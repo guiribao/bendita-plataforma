@@ -6,11 +6,9 @@ export const meta: V2_MetaFunction = () => {
 };
 
 export async function loader({ request }: LoaderArgs) {
-  return json({ ok: true });
+  return {};
 }
 
 export default function Index() {
-  let data = useLoaderData<typeof loader>();
-  console.log(data);
   return <h1 className='text-3xl font-bold underline'>Hello world!</h1>;
 }
