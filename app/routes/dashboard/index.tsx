@@ -12,7 +12,7 @@ export const meta: V2_MetaFunction = () => {
     {
       name: 'description',
       content:
-        'Dashboard para análise e geração de relatórios de usuários, de operações e de atividades da núvem do Chave.',
+        'Dashboard para análise e geração de relatórios de usuários, de operações e de atividades da núvem do Chave',
     },
   ];
 };
@@ -23,24 +23,15 @@ export async function loader({ request }: LoaderArgs) {
 
 export default function DashboardIndex() {
   return (
-    <div>
+    <main>
       <div className="cards">
         <div className="card-single">
           <div>
-            <h1>640</h1>
+            <h1>680</h1>
             <span>Membros</span>
           </div>
           <div>
             <span className="las la-users"></span>
-          </div>
-        </div>
-        <div className="card-single">
-          <div>
-            <h1>35.000</h1>
-            <span>Visitantes</span>
-          </div>
-          <div>
-            <span className="las la-user-friends"></span>
           </div>
         </div>
         <div className="card-single">
@@ -52,7 +43,25 @@ export default function DashboardIndex() {
             <span className="las la-star"></span>
           </div>
         </div>
+        <div className="card-single">
+          <div>
+            <h1>900</h1>
+            <span>Presenças (últimos 30 dias)</span>
+          </div>
+          <div>
+            <span className="las la-user-friends"></span>
+          </div>
+        </div>
+        <div className="card-single">
+          <div>
+            <h1>5.001</h1>
+            <span>Visitantes cadastrados</span>
+          </div>
+          <div>
+            <span className="las la-user-friends"></span>
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

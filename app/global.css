@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;700&display=swap');
 
 :root {
-  --main-color: #3772FF;
+  --main-color: #3772ff;
   --color-dark: #080708;
-  --text-gray: #E6E8E6;
+  --text-gray: #776;
   --green: #06ba63;
   --brown: #795663;
 }
@@ -24,15 +24,16 @@
 .sidebar {
   width: 345px;
   height: 100%;
-  position:fixed;
+  position: fixed;
   left: 0;
   top: 0;
   background: var(--main-color);
+  z-index: 100;
 }
 
 .sidebar-brand {
   height: 90px;
-  padding: 1em  0em 1em 2em;
+  padding: 1em 0em 1em 2em;
   color: white;
 }
 
@@ -41,16 +42,28 @@
   padding-right: 1em;
 }
 
-.sidebar-menu  li {
+.sidebar-menu {
+  padding: 3em 0 0 0;  
+}
+.sidebar-menu li {
   width: 100%;
-  margin-bottom: 1.7em;
-  padding-left: 2em;
+  margin-bottom: 1em;
+  padding-left: 1em;
 }
 
 .sidebar-menu a {
   display: block;
   color: white;
   font-size: 1.1em;
+  padding-left: 1em;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+.sidebar-menu a.active {
+  background: white;
+  color: var(--main-color);
+  border-radius: 30px 0 0 30px;
 }
 
 .sidebar-menu a span:first-child {
@@ -59,7 +72,86 @@
 }
 
 .content {
+  width: 100%;
   margin-left: 345px;
 }
 
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em 1.5em;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  position: fixed;
+  top: 0;
+  left: 345px;
+  width: calc(100% - 345px);
+  z-index: 100;
+}
 
+header h2 {
+  color: #222;
+  display: flex;
+  align-items: center;
+}
+
+header label span {
+  font-size: 1.7em;
+  padding-right: 1em;
+}
+
+.user-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.user-wrapper img {
+  border-radius: 50%;
+  margin-right: 1em;
+}
+
+.user-wrapper small {
+  display: inline-block;
+  color: var(--text-gray);
+}
+
+main {
+  margin-top: 90px;
+  padding: 2em 1.5em;
+  background: #f9f9f9;
+  min-height: calc(100vh - 90px);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 2em;
+  margin-top: 1em;
+}
+
+.card-single {
+  display: flex;
+  justify-content: space-between;
+  background: white;
+  padding: 2em;
+  border-radius: 2px;
+}
+
+.card-single div:first-child span {
+  color: var(--text-gray);
+}
+
+.card-single div:last-child span {
+  font-size: 3em;
+  color: var(--main-color);
+}
+
+.card-single:last-child {
+  background: var(--main-color);
+}
+
+.card-single:last-child h1,
+.card-single:last-child div:first-child span,
+.card-single:last-child div:last-child span {
+  color: white;
+}

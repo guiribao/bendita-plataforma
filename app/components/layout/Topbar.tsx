@@ -11,8 +11,8 @@ export default function Topbar() {
   return (
       <header>
         <h2>
-          <label htmlFor=''>
-            <span className='las la-chart-area'></span>
+          <label>
+            <span className='las la-bars'></span>
           </label>
           {info?.title}
         </h2>
