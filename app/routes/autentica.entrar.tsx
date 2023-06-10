@@ -13,27 +13,11 @@ export const links: LinksFunction = () => {
 };
 
 export const action: ActionFunction = async ({ request }) => {
-  const form = await request.formData();
-  const email: string = form.get('email') as string;
-  const senha: string = form.get('senha') as string;
-
-  try {
-    const errors = {
-      email: !email,
-      senha: !senha,
-    };
-
-    if (Object.values(errors).some(Boolean)) {
-      const values = Object.fromEntries(form);
-      return json({ errors, values });
-    }
-    await authenticator.authenticate('form', request, {
-      successRedirect: '/dashboard',
-      failureRedirect: '/autentica/entrar',
-    });
-  } catch (e) {
-    console.warn(e);
-  }
+  await authenticator.authenticate('form', request, {
+    successRedirect: '/dashboard',
+    failureRedirect: '/autentica/entrar'
+  });
+  
 };
 
 export async function loader({ request }: LoaderArgs) {
@@ -41,7 +25,7 @@ export async function loader({ request }: LoaderArgs) {
     successRedirect: '/dashboard',
   });
 
-  return json({ user });
+  return {};
 }
 
 export default function Entrar() {
