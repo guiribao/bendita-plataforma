@@ -1,14 +1,28 @@
-import { useLocation } from 'react-router-dom'
-import {getPageInfo} from '~/shared/PageInfo'
+import { LoaderArgs, json } from '@remix-run/node';
+import { Link, useLoaderData } from '@remix-run/react';
+import { useLocation } from 'react-router-dom';
+import { Usuario } from '@prisma/client';
+import { getPageInfo } from '~/shared/PageInfo';
+
+import { authenticator } from '~/secure/auth.server';
 
 import userImage from '~/assets/img/user.png';
 
-export default function Topbar() {
-  const location = useLocation();
-  const info = getPageInfo(location.pathname)
+export const loader = ({ request }: LoaderArgs) => {
+  let usuario = authenticator.isAuthenticated(request);
 
+  console.log(usuario)
+  
+  return json({ usuario });
+};
+
+export default function Topbar() {
+  const { usuario } = useLoaderData();
+  const location = useLocation();
+  const info = getPageInfo(location.pathname);
 
   return (
+    usuario && (
       <header>
         <h2>
           <label>
@@ -20,10 +34,11 @@ export default function Topbar() {
         <div className='user-wrapper'>
           <img src={userImage} alt='some random user image' width={'40px'} height={'40px'} />
           <div>
-            <h4>Mestre Irineu</h4>
-            <small>General</small>
+            <h4>{usuario.email}</h4>
+            <small><Link to="/autentica/sair">Sair</Link></small>
           </div>
         </div>
       </header>
+    )
   );
 }

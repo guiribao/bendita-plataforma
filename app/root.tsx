@@ -1,11 +1,20 @@
-import type { LinksFunction, V2_MetaFunction } from '@remix-run/node';
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
+import { LinksFunction, LoaderArgs, V2_MetaFunction, json } from '@remix-run/node';
+import {
+  Links,
+  LiveReload,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  useLoaderData,
+} from '@remix-run/react';
 
 import stylesheet from '~/global.css';
 import line_awesome from '~/assets/lib/line-awesome/css/line-awesome.min.css';
 import Sidebar from './components/layout/Sidebar';
 import Layout from './components/layout/Layout';
 import Topbar from './components/layout/Topbar';
+import { authenticator } from './secure/auth.server';
 
 export const links: LinksFunction = () => {
   return [
@@ -21,7 +30,17 @@ export const meta: V2_MetaFunction = () => {
   ];
 };
 
+export async function loader({ request }: LoaderArgs) {
+  let usuario = await authenticator.isAuthenticated(request);
+
+  
+
+  return json({ usuario });
+}
+
 export default function App() {
+  let { usuario } = useLoaderData();
+
   return (
     <html lang='pt-BR'>
       <head>

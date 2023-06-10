@@ -17,6 +17,10 @@
   text-decoration: none;
 }
 
+body {
+  background: #f9f9f9;
+}
+
 .container {
   display: flex;
 }
@@ -110,9 +114,12 @@ header label span {
   margin-right: 1em;
 }
 
-.user-wrapper small {
+.user-wrapper small a {
   display: inline-block;
   color: var(--text-gray);
+}
+.user-wrapper small a:hover {
+  color: var(--main-color);
 }
 
 main {
