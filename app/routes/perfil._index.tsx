@@ -61,7 +61,7 @@ export async function loader({ request }: LoaderArgs) {
   return json({ });
 }
 
-export default function DashboardIndex() {
+export default function PerfilIndex() {
   let { usuario, perfil } = useLoaderData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';

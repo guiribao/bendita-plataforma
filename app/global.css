@@ -91,6 +91,7 @@ header {
   left: 345px;
   width: calc(100% - 345px);
   z-index: 100;
+  background: white;
 }
 
 header h2 {

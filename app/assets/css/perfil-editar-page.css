@@ -81,6 +81,17 @@ main {
   margin: 0 auto;
 }
 
+.form-perfil .form-field .input-email {
+  width: 100%;
+  font-size: 1.05em;
+  padding: 8.5px 10px;
+  border: 1px solid var(--main-color);
+  border-radius: 6px;
+  background: #f9f9f9;
+  outline: none;
+  margin: 0 auto;
+}
+
 .form-perfil .form-field-membro {
   width: 300px;
   display: flex;

@@ -5,19 +5,17 @@ import cadastroLoginPageStyle from '~/assets/css/cadastro-login-page.css';
 import loading from '~/assets/img/loading.gif';
 
 export const meta: V2_MetaFunction = () => {
-  return [{ title: 'Entrar - ChaveCloud' }, { name: 'description', content: 'A Núvem do Chave!' }];
+  return [
+    { title: 'Esqueci minha senha - ChaveCloud' },
+    { name: 'description', content: 'A Núvem do Chave!' },
+  ];
 };
 
 export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: cadastroLoginPageStyle }];
 };
 
-export const action: ActionFunction = async ({ request }) => {
-  await authenticator.authenticate('form', request, {
-    successRedirect: '/dashboard',
-    failureRedirect: '/autentica/entrar',
-  });
-};
+export const action: ActionFunction = async ({ request }) => {};
 
 export async function loader({ request }: LoaderArgs) {
   let user = await authenticator.isAuthenticated(request, {
@@ -35,38 +33,33 @@ export default function Entrar() {
   return (
     <main>
       <div className='header'>
-        <h1>Entrar</h1>
+        <h1>Esqueci minha senha</h1>
         <p>
-          Digite as informações abaixo <br />
-          para entrar
+          Digite seu e-mail de cadastro no campo abaixo.
+          <br />
+          Enviaremos um link para este e-mail.
         </p>
       </div>
       <Form method='POST' className='form-cadastro'>
         {actionData?.errors?.email && (
           <p className='mensagem-erro'>Por favor, preencha o campo e-mail</p>
         )}
-        {actionData?.errors?.senha && (
-          <p className='mensagem-erro'>Por favor, preencha o campo senha</p>
-        )}
         <div className='form-group'>
           <label>E-mail</label>
           <input type='email' name='email' id='email' autoComplete='off' />
         </div>
-        <div className='form-group'>
-          <label>Senha</label>
-          <input type='password' name='senha' id='senha' autoComplete='off' />
-          <p>
-            Esqueceu sua senha? <Link to='/autentica/esqueci-minha-senha'>Clique aqui</Link>
-          </p>
-        </div>
         <div className='form-group form-button'>
           <button type='submit' className='btn-cadastro' disabled={isSubmitting}>
-            {!isSubmitting && 'Entrar'}
+            {!isSubmitting && 'Enviar'}
             {isSubmitting && <img src={loading} alt='Carregando' />}
           </button>
         </div>
       </Form>
       <div className='footer'>
+        <p>
+          Já tem uma conta? <br />
+          <Link to='/autentica/entrar'>Entrar</Link>
+        </p>
         <p>
           Não tem uma conta ainda? <br />
           <Link to='/autentica/cadastro'>Cadastre-se</Link>

@@ -65,7 +65,10 @@ main {
   align-items: start;
   justify-content: space-between;
 }
+.meu-perfil .field #email {
 
+  line-break: anywhere;
+}
 .meu-perfil .field .profissao {
   width: 100%;
 }

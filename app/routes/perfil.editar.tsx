@@ -10,7 +10,7 @@ import Perfil from '~/model/Perfil.server';
 import Usuario from '~/model/Usuario.server';
 import editarPerfil from '~/domain/Perfil/editar-perfil.server';
 import pegarPerfilPeloIdUsuario from '~/domain/Perfil/perfil-pelo-id-usuario.server';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -41,6 +41,8 @@ export const action: ActionFunction = async ({ request }) => {
   const bio: string = form.get('bio') as string;
   const usuarioId: number = Number(form.get('usuarioId') as string);
   const membro: boolean = (form.get('membro') as string) === 'true';
+  
+  console.log('email: ',email);
 
   let perfil = new Perfil(
     nome,
@@ -67,18 +69,19 @@ export async function loader({ request }: LoaderArgs) {
   });
 
   let perfil: PrismaPerfil | null = await pegarPerfilPeloIdUsuario(usuario.id);
-  
+
   return json({ usuario, perfil });
 }
 
-export default function DashboardIndex() {
+export default function PerfilEditar() {
   let { usuario, perfil } = useLoaderData();
-  let [ membro, setMembro] = useState(perfil?.membro)
+  let [_email, _setEmail] = useState(perfil?.email||usuario?.email||"")
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
 
-  function handleMembro() {
-    setMembro(!membro)
+  console.log(usuario?.email, perfil?.email)
+  function handleEmail(e: ChangeEvent<HTMLInputElement>) {
+    _setEmail(e.target.value)
   }
 
   return (
@@ -102,11 +105,23 @@ export default function DashboardIndex() {
           </div>
           <div className='form-field'>
             <label htmlFor='nome'>Nome *</label>
-            <input type='text' name='nome' id='nome' value={(perfil?.nome)??""} autoComplete='off' />
+            <input
+              type='text'
+              name='nome'
+              id='nome'
+              defaultValue={perfil?.nome ?? ''}
+              autoComplete='off'
+            />
           </div>
           <div className='form-field'>
             <label htmlFor='sobrenome'>Sobrenome *</label>
-            <input type='text' name='sobrenome' id='sobrenome' value={(perfil?.sobrenome)??""} autoComplete='off' />
+            <input
+              type='text'
+              name='sobrenome'
+              id='sobrenome'
+              defaultValue={perfil?.sobrenome ?? ''}
+              autoComplete='off'
+            />
           </div>
         </div>
         <div className='form-group'>
@@ -115,11 +130,26 @@ export default function DashboardIndex() {
           </div>
           <div className='form-field'>
             <label htmlFor='email'>E-mail *</label>
-            <input type='email' name='email' id='email' value={(perfil?.email)??""} autoComplete='off' />
+            <input
+              type='email'
+              name='email'
+              id='email'
+              className='input-email'
+              value={_email}
+              onChange={handleEmail}
+              autoComplete='off'
+              
+            />
           </div>
           <div className='form-field'>
             <label htmlFor='celular'>Celular *</label>
-            <input type='text' name='celular' id='celular' value={(perfil?.celular)??""} autoComplete='off' />
+            <input
+              type='text'
+              name='celular'
+              id='celular'
+              defaultValue={perfil?.celular ?? ''}
+              autoComplete='off'
+            />
           </div>
         </div>
 
@@ -129,18 +159,36 @@ export default function DashboardIndex() {
           </div>
           <div className='form-field profissao'>
             <label htmlFor='profissao'>Profissão</label>
-            <input type='text' name='profissao' id='profissao' value={(perfil?.profissao)??""} autoComplete='off' />
+            <input
+              type='text'
+              name='profissao'
+              id='profissao'
+              defaultValue={perfil?.profissao ?? ''}
+              autoComplete='off'
+            />
           </div>
           <div className='form-field-membro'>
             <h3>És membro?</h3>
             <div>
               <div className='form-field-membro-response'>
                 <label htmlFor='membro_sim'>Sim</label>
-                <input type='radio' name='membro' id='membro_sim' value='true' checked={membro==true} onChange={handleMembro}/>
+                <input
+                  type='radio'
+                  name='membro'
+                  id='membro_sim'
+                  value='true'
+                  defaultChecked={perfil?.membro == true}
+                />
               </div>
               <div className='form-field-membro-response'>
                 <label htmlFor='membro_nao'>Não?</label>
-                <input type='radio' name='membro' id='membro_nao' value='false' checked={membro==false} onChange={handleMembro} />
+                <input
+                  type='radio'
+                  name='membro'
+                  id='membro_nao'
+                  value='false'
+                  defaultChecked={perfil?.membro == false}
+                />
               </div>
             </div>
           </div>
@@ -151,7 +199,7 @@ export default function DashboardIndex() {
           </div>
           <div className='form-field-bio'>
             <label htmlFor='bio'>Escreva um pouco sobre você</label>
-            <textarea name='bio' id='bio' value={(perfil?.bio)??""}></textarea>
+            <textarea name='bio' id='bio' defaultValue={perfil?.bio ?? ''}></textarea>
           </div>
         </div>
         <div className='form-group'>

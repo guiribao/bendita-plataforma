@@ -23,7 +23,7 @@ export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
   const email: string = form.get('email') as string;
   const senha: string = form.get('senha') as string;
-  const senha_verify: string = form.get('senha_verify') as string;
+  const senha_repetida: string = form.get('senha_repetida') as string;
 
   let errors = {
     email: !email,
@@ -35,7 +35,7 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors, values });
   }
 
-  if (senha != senha_verify) {
+  if (senha != senha_repetida) {
     errors = Object.assign(errors, { data: 'Hmmm! Parece que a verificação de senha não confere' });
     return json({ errors });
   }
@@ -90,7 +90,7 @@ export default function Cadastro() {
           <input type='password' name='senha' id='senha' autoComplete='off' />
         </div>
         <div className='form-group'>
-          <label htmlFor='senha_verify'>Repita a senha</label>
+          <label htmlFor='senha_repetida'>Repita a senha</label>
           <input type='password' name='senha_repetida' id='senha_repetida' autoComplete='off' />
         </div>
         <div className='form-group form-button'>

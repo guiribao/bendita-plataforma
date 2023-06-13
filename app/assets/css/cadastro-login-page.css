@@ -9,13 +9,13 @@ main {
   text-align: center;
 }
 .header h1 { font-size: 50px;}
-.header p { font-size: 26px;}
+.header p { margin: 20px 0; font-size: 26px;}
 
 .form-cadastro {
-  padding: 1em 0;
+  padding: 2em 0;
   display: flex;
   flex-direction: column;
-  gap: 1.6em;
+  gap: 2em;
   position: relative;
 }
 
@@ -40,8 +40,15 @@ main {
 .form-cadastro .form-group label {
   font-size: 1.3m;
   font-weight: 800;
-  color: var(--text-gray);
-  
+  color: var(--text-gray);  
+}
+
+.form-cadastro .form-group p {
+  font-size: 1.1m;
+  font-weight: 800;  
+}
+.form-cadastro .form-group a {
+  color: var(--main-color);
 }
 
 .form-cadastro .form-group input {
@@ -88,6 +95,7 @@ main {
 }
 .footer p {
   text-align: center;
+  margin-bottom: 1em;
 }
 .footer a {
   color: var(--main-color)
