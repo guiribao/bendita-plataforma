@@ -1,0 +1,94 @@
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  margin: 24px 0 34px 0;
+}
+.header {
+  text-align: center;
+}
+.header img {
+  width: 128px;
+  border-radius: 50%;
+  border: 1px solid var(--main-color);
+  margin: 4em auto 0 auto;
+}
+.header h1 { font-size: 50px;}
+.header p { font-size: 26px;}
+.header a{
+  color: var(--main-color);
+  font-size: 18px;
+  font-weight: 800;
+  border-bottom: 3px solid var(--main-color);
+  padding: 5px 0 6px 0;
+}
+
+.meu-perfil {
+  max-width: 632px;
+  padding: 1em 0;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2em;
+}
+
+.meu-perfil .group {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.meu-perfil .group .group-header {
+  width: 100% !important;
+  padding: 26px 0 15px 0;
+  border-bottom: 4px solid rgba(55, 114, 255, .066);
+  color: #323232;
+}
+
+.meu-perfil .field {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-between;
+}
+
+.meu-perfil .field-bio {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-between;
+}
+.meu-perfil .field #email {
+
+  line-break: anywhere;
+}
+.meu-perfil .field .profissao {
+  width: 100%;
+}
+
+.meu-perfil .field label {
+  margin: 10px 0;
+  font-size: 1.1em;
+  font-weight: 800;
+  color: var(--text-gray);
+}
+
+.meu-perfil .field p  {
+  width: 100%;
+  font-size: 1.35em;
+  padding: 5px 10px;
+}
+
+.meu-perfil .field-bio p {
+  width: 100%;
+  height: 78px;
+  font-size: 1.15em;
+  padding: 5px 10px;
+}

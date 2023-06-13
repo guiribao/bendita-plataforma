@@ -3,7 +3,6 @@ module.exports = {
   ignoredRouteFiles: ["**/.*"],
   server: process.env.NODE_ENV === "development" ? undefined : "./server.ts",
   serverBuildPath: "api/index.js",
-  tailwind: true,
   // appDirectory: "app",
   // assetsBuildDirectory: "public/build",
   // publicPath: "/build/",

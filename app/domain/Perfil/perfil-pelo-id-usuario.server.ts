@@ -1,0 +1,16 @@
+import { Perfil } from '@prisma/client';
+import { prisma } from '~/secure/db.server';
+
+export default async function pegarPerfilPeloIdUsuario(id: number): Promise<Perfil | null> {
+  try {
+    const perfil = await prisma.perfil.findUnique({
+      where: {
+        usuarioId: id
+      }
+    })
+    
+    return perfil;
+  } catch (error) {
+    return null
+  }  
+}

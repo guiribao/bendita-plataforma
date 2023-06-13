@@ -1,0 +1,102 @@
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 24px;
+}
+.header {
+  text-align: center;
+}
+.header h1 { font-size: 50px;}
+.header p { margin: 20px 0; font-size: 26px;}
+
+.form-cadastro {
+  padding: 2em 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+  position: relative;
+}
+
+.form-cadastro .mensagem-erro {
+  background-color: rgb(212, 26, 26);
+  padding: .5em 0;
+  text-align: center;
+  color: #f9f9f9;
+  border-radius: 6px;
+}
+
+.form-cadastro .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: .75em;
+}
+
+.form-cadastro .form-group.form-button {
+  align-items: center;
+}
+
+.form-cadastro .form-group label {
+  font-size: 1.3m;
+  font-weight: 800;
+  color: var(--text-gray);  
+}
+
+.form-cadastro .form-group p {
+  font-size: 1.1m;
+  font-weight: 800;  
+}
+.form-cadastro .form-group a {
+  color: var(--main-color);
+}
+
+.form-cadastro .form-group input {
+  max-width: 372px;
+  font-size: 1.35em;
+  padding: 5px 10px;
+  border: 1px solid var(--main-color);
+  border-radius: 6px;
+  background: #f9f9f9;
+  outline: none;
+}
+
+
+.form-cadastro .form-group button {
+  width: 180px;
+  font-size: 1.1em;
+  font-weight: 800;
+  padding: .6em 0;
+  border: 1px solid var(--main-color);
+  border-radius: 6px;
+  box-shadow: 1px 2px 7px -4px black;
+  background: var(--main-color);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color .5s linear;
+}
+
+.form-cadastro .form-group button:disabled {
+  border: 5px solid #608ef8;
+  background-color: #608ef8;
+}
+
+.form-cadastro .form-group button img {
+  width: 24px;
+}
+
+.footer {
+  font-size: 1.1em;
+  font-weight: 700;
+  margin: 3em 0 0 0;
+}
+.footer p {
+  text-align: center;
+  margin-bottom: 1em;
+}
+.footer a {
+  color: var(--main-color)
+}

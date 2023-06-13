@@ -1,0 +1,174 @@
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  margin-top: 24px;
+}
+.header {
+  text-align: center;
+}
+.header img {
+  width: 128px;
+  border-radius: 50%;
+  border: 1px solid var(--main-color);
+  margin: 4em auto 0 auto;
+}
+.header h1 { font-size: 50px;}
+.header p { font-size: 26px;}
+
+.form-perfil {
+  max-width: 632px;
+  padding: 1em 0;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2em;
+}
+
+.form-perfil .form-group {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.form-perfil .form-group .form-group-header {
+  width: 100% !important;
+  padding: 26px 0 15px 0;
+  border-bottom: 4px solid rgba(55, 114, 255, .066);
+  color: #323232;
+}
+
+.form-perfil .form-field {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-between;
+}
+
+.form-perfil .form-field-bio {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-between;
+}
+
+
+.form-perfil .form-field .profissao{
+  width: 100%;
+}
+.form-perfil .form-field label {
+  margin: 10px 0;
+  font-size: 1.1em;
+  font-weight: 800;
+  color: var(--text-gray);
+}
+
+.form-perfil .form-field input {
+  width: 100%;
+  font-size: 1.35em;
+  padding: 5px 10px;
+  border: 1px solid var(--main-color);
+  border-radius: 6px;
+  background: #f9f9f9;
+  outline: none;
+  margin: 0 auto;
+}
+
+.form-perfil .form-field .input-email {
+  width: 100%;
+  font-size: 1.05em;
+  padding: 8.5px 10px;
+  border: 1px solid var(--main-color);
+  border-radius: 6px;
+  background: #f9f9f9;
+  outline: none;
+  margin: 0 auto;
+}
+
+.form-perfil .form-field-membro {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.form-perfil .form-field-membro h3 {
+  font-size: 1.1em;
+  font-weight: 800;
+  color: var(--text-gray);
+  padding: 10px 0;
+}
+
+.form-perfil .form-field-membro div {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+
+}
+.form-field-membro-response {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.form-field-membro-response label {
+  background: var(--main-color);
+  color: white;
+  font-size: 1.1em;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.form-perfil .form-field-bio label {
+  font-size: 1.1em;
+  font-weight: 800;
+  color: var(--text-gray);
+  margin: 0 0 .5em 0;
+}
+.form-perfil .form-field-bio textarea {
+  width: 100%;
+  height: 78px;
+  font-size: .95em;
+  padding: 5px 10px;
+  border: 1px solid var(--main-color);
+  border-radius: 6px;
+  background: #f9f9f9;
+  outline: none;
+  resize: none;
+}
+
+
+.form-perfil .form-field button {
+  width: 180px;
+  font-size: 1.1em;
+  font-weight: 800;
+  padding: .6em 0;
+  border: 1px solid var(--main-color);
+  border-radius: 6px;
+  box-shadow: 1px 2px 7px -4px black;
+  background: var(--main-color);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color .5s linear;
+}
+
+.form-perfil .form-field button:disabled {
+  border: 5px solid #608ef8;
+  background-color: #608ef8;
+}
+.form-perfil .form-field button img {
+  width: 24px;
+}

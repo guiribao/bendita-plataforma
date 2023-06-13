@@ -1,16 +1,19 @@
-import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
+import { LoaderArgs, V2_MetaFunction } from '@remix-run/node';
+import { authenticator } from '~/secure/auth.server';
 
 export const meta: V2_MetaFunction = () => {
   return [{ title: 'ChaveCloud' }, { name: 'description', content: 'A Núvem do Chave!' }];
 };
 
 export async function loader({ request }: LoaderArgs) {
-  return json({ ok: true });
+  await authenticator.isAuthenticated(request, {
+    successRedirect: '/dashboard',
+    failureRedirect: '/autentica/entrar',
+  });
+
+  return {};
 }
 
 export default function Index() {
-  let data = useLoaderData<typeof loader>();
-  console.log(data);
-  return <h1 className='text-3xl font-bold underline'>Hello world!</h1>;
+  return <main>Redirecionando...</main>;
 }
