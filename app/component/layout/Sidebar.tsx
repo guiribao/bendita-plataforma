@@ -36,7 +36,7 @@ export default function Sidebar() {
         </h2>
       </div>
 
-      {usuario && (
+      {usuario && !(location.pathname == '/perfil/editar') && (
         <div className='sidebar-menu'>
           <ul>
             <li>

@@ -2,15 +2,17 @@ import { ActionFunction, LinksFunction, LoaderArgs, V2_MetaFunction, json } from
 import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
 
 import { authenticator } from '~/secure/auth.server';
-import criarNovoUsuario from '~/domains/User/criar-novo-usuario.server';
-import ServerError from '~/interfaces/ServerError';
+import criarNovoUsuario from '~/domain/User/criar-novo-usuario.server';
 
 import cadastroLoginPageStyle from '~/assets/css/cadastro-login-page.css';
 import loading from '~/assets/img/loading.gif';
 import { Usuario } from '@prisma/client';
 
 export const meta: V2_MetaFunction = () => {
-  return [{ title: 'ChaveCloud' }, { name: 'description', content: 'A Núvem do Chave!' }];
+  return [
+    { title: 'Cadastro - ChaveCloud' },
+    { name: 'description', content: 'A Núvem do Chave!' },
+  ];
 };
 
 export const links: LinksFunction = () => {
@@ -21,6 +23,7 @@ export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
   const email: string = form.get('email') as string;
   const senha: string = form.get('senha') as string;
+  const senha_verify: string = form.get('senha_verify') as string;
 
   let errors = {
     email: !email,
@@ -32,10 +35,14 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors, values });
   }
 
+  if (senha != senha_verify) {
+    errors = Object.assign(errors, { data: 'Hmmm! Parece que a verificação de senha não confere' });
+    return json({ errors });
+  }
+
   let criarUsuario = await criarNovoUsuario(email, senha);
 
   if (criarUsuario) {
-    console.log(criarUsuario);
     await authenticator.authenticate('form', request, {
       successRedirect: '/dashboard',
       failureRedirect: '/autentica/cadastro',
@@ -62,13 +69,11 @@ export default function Cadastro() {
   return (
     <main>
       <div className='header'>
-        <h1>Bem-vindo!</h1>
+        <h1>Cadastrar-se</h1>
         <p>Crie sua conta para começar</p>
       </div>
       <Form method='post' className='form-cadastro'>
-        {actionData?.errors?.data && (
-          <p className='mensagem-erro'>Ops! Parece que este e-mail já está em uso</p>
-        )}
+        {actionData?.errors?.data && <p className='mensagem-erro'>{actionData?.errors?.data}</p>}
         {actionData?.errors?.email && (
           <p className='mensagem-erro'>Por favor, preencha o campo e-mail</p>
         )}
@@ -83,6 +88,10 @@ export default function Cadastro() {
         <div className='form-group'>
           <label htmlFor='senha'>Senha</label>
           <input type='password' name='senha' id='senha' autoComplete='off' />
+        </div>
+        <div className='form-group'>
+          <label htmlFor='senha_verify'>Repita a senha</label>
+          <input type='password' name='senha_repetida' id='senha_repetida' autoComplete='off' />
         </div>
         <div className='form-group form-button'>
           <button type='submit' className='btn-cadastro' disabled={isSubmitting}>

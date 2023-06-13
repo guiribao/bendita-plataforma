@@ -4,15 +4,16 @@ import bcrypt from 'bcryptjs';
 
 import { prisma } from './db.server';
 import { sessionStorage } from './session.server';
-import { Usuario } from '@prisma/client';
+import { Usuario as PrismaUsuario } from '@prisma/client';
+import Usuario from '~/model/Usuario.server';
 
-const authenticator = new Authenticator(sessionStorage);
+const authenticator = new Authenticator<Usuario>(sessionStorage);
 
 const formStrategy = new FormStrategy(async ({ form }) => {
   const email = form.get('email') as string;
   const senha = form.get('senha') as string;
 
-  const usuario: Usuario | null = await prisma.usuario.findFirst({
+  const usuario: PrismaUsuario | null = await prisma.usuario.findUnique({
     where: {
       email,
     },
@@ -29,7 +30,7 @@ const formStrategy = new FormStrategy(async ({ form }) => {
     throw new AuthorizationError();
   }
 
-  return usuario;
+  return new Usuario(usuario)
 });
 
 authenticator.use(formStrategy, 'form');

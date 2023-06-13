@@ -5,6 +5,7 @@ const infos = [
   { path: '/calendario', title: 'Calendário' },
   { path: '/financeiro', title: 'Financeiro' },
   { path: '/gente', title: 'Gente' },
+  { path: '/perfil', title: 'Meu perfil' },
 ];
 
 export function getPageInfo(page: string) {

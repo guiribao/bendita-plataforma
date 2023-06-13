@@ -5,7 +5,7 @@ import cadastroLoginPageStyle from '~/assets/css/cadastro-login-page.css';
 import loading from '~/assets/img/loading.gif';
 
 export const meta: V2_MetaFunction = () => {
-  return [{ title: 'ChaveCloud' }, { name: 'description', content: 'A Núvem do Chave!' }];
+  return [{ title: 'Entrar - ChaveCloud' }, { name: 'description', content: 'A Núvem do Chave!' }];
 };
 
 export const links: LinksFunction = () => {

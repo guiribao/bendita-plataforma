@@ -10,14 +10,11 @@ import userImage from '~/assets/img/user.png';
 
 export const loader = ({ request }: LoaderArgs) => {
   let usuario = authenticator.isAuthenticated(request);
-
-  console.log(usuario)
-  
   return json({ usuario });
 };
 
 export default function Topbar() {
-  const { usuario } = useLoaderData();
+  const { usuario, perfil } = useLoaderData();
   const location = useLocation();
   const info = getPageInfo(location.pathname);
 
@@ -34,7 +31,7 @@ export default function Topbar() {
         <div className='user-wrapper'>
           <img src={userImage} alt='some random user image' width={'40px'} height={'40px'} />
           <div>
-            <h4>{usuario.email}</h4>
+            <h4>{`${perfil.nome} ${perfil.sobrenome}` || usuario.email}</h4>
             <small><Link to="/autentica/sair">Sair</Link></small>
           </div>
         </div>

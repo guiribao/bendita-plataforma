@@ -1,4 +1,4 @@
-import { LinksFunction, LoaderArgs, V2_MetaFunction, json } from '@remix-run/node';
+import { LinksFunction, LoaderArgs, V2_MetaFunction, json, redirect } from '@remix-run/node';
 import {
   Links,
   LiveReload,
@@ -11,10 +11,12 @@ import {
 
 import stylesheet from '~/global.css';
 import line_awesome from '~/assets/lib/line-awesome/css/line-awesome.min.css';
-import Sidebar from './components/layout/Sidebar';
-import Layout from './components/layout/Layout';
-import Topbar from './components/layout/Topbar';
+import Sidebar from './component/layout/Sidebar';
+import Layout from './component/layout/Layout';
+import Topbar from './component/layout/Topbar';
 import { authenticator } from './secure/auth.server';
+import { Perfil, Usuario } from '@prisma/client';
+import pegarPerfilPeloIdUsuario from './domain/Perfil/perfil-pelo-id-usuario.server';
 
 export const links: LinksFunction = () => {
   return [
@@ -31,18 +33,24 @@ export const meta: V2_MetaFunction = () => {
 };
 
 export async function loader({ request }: LoaderArgs) {
-  let usuario = await authenticator.isAuthenticated(request);
+  //@ts-ignore
+  let usuario: Usuario = await authenticator.isAuthenticated(request);
+  let perfil: Perfil | null = null;
 
-  
+  if(usuario?.id) {
+    perfil = await pegarPerfilPeloIdUsuario(usuario.id);
+  }
 
-  return json({ usuario });
+  if(usuario && !perfil?.id && !request.url.includes('/perfil')) return redirect('/perfil/editar')
+
+  return json({ usuario, perfil });
 }
 
 export default function App() {
-  let { usuario } = useLoaderData();
-
+  let { usuario, perfil } = useLoaderData();
+  console.log(perfil)
   return (
-    <html lang='pt-BR'>
+    <html lang='pt-BR' suppressHydrationWarning={true}>
       <head>
         <meta charSet='utf-8' />
         <meta name='viewport' content='width=device-width,initial-scale=1' />
@@ -60,7 +68,6 @@ export default function App() {
 
         <ScrollRestoration />
         <Scripts />
-        <script src={`${process.env.APP_URL}/init-alpine.js`}></script>
         <LiveReload />
       </body>
     </html>
