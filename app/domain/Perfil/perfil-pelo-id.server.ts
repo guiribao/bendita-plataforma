@@ -5,7 +5,7 @@ export default async function pegarPerfilPeloId(id: number): Promise<Perfil | nu
   try {
     const perfil = await prisma.perfil.findUnique({
       where: {
-        usuarioId: id
+        id
       }
     })
     

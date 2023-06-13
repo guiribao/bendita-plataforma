@@ -48,7 +48,6 @@ export async function loader({ request }: LoaderArgs) {
 
 export default function App() {
   let { usuario, perfil } = useLoaderData();
-  console.log(perfil)
   return (
     <html lang='pt-BR' suppressHydrationWarning={true}>
       <head>

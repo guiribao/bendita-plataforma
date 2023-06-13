@@ -31,8 +31,14 @@ export default function Topbar() {
         <div className='user-wrapper'>
           <img src={userImage} alt='some random user image' width={'40px'} height={'40px'} />
           <div>
-            <h4>{`${perfil.nome} ${perfil.sobrenome}` || usuario.email}</h4>
-            <small><Link to="/autentica/sair">Sair</Link></small>
+            <h4>{(perfil?.nome) ? `${perfil?.nome} ${perfil?.sobrenome}` : usuario.email}</h4>
+            <small>
+              <Link to='/perfil'>Meu perfil</Link>
+              {' | '}
+            </small>
+            <small>
+              <Link to='/autentica/sair'>Sair</Link>
+            </small>
           </div>
         </div>
       </header>

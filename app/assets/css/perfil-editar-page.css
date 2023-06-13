@@ -158,3 +158,6 @@ main {
   border: 5px solid #608ef8;
   background-color: #608ef8;
 }
+.form-perfil .form-field button img {
+  width: 24px;
+}

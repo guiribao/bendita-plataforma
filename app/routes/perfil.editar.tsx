@@ -5,10 +5,12 @@ import { authenticator } from '~/secure/auth.server';
 import loading from '~/assets/img/loading.gif';
 import perfilEditarPageStyle from '~/assets/css/perfil-editar-page.css';
 import userImage from '~/assets/img/user.png';
+import { Perfil as PrismaPerfil } from '@prisma/client';
 import Perfil from '~/model/Perfil.server';
 import Usuario from '~/model/Usuario.server';
-import pegarPerfilPeloId from '~/domain/Perfil/perfil-pelo-id.server';
 import editarPerfil from '~/domain/Perfil/editar-perfil.server';
+import pegarPerfilPeloIdUsuario from '~/domain/Perfil/perfil-pelo-id-usuario.server';
+import { useState } from 'react';
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -30,7 +32,6 @@ export const links: LinksFunction = () => {
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
-
   const perfilId: number = Number(form.get('perfilId') as string);
   const nome: string = form.get('nome') as string;
   const sobrenome: string = form.get('sobrenome') as string;
@@ -39,7 +40,7 @@ export const action: ActionFunction = async ({ request }) => {
   const profissao: string = form.get('profissao') as string;
   const bio: string = form.get('bio') as string;
   const usuarioId: number = Number(form.get('usuarioId') as string);
-  const membro: boolean = (form.get('membro') as string) === 'sim';
+  const membro: boolean = (form.get('membro') as string) === 'true';
 
   let perfil = new Perfil(
     nome,
@@ -61,41 +62,24 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export async function loader({ request }: LoaderArgs) {
-  let perfil: Perfil | null = null;
-
   let usuario = await authenticator.isAuthenticated(request, {
     failureRedirect: '/autentica/entrar',
   });
 
-  if (usuario?.id) {
-    let p = await pegarPerfilPeloId(usuario.id);
-
-    if (p?.id) {
-      //@ts-ignore
-      perfil = new Perfil(
-        p?.nome,
-        p?.sobrenome,
-        p.foto,
-        p?.grupo,
-        p?.email,
-        p?.celular,
-        p?.membro,
-        p?.profissao,
-        p?.bio,
-        p?.usuarioId,
-        p?.id,
-        p?.criado_em,
-        p?.atualizado_em
-      );
-    }
-  }
+  let perfil: PrismaPerfil | null = await pegarPerfilPeloIdUsuario(usuario.id);
+  
   return json({ usuario, perfil });
 }
 
 export default function DashboardIndex() {
   let { usuario, perfil } = useLoaderData();
+  let [ membro, setMembro] = useState(perfil?.membro)
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
+
+  function handleMembro() {
+    setMembro(!membro)
+  }
 
   return (
     <main>
@@ -117,12 +101,12 @@ export default function DashboardIndex() {
             <h2>Informações básicas</h2>
           </div>
           <div className='form-field'>
-            <label htmlFor='nome'>Nome</label>
-            <input type='text' name='nome' id='nome' autoComplete='off' />
+            <label htmlFor='nome'>Nome *</label>
+            <input type='text' name='nome' id='nome' value={(perfil?.nome)??""} autoComplete='off' />
           </div>
           <div className='form-field'>
-            <label htmlFor='sobrenome'>Sobrenome</label>
-            <input type='text' name='sobrenome' id='sobrenome' autoComplete='off' />
+            <label htmlFor='sobrenome'>Sobrenome *</label>
+            <input type='text' name='sobrenome' id='sobrenome' value={(perfil?.sobrenome)??""} autoComplete='off' />
           </div>
         </div>
         <div className='form-group'>
@@ -130,12 +114,12 @@ export default function DashboardIndex() {
             <h2>Informações de contato</h2>
           </div>
           <div className='form-field'>
-            <label htmlFor='email'>E-mail</label>
-            <input type='email' name='email' id='email' autoComplete='off' />
+            <label htmlFor='email'>E-mail *</label>
+            <input type='email' name='email' id='email' value={(perfil?.email)??""} autoComplete='off' />
           </div>
           <div className='form-field'>
-            <label htmlFor='celular'>Celular</label>
-            <input type='text' name='celular' id='celular' autoComplete='off' />
+            <label htmlFor='celular'>Celular *</label>
+            <input type='text' name='celular' id='celular' value={(perfil?.celular)??""} autoComplete='off' />
           </div>
         </div>
 
@@ -145,18 +129,18 @@ export default function DashboardIndex() {
           </div>
           <div className='form-field profissao'>
             <label htmlFor='profissao'>Profissão</label>
-            <input type='text' name='profissao' id='profissao' autoComplete='off' />
+            <input type='text' name='profissao' id='profissao' value={(perfil?.profissao)??""} autoComplete='off' />
           </div>
           <div className='form-field-membro'>
             <h3>És membro?</h3>
             <div>
               <div className='form-field-membro-response'>
                 <label htmlFor='membro_sim'>Sim</label>
-                <input type='radio' name='membro' id='membro_sim' value='sim' autoComplete='off' />
+                <input type='radio' name='membro' id='membro_sim' value='true' checked={membro==true} onChange={handleMembro}/>
               </div>
               <div className='form-field-membro-response'>
                 <label htmlFor='membro_nao'>Não?</label>
-                <input type='radio' name='membro' id='membro_nao' value='nao' autoComplete='off' />
+                <input type='radio' name='membro' id='membro_nao' value='false' checked={membro==false} onChange={handleMembro} />
               </div>
             </div>
           </div>
@@ -167,7 +151,7 @@ export default function DashboardIndex() {
           </div>
           <div className='form-field-bio'>
             <label htmlFor='bio'>Escreva um pouco sobre você</label>
-            <textarea name='bio' id='bio'></textarea>
+            <textarea name='bio' id='bio' value={(perfil?.bio)??""}></textarea>
           </div>
         </div>
         <div className='form-group'>
