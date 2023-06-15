@@ -1,5 +1,5 @@
 import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node';
-import { authenticator } from '~/secure/auth.server';
+import { authenticator } from '~/secure/authentication.server';
 
 export const meta: V2_MetaFunction = () => {
   return [{ title: 'Saindo...' }, { name: 'description', content: 'A Núvem do Chave!' }];

@@ -1,7 +1,7 @@
-import { LoaderArgs, json } from '@remix-run/node';
+import { LoaderArgs, json, redirect } from '@remix-run/node';
 import type { ActionFunction, LinksFunction, V2_MetaFunction } from '@remix-run/node';
 import { Form, useLoaderData, useNavigation } from '@remix-run/react';
-import { authenticator } from '~/secure/auth.server';
+import { authenticator } from '~/secure/authentication.server';
 import loading from '~/assets/img/loading.gif';
 import perfilEditarPageStyle from '~/assets/css/perfil-editar-page.css';
 import userImage from '~/assets/img/user.png';
@@ -41,8 +41,6 @@ export const action: ActionFunction = async ({ request }) => {
   const bio: string = form.get('bio') as string;
   const usuarioId: number = Number(form.get('usuarioId') as string);
   const membro: boolean = (form.get('membro') as string) === 'true';
-  
-  console.log('email: ',email);
 
   let perfil = new Perfil(
     nome,
@@ -60,7 +58,9 @@ export const action: ActionFunction = async ({ request }) => {
     undefined
   );
 
-  return await editarPerfil(perfil);
+  await editarPerfil(perfil);
+
+  return redirect('/perfil')
 };
 
 export async function loader({ request }: LoaderArgs) {
@@ -79,7 +79,6 @@ export default function PerfilEditar() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
 
-  console.log(usuario?.email, perfil?.email)
   function handleEmail(e: ChangeEvent<HTMLInputElement>) {
     _setEmail(e.target.value)
   }

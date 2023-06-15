@@ -6,6 +6,7 @@ import { prisma } from './db.server';
 import { sessionStorage } from './session.server';
 import { Usuario as PrismaUsuario } from '@prisma/client';
 import Usuario from '~/model/Usuario.server';
+import { compare } from '~/shared/Password.util';
 
 const authenticator = new Authenticator<Usuario>(sessionStorage);
 
@@ -24,10 +25,10 @@ const formStrategy = new FormStrategy(async ({ form }) => {
     throw new AuthorizationError();
   }
 
-  const passwordsMatch = await bcrypt.compare(senha, usuario.senha as string);
+  const match = await compare(senha, usuario.senha as string)
 
-  if (!passwordsMatch) {
-    throw new AuthorizationError();
+  if (!match) {
+    throw new AuthorizationError('Senha inválida para este usuário');
   }
 
   return new Usuario(usuario)
