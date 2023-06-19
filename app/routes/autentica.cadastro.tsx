@@ -1,7 +1,7 @@
 import { ActionFunction, LinksFunction, LoaderArgs, V2_MetaFunction, json } from '@remix-run/node';
 import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
 
-import { authenticator } from '~/secure/auth.server';
+import { authenticator } from '~/secure/authentication.server';
 import criarNovoUsuario from '~/domain/User/criar-novo-usuario.server';
 
 import cadastroLoginPageStyle from '~/assets/css/cadastro-login-page.css';
@@ -23,7 +23,7 @@ export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
   const email: string = form.get('email') as string;
   const senha: string = form.get('senha') as string;
-  const senha_repetida: string = form.get('senha_repetida') as string;
+  const senhaRepetida: string = form.get('senha_repetida') as string;
 
   let errors = {
     email: !email,
@@ -35,8 +35,13 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors, values });
   }
 
-  if (senha != senha_repetida) {
+  if (senha != senhaRepetida) {
     errors = Object.assign(errors, { data: 'Hmmm! Parece que a verificação de senha não confere' });
+    return json({ errors });
+  }
+
+  if (senha.length < 8) {
+    errors = Object.assign(errors, { data: 'Sua senha deve ter no minimo 8 caracteres' });
     return json({ errors });
   }
 

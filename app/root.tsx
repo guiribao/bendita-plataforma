@@ -7,21 +7,27 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useLocation,
+  useNavigation,
 } from '@remix-run/react';
 
 import stylesheet from '~/global.css';
+import toastyStyle from 'toastify-js/src/toastify.css';
 import line_awesome from '~/assets/lib/line-awesome/css/line-awesome.min.css';
 import Sidebar from './component/layout/Sidebar';
 import Layout from './component/layout/Layout';
 import Topbar from './component/layout/Topbar';
-import { authenticator } from './secure/auth.server';
+import { authenticator } from './secure/authentication.server';
 import { Perfil, Usuario } from '@prisma/client';
 import pegarPerfilPeloIdUsuario from './domain/Perfil/perfil-pelo-id-usuario.server';
+import { useEffect } from 'react';
+import { createHashHistory } from 'history';
 
 export const links: LinksFunction = () => {
   return [
     { rel: 'stylesheet', href: line_awesome },
     { rel: 'stylesheet', href: stylesheet },
+    { rel: 'stylesheet', href: toastyStyle },
   ];
 };
 
@@ -37,17 +43,30 @@ export async function loader({ request }: LoaderArgs) {
   let usuario: Usuario = await authenticator.isAuthenticated(request);
   let perfil: Perfil | null = null;
 
-  if(usuario?.id) {
+  if (usuario?.id) {
     perfil = await pegarPerfilPeloIdUsuario(usuario.id);
+    if (!perfil?.id && !request.url.includes('/perfil/editar')) return redirect('/perfil/editar');
   }
-
-  if(usuario && !perfil?.id && !request.url.includes('/perfil')) return redirect('/perfil/editar')
 
   return json({ usuario, perfil });
 }
 
 export default function App() {
+  let location = useLocation();
+  let navigation = useNavigation();
   let { usuario, perfil } = useLoaderData();
+
+  // Redireciona pro preenchimento do perfil quando ainda estiver incompleto
+  useEffect(() => {
+    let history = createHashHistory();
+
+    if (usuario) {
+      if (!perfil && location.pathname !== '/perfil/editar') {
+        history.back();
+      }
+    }
+  }, [location.pathname]);
+
   return (
     <html lang='pt-BR' suppressHydrationWarning={true}>
       <head>

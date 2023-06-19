@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { Usuario } from '@prisma/client';
 import { getPageInfo } from '~/shared/PageInfo';
 
-import { authenticator } from '~/secure/auth.server';
+import { authenticator } from '~/secure/authentication.server';
 
 import userImage from '~/assets/img/user.png';
 

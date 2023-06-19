@@ -45,8 +45,6 @@ export default class Perfil {
     this.criadoEm = criadoEm;
     this.atualizadoEm = atualizadoEm
 
-    console.log(email)
-
     if(!nome || !sobrenome || !email || !celular  ) throw new Error("Vish. Dá uma verificada nos campos obrigatórios")
 
     return this;

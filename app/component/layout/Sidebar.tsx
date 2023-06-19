@@ -1,7 +1,7 @@
 import { LoaderArgs, json } from '@remix-run/node';
 import { Link, useLoaderData, useLocation } from '@remix-run/react';
 import { useEffect } from 'react';
-import { authenticator } from '~/secure/auth.server';
+import { authenticator } from '~/secure/authentication.server';
 
 export async function loader({ request }: LoaderArgs) {
   let usuario = await authenticator.isAuthenticated(request);
@@ -36,7 +36,7 @@ export default function Sidebar() {
         </h2>
       </div>
 
-      {usuario && !(location.pathname == '/perfil/editar') && (
+      {usuario && (
         <div className='sidebar-menu'>
           <ul>
             <li>

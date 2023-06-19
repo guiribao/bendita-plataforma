@@ -6,42 +6,73 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
 model Usuario {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  senha String  @db.VarChar(100)
-  papel Papel   @default(USUARIO)
-  criado_em  DateTime @default(now()) @db.Timestamp(3)
-  atualizado_em DateTime  @updatedAt @db.Timestamp(3)
-  perfil  Perfil?
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  senha         String   @db.VarChar(100)
+  papel         Papel    @default(USUARIO)
+  criado_em     DateTime @default(now()) @db.Timestamp(0)
+  atualizado_em DateTime @updatedAt @db.Timestamp(0)
+  perfil        Perfil?
 }
-enum  Papel {
+
+model Usuario_Esqueci_Senha {
+  id            Int      @id @default(autoincrement())
+  usuarioId     Int
+  token         String   @unique @default(uuid())
+  ativo         Boolean  @default(true)
+  valido_ate    DateTime @default(now()) @db.Timestamp(0)
+  criado_em     DateTime @default(now()) @db.Timestamp(0)
+  atualizado_em DateTime @updatedAt @db.Timestamp(0)
+}
+
+
+
+enum Papel {
   ADMIN
   USUARIO
 }
 
 model Perfil {
-  id        Int     @id @default(autoincrement())
-  nome      String
-  sobrenome String 
-  foto      String?  @db.VarChar(200)
-  grupo     Grupo    @default(VISITANTE)
-  email     String
-  celular   String
-  bio       String?  @db.Text
-  profissao String?
-  membro    Boolean  @default(false)
-  usuario   Usuario? @relation(fields: [usuarioId],references: [id])
-  usuarioId Int?     @unique
-  criado_em  DateTime @default(now()) @db.Timestamp(3)
-  atualizado_em DateTime  @updatedAt @db.Timestamp(3)
+  id            Int      @id @default(autoincrement())
+  nome          String
+  sobrenome     String
+  foto          String?  @db.VarChar(200)
+  grupo         Grupo    @default(VISITANTE)
+  email         String
+  celular       String
+  bio           String?  @db.Text
+  profissao     String?
+  membro        Boolean  @default(false)
+  usuario       Usuario? @relation(fields: [usuarioId], references: [id])
+  usuarioId     Int?     @unique
+<<<<<<< Updated upstream
+  criado_em     DateTime @db.Timestamp(0) @default(now())
+  atualizado_em DateTime @db.Timestamp(0) @updatedAt
+  operacao      Operacao[]
 }
-enum  Grupo {
+
+model Operacao {
+  id                  Int                     @id @default(autoincrement())
+  tipo                String                  
+  valor               Decimal                 @db.Decimal(10,2)
+  criado_em           DateTime                @db.Timestamp(0) @default(now())
+  perfil              Perfil?                 @relation(fields: [perfilId], references: [id])
+  perfilId            Int?                    
+
+  @@index([perfilId])
+=======
+  criado_em     DateTime @default(now()) @db.Timestamp(0)
+  atualizado_em DateTime @updatedAt @db.Timestamp(0)
+>>>>>>> Stashed changes
+}
+
+enum Grupo {
   FARDADO
   VISITANTE
 }

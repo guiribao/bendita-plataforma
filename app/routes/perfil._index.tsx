@@ -2,7 +2,7 @@
 import { LoaderArgs, json, redirect } from '@remix-run/node';
 import type { LinksFunction, V2_MetaFunction } from '@remix-run/node';
 import { Link, useLoaderData, useNavigation } from '@remix-run/react';
-import { authenticator } from '~/secure/auth.server';
+import { authenticator } from '~/secure/authentication.server';
 import perfilPageStyle from '~/assets/css/perfil-page.css';
 import userImage from '~/assets/img/user.png';
 import { Perfil as PrismaPerfil } from '@prisma/client';
@@ -36,7 +36,6 @@ export async function loader({ request }: LoaderArgs) {
     let p: PrismaPerfil | null = await pegarPerfilPeloIdUsuario(usuario.id);
 
     if (!p || p.id == null){
-      console.log(p)
       return redirect('/perfil/editar');
     } 
 

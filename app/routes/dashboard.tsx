@@ -1,7 +1,7 @@
 import { LoaderArgs, json } from '@remix-run/node';
 import type { V2_MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
-import { authenticator } from '~/secure/auth.server';
+import { authenticator } from '~/secure/authentication.server';
 
 export const meta: V2_MetaFunction = () => {
   return [
