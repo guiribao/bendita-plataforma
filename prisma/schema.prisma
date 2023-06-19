@@ -31,6 +31,8 @@ model Usuario_Esqueci_Senha {
   atualizado_em DateTime @db.Timestamp(0) @updatedAt
 }
 
+
+
 enum Papel {
   ADMIN
   USUARIO
@@ -51,6 +53,18 @@ model Perfil {
   usuarioId     Int?     @unique
   criado_em     DateTime @db.Timestamp(0) @default(now())
   atualizado_em DateTime @db.Timestamp(0) @updatedAt
+  operacao      Operacao[]
+}
+
+model Operacao {
+  id                  Int                     @id @default(autoincrement())
+  tipo                String                  
+  valor               Decimal                 @db.Decimal(10,2)
+  criado_em           DateTime                @db.Timestamp(0) @default(now())
+  perfil              Perfil?                 @relation(fields: [perfilId], references: [id])
+  perfilId            Int?                    
+
+  @@index([perfilId])
 }
 
 enum Grupo {
