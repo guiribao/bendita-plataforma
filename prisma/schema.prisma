@@ -31,8 +31,6 @@ model Usuario_Esqueci_Senha {
   atualizado_em DateTime @updatedAt @db.Timestamp(0)
 }
 
-
-
 enum Papel {
   ADMIN
   USUARIO

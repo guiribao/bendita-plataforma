@@ -1,9 +1,8 @@
 main {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
-  margin-top: 24px;
+  align-items: flex-start;
+  margin-top: calc(4em + 24px);
 }
 .header {
   text-align: center;
