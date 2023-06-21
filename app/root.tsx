@@ -22,6 +22,8 @@ import { Perfil, Usuario } from '@prisma/client';
 import pegarPerfilPeloIdUsuario from './domain/Perfil/perfil-pelo-id-usuario.server';
 import { useEffect } from 'react';
 import { createHashHistory } from 'history';
+import { canAccess, canView } from './secure/authorization';
+import NotAuthorized from './routes/autorizacao';
 
 export const links: LinksFunction = () => {
   return [
@@ -46,6 +48,9 @@ export async function loader({ request }: LoaderArgs) {
   if (usuario?.id) {
     perfil = await pegarPerfilPeloIdUsuario(usuario.id);
     if (!perfil?.id && !request.url.includes('/perfil/editar')) return redirect('/perfil/editar');
+
+    if (!request.url.includes('/autorizacao') && !canAccess(request, usuario.papel))
+      return redirect('/autorizacao');
   }
 
   return json({ usuario, perfil });
@@ -53,19 +58,21 @@ export async function loader({ request }: LoaderArgs) {
 
 export default function App() {
   let location = useLocation();
-  let navigation = useNavigation();
   let { usuario, perfil } = useLoaderData();
+  let isAuthorized = canView(location.pathname, usuario?.papel);
 
   // Redireciona pro preenchimento do perfil quando ainda estiver incompleto
   useEffect(() => {
     let history = createHashHistory();
 
     if (usuario) {
+      isAuthorized = canView(location.pathname, usuario.papel);
+      
       if (!perfil && location.pathname !== '/perfil/editar') {
         history.back();
       }
     }
-  }, [location.pathname]);
+  }, [location.key, isAuthorized]);
 
   return (
     <html lang='pt-BR' suppressHydrationWarning={true}>
@@ -80,7 +87,7 @@ export default function App() {
           <Sidebar />
           <div className='content'>
             <Topbar />
-            <Outlet />
+            {(isAuthorized) ? <Outlet /> : <NotAuthorized />}
           </div>
         </Layout>
 

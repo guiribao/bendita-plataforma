@@ -2,6 +2,7 @@ import { LoaderArgs, json } from '@remix-run/node';
 import { Link, useLoaderData, useLocation } from '@remix-run/react';
 import { useEffect } from 'react';
 import { authenticator } from '~/secure/authentication.server';
+import { canView } from '~/secure/authorization';
 
 export async function loader({ request }: LoaderArgs) {
   let usuario = await authenticator.isAuthenticated(request);
@@ -39,30 +40,38 @@ export default function Sidebar() {
       {usuario && (
         <div className='sidebar-menu'>
           <ul>
-            <li>
-              <Link to='/dashboard' className='link-page'>
-                <span className='las la-chart-area'></span>
-                <span>Dashboard</span>
-              </Link>
-            </li>
-            <li>
-              <Link to='/calendario' className='link-page'>
-                <span className='las la-calendar'></span>
-                <span>Calendário</span>
-              </Link>
-            </li>
-            <li>
-              <Link to='/financeiro' className='link-page'>
-                <span className='las la-calculator'></span>
-                <span>Financeiro</span>
-              </Link>
-            </li>
-            <li>
-              <Link to='/gente' className='link-page'>
-                <span className='las la-people-carry'></span>
-                <span>Gente</span>
-              </Link>
-            </li>
+            {canView('/dashboard', usuario?.papel) && (
+              <li>
+                <Link to='/dashboard' className='link-page'>
+                  <span className='las la-chart-area'></span>
+                  <span>Dashboard</span>
+                </Link>
+              </li>
+            )}
+            {canView('/calendario', usuario?.papel) && (
+              <li>
+                <Link to='/calendario' className='link-page'>
+                  <span className='las la-calendar'></span>
+                  <span>Calendário</span>
+                </Link>
+              </li>
+            )}
+            {canView('/financeiro', usuario?.papel) && (
+              <li>
+                <Link to='/financeiro' className='link-page'>
+                  <span className='las la-calculator'></span>
+                  <span>Financeiro</span>
+                </Link>
+              </li>
+            )}
+            {canView('/gente', usuario?.papel) && (
+              <li>
+                <Link to='/gente' className='link-page'>
+                  <span className='las la-people-carry'></span>
+                  <span>Gente</span>
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       )}

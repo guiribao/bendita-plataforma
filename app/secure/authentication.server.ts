@@ -1,7 +1,5 @@
 import { Authenticator, AuthorizationError } from 'remix-auth';
 import { FormStrategy } from 'remix-auth-form';
-import bcrypt from 'bcryptjs';
-
 import { prisma } from './db.server';
 import { sessionStorage } from './session.server';
 import { Usuario as PrismaUsuario } from '@prisma/client';
