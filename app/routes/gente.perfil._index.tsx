@@ -1,12 +1,12 @@
-import { LoaderArgs } from '@remix-run/node';
+import { LoaderArgs, json } from '@remix-run/node';
 import type { V2_MetaFunction } from '@remix-run/node';
-
+import { authenticator } from '~/secure/authentication.server';
 
 export const meta: V2_MetaFunction = () => {
   return [
     {
       charset: 'utf-8',
-      title: 'Gente - ChaveCloud',
+      title: 'Perfis - ChaveCloud',
       viewport: 'width=device-width, initial-scale=1',
     },
     {
@@ -18,13 +18,17 @@ export const meta: V2_MetaFunction = () => {
 };
 
 export async function loader({ request }: LoaderArgs) {
-  return {};
+  let usuario = await authenticator.isAuthenticated(request, {
+    failureRedirect: '/autentica/entrar',
+  });
+
+  return json({ usuario });
 }
 
 export default function GenteIndex() {
   return (
     <main>
-      <h1>Gente</h1>
+      <h1>Lista de Perfis</h1>
     </main>
   );
 }

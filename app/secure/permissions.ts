@@ -38,8 +38,10 @@ export const FuncionalidadesPorPapel = {
   },
   '/gente': {
     CARDS_GENTE: [Papel.ADMIN],
+    BUSCAR_PERFIL: [Papel.ADMIN],
     ULTIMOS_USUARIOS: [Papel.ADMIN],
     ULTIMOS_PERFIS: [Papel.ADMIN],
-    BUSCAR_PROFISSIONAL: [Papel.USUARIO, Papel.ADMIN]
+    BUSCAR_PROFISSIONAL: [Papel.USUARIO, Papel.ADMIN],
+    CRIAR_PERFIL: [Papel.ADMIN],
   },
 };

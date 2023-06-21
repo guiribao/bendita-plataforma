@@ -12,23 +12,23 @@ datasource db {
 }
 
 model Usuario {
-  id                  Int                     @id @default(autoincrement())
-  email               String                  @unique
-  senha               String                  @db.VarChar(100)
-  papel               Papel                   @default(USUARIO)
-  criado_em           DateTime                @db.Timestamp(0) @default(now())
-  atualizado_em       DateTime                @db.Timestamp(0) @updatedAt
-  perfil              Perfil?
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  senha         String   @db.VarChar(100)
+  papel         Papel    @default(USUARIO)
+  criado_em     DateTime @default(now()) @db.Timestamp(0)
+  atualizado_em DateTime @updatedAt @db.Timestamp(0)
+  perfil        Perfil?
 }
 
 model Usuario_Esqueci_Senha {
   id            Int      @id @default(autoincrement())
-  usuarioId     Int     
+  usuarioId     Int
   token         String   @unique @default(uuid())
   ativo         Boolean  @default(true)
-  valido_ate    DateTime @db.Timestamp(0) @default(now())
-  criado_em     DateTime @db.Timestamp(0) @default(now())
-  atualizado_em DateTime @db.Timestamp(0) @updatedAt
+  valido_ate    DateTime @default(now()) @db.Timestamp(0)
+  criado_em     DateTime @default(now()) @db.Timestamp(0)
+  atualizado_em DateTime @updatedAt @db.Timestamp(0)
 }
 
 enum Papel {
@@ -51,6 +51,18 @@ model Perfil {
   usuarioId     Int?     @unique
   criado_em     DateTime @db.Timestamp(0) @default(now())
   atualizado_em DateTime @db.Timestamp(0) @updatedAt
+  operacao      Operacao[]
+}
+
+model Operacao {
+  id                  Int                     @id @default(autoincrement())
+  tipo                String                  
+  valor               Decimal                 @db.Decimal(10,2)
+  criado_em           DateTime                @db.Timestamp(0) @default(now())
+  perfil              Perfil?                 @relation(fields: [perfilId], references: [id])
+  perfilId            Int?                    
+
+  @@index([perfilId])
 }
 
 enum Grupo {
