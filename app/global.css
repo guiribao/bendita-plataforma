@@ -3,7 +3,7 @@
 :root {
   --main-color: #3772ff;
   --color-dark: #080708;
-  --text-gray: #776;
+  --text-gray: #808080;
   --green: #06ba63;
   --brown: #795663;
 }
@@ -26,13 +26,13 @@ body {
 }
 
 .sidebar {
-  width: 345px;
   height: 100%;
   position: fixed;
   left: 0;
   top: 0;
   background: var(--main-color);
   z-index: 100;
+  transition: all .3s;
 }
 
 .sidebar-brand {
@@ -40,7 +40,15 @@ body {
   padding: 1em 0em 1em 2em;
   color: white;
 }
-
+.sidebar-brand h2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.sidebar-brand span:first-child {
+  font-size: 1.7em;
+  font-weight: 500;
+}
 .sidebar-brand span {
   display: inline-block;
   padding-right: 1em;
@@ -50,9 +58,7 @@ body {
   padding: 3em 0 0 0;  
 }
 .sidebar-menu li {
-  width: 100%;
-  margin-bottom: 1em;
-  padding-left: 1em;
+  padding-left: .75em;
 }
 
 .sidebar-menu a {
@@ -75,9 +81,41 @@ body {
   padding-right: 1em;
 }
 
+#nav-toggle:checked + .sidebar {
+  width: 345px;
+}
+#nav-toggle:not(:checked) + .sidebar {
+  width: 75px;
+}
+
+#nav-toggle:not(:checked) + .sidebar .sidebar-brand h2 {
+  padding-left: .75em;
+}
+
+#nav-toggle:not(:checked) + .sidebar li {
+  width: 100%;
+  margin-bottom: 1em;
+  padding-left: 1em;
+}
+
+#nav-toggle:not(:checked) + .sidebar .sidebar-brand h2 span:last-child,
+#nav-toggle:not(:checked) + .sidebar li a span:last-child {
+  display: none;
+}
+
+#nav-toggle:not(:checked) ~ .content {
+  margin-left: 75px;
+}
+
+#nav-toggle:not(:checked) ~ .content header {
+  width: calc(100% - 75px);
+  left: 75px;
+}
+
 .content {
   width: 100%;
   margin-left: 345px;
+  transition: all .3s;
 }
 
 header {
@@ -92,12 +130,26 @@ header {
   width: calc(100% - 345px);
   z-index: 100;
   background: white;
+  transition: all .3s;
 }
-
+#nav-toggle {
+  display: none;
+}
 header h2 {
   color: #222;
   display: flex;
   align-items: center;
+}
+
+header label {
+  display: none;
+}
+
+@media screen and (min-width: 1300px) {
+  header label {
+    cursor: pointer;
+    display: block;
+  }
 }
 
 header label span {
@@ -124,25 +176,32 @@ header label span {
 }
 
 main {
-  margin-top: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin: 90px auto;
   padding: 2em 1.5em;
   background: #f9f9f9;
+  max-width: 100%;
   min-height: calc(100vh - 90px);
 }
 
 .cards {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-gap: 2em;
-  margin-top: 1em;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
 }
 
 .card-single {
+  min-width: 300px;
+  max-width: 320px;
   display: flex;
   justify-content: space-between;
   background: white;
-  padding: 2em;
-  border-radius: 2px;
+  padding: 1.4em;
+  box-shadow: 10px 0 50px -40px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  border-radius: 30px;
 }
 
 .card-single div:first-child span {
@@ -162,6 +221,119 @@ main {
 .card-single:last-child div:first-child span,
 .card-single:last-child div:last-child span {
   color: white;
+}
+
+.cards .view {
+  min-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+  background: white;
+  padding: 1.4em;
+  box-shadow: 10px 0 50px -40px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  border-radius: 30px;
+}
+.view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.view-header a {
+  background: red;
+  padding: .50em 1em;
+  background: var(--main-color);
+  color: #fff;
+  font-size: .99em;
+  font-weight: 800;
+  border: none;
+  border-radius: 30px;
+}
+.view-body {
+  padding: .50em 0;
+  overflow-x: auto;
+}
+
+.view-body table {
+  min-width: 700px;
+  width: calc(100% + 2.8em);
+  margin-left: -1.4em;
+  overflow-x: scroll;
+  border-collapse: collapse;
+}
+.view-body table thead tr td {
+  font-size: 1.05em;
+  font-weight: 700;
+  text-align: center;
+  color: #424242;
+  padding-top: .75em;
+  padding-bottom: .75em;
+  border-top: 2px solid #e9e9e9;
+  border-bottom: 2px solid #e9e9e9;
+}
+.view-body table thead tr td:first-child {
+  padding-left: 1.2em;
+}
+.view-body table thead tr td:last-child {
+  padding-right: 1.2em;
+}
+.view-body table tbody tr:first-child td {
+  padding-top: 1.2em;
+}
+.view-body table tbody tr td:first-child {
+  padding-left: 1.2em;
+}
+.view-body table tbody tr td {
+  padding-top: 1em;
+  padding-bottom: .75em;
+  border-bottom: 2px solid #f9f9f9;
+  font-size: 1em;
+  font-weight: 400;
+  color: #727272;
+  text-align: center;
+}
+.view-body table tbody tr:hover td {
+  color: var(--color-dark);
+}
+.view-body table tbody tr:last-child td {
+  border-bottom: none; 
+}
+.view-body table tbody tr td:last-child {
+  padding-right: 1.2em;
+}
+
+.view.operacoes {
+  width: 100%;
+}
+.view.ultimos-perfis {
+  width: 100%;
+}
+.view.eventos {
+  width: 100%;
+}
+
+@media screen and (min-width: 1023px) {
+  .view.operacoes {
+    width: 100%;
+  }
+  .view.ultimos-perfis {
+    width: 425px;
+  }
+  .view.eventos {
+    width: 425px;
+  }
+}
+
+@media screen and (min-width: 1600px) {
+  .view.operacoes {
+    width: 685px;
+  }
+  .view.ultimos-perfis {
+    width: 605px;
+  }
+  .view.eventos {
+    width: 600px;
+  }
 }
 
 main.nao-autorizado {
