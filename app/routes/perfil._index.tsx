@@ -72,10 +72,10 @@ export default function PerfilIndex() {
         <h1>Meu perfil</h1>
         <Link to='/perfil/editar'>Editar perfil</Link>
       </div>
-      <div className='meu-perfil'>
-        <div className='group'>
+      <div className='meu-perfil cards'>
+        <div className='group view'>
           <div className='group-header'>
-            <h2>Informações básicas</h2>
+            <h1>Informações básicas</h1>
           </div>
           <div className='field'>
             <label htmlFor='nome'>Nome</label>
@@ -86,9 +86,9 @@ export default function PerfilIndex() {
             <p id='sobrenome'>{perfil?.sobrenome}</p>
           </div>
         </div>
-        <div className='group'>
+        <div className='group view'>
           <div className='group-header'>
-            <h2>Informações de contato</h2>
+            <h1>Informações de contato</h1>
           </div>
           <div className='field'>
             <label htmlFor='email'>E-mail</label>
@@ -100,9 +100,9 @@ export default function PerfilIndex() {
           </div>
         </div>
 
-        <div className='group'>
+        <div className='group view'>
           <div className='group-header'>
-            <h2>Social</h2>
+            <h1>Social</h1>
           </div>
           <div className='field profissao'>
             <label htmlFor='profissao'>Profissão</label>
@@ -113,9 +113,9 @@ export default function PerfilIndex() {
             <p id='membro'>{perfil?.membro ? 'Sim' : 'Não'}</p>
           </div>
         </div>
-        <div className='group'>
+        <div className='group view'>
           <div className='group-header'>
-            <h2>Bio</h2>
+            <h1>Bio</h1>
           </div>
           <div className='field-bio'>
             <p id='bio'>{perfil?.bio}</p>
