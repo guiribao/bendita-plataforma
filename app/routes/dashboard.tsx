@@ -31,19 +31,10 @@ export default function DashboardIndex() {
 
   return (
     <main>
-      <div className='cards'>
+      <div className='minicards'>
         <div className='card-single'>
           <div>
-            <h1>5050</h1>
-            <span>Membros</span>
-          </div>
-          <div>
-            <span className='las la-users'></span>
-          </div>
-        </div>
-        <div className='card-single'>
-          <div>
-            <h1>409</h1>
+            <h1>100</h1>
             <span>Fardados</span>
           </div>
           <div>
@@ -52,20 +43,29 @@ export default function DashboardIndex() {
         </div>
         <div className='card-single'>
           <div>
-            <h1>900</h1>
-            <span>Presenças (últimos 30 dias)</span>
+            <h1>409</h1>
+            <span>Visitantes</span>
           </div>
           <div>
-            <span className='las la-user-friends'></span>
+            <span className='las la-users'></span>
           </div>
         </div>
         <div className='card-single'>
           <div>
-            <h1>5.001</h1>
-            <span>Visitantes cadastrados</span>
+            <h1>10</h1>
+            <span>Operações saída</span>
           </div>
           <div>
-            <span className='las la-user-friends'></span>
+            <span className='las la-file-export'></span>
+          </div>
+        </div>
+        <div className='card-single'>
+          <div>
+            <h1>995</h1>
+            <span>Operações entrada</span>
+          </div>
+          <div>
+            <span className='las la-file-import'></span>
           </div>
         </div>
       </div>
@@ -77,7 +77,7 @@ export default function DashboardIndex() {
             <Link to={''}>Ver +</Link>
           </div>
           <div className='view-body'>
-            <table width={`100%`}>
+            <table>
               <thead>
                 <tr>
                   <td>Id</td>
@@ -156,29 +156,37 @@ export default function DashboardIndex() {
                 <tr>
                   <td>2301</td>
                   <td>Paloma Dutra</td>
-                  <td>Membro</td>
-                  <td><i className="las la-check"></i></td>
+                  <td>Fardado</td>
+                  <td>
+                    <i className='las la-check'></i>
+                  </td>
                   <td>20 mai de 2023 </td>
                 </tr>
                 <tr>
                   <td>2302</td>
                   <td>Guilherme Rosa</td>
-                  <td>Membro</td>
-                  <td><i className="las la-check"></i></td>
+                  <td>Fardado</td>
+                  <td>
+                    <i className='las la-check'></i>
+                  </td>
                   <td>20 mai de 2023 </td>
                 </tr>
                 <tr>
                   <td>2303</td>
                   <td>Bruno Soares</td>
-                  <td>Membro</td>
-                  <td><i className="las la-check"></i></td>
+                  <td>Fardado</td>
+                  <td>
+                    <i className='las la-check'></i>
+                  </td>
                   <td>20 mai de 2023 </td>
                 </tr>
                 <tr>
                   <td>2304</td>
                   <td>Janaina Camargo</td>
-                  <td>Membro</td>
-                  <td><i className="las la-check"></i></td>
+                  <td>Fardado</td>
+                  <td>
+                    <i className='las la-check'></i>
+                  </td>
                   <td>20 mai de 2023 </td>
                 </tr>
                 <tr>
@@ -207,7 +215,7 @@ export default function DashboardIndex() {
             <Link to={''}>Ver +</Link>
           </div>
           <div className='view-body'>
-            <table width={`100%`}>
+            <table>
               <thead>
                 <tr>
                   <td>Id</td>
