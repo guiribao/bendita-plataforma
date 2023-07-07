@@ -34,7 +34,7 @@ export default function DashboardIndex() {
       <div className='minicards'>
         <div className='card-single'>
           <div>
-            <h1>100</h1>
+            <h1>123</h1>
             <span>Fardados</span>
           </div>
           <div>
@@ -43,7 +43,7 @@ export default function DashboardIndex() {
         </div>
         <div className='card-single'>
           <div>
-            <h1>409</h1>
+            <h1>123</h1>
             <span>Visitantes</span>
           </div>
           <div>
@@ -52,7 +52,7 @@ export default function DashboardIndex() {
         </div>
         <div className='card-single'>
           <div>
-            <h1>10</h1>
+            <h1>123</h1>
             <span>Operações saída</span>
           </div>
           <div>
@@ -61,7 +61,7 @@ export default function DashboardIndex() {
         </div>
         <div className='card-single'>
           <div>
-            <h1>995</h1>
+            <h1>642</h1>
             <span>Operações entrada</span>
           </div>
           <div>
