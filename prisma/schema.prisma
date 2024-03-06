@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider     = "mysql"
+  provider     = "postgres"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
@@ -37,30 +37,31 @@ enum Papel {
 }
 
 model Perfil {
-  id            Int      @id @default(autoincrement())
+  id            Int        @id @default(autoincrement())
   nome          String
   sobrenome     String
-  foto          String?  @db.VarChar(200)
-  grupo         Grupo    @default(VISITANTE)
+  foto          String?    @db.VarChar(200)
+  grupo         Grupo      @default(VISITANTE)
   email         String
   celular       String
-  bio           String?  @db.Text
+  bio           String?    @db.Text
   profissao     String?
-  membro        Boolean  @default(false)
-  usuario       Usuario? @relation(fields: [usuarioId], references: [id])
-  usuarioId     Int?     @unique
-  criado_em     DateTime @db.Timestamp(0) @default(now())
-  atualizado_em DateTime @db.Timestamp(0) @updatedAt
+  membro        Boolean    @default(false)
+  usuario       Usuario?   @relation(fields: [usuarioId], references: [id])
+  usuarioId     Int?       @unique
+  criado_em     DateTime   @default(now()) @db.Timestamp(0)
+  atualizado_em DateTime   @updatedAt @db.Timestamp(0)
   operacao      Operacao[]
 }
 
 model Operacao {
-  id                  Int                     @id @default(autoincrement())
-  tipo                String                  
-  valor               Decimal                 @db.Decimal(10,2)
-  criado_em           DateTime                @db.Timestamp(0) @default(now())
-  perfil              Perfil?                 @relation(fields: [perfilId], references: [id])
-  perfilId            Int?                    
+  id        Int          @id @default(autoincrement())
+  descricao String?       @db.VarChar(200)
+  tipo      TipoOperacao @default(ENTRADA)
+  valor     Decimal      @db.Decimal(10, 2)
+  criado_em DateTime     @default(now()) @db.Timestamp(0)
+  perfil    Perfil?      @relation(fields: [perfilId], references: [id])
+  perfilId  Int?
 
   @@index([perfilId])
 }
@@ -68,4 +69,9 @@ model Operacao {
 enum Grupo {
   FARDADO
   VISITANTE
+}
+
+enum TipoOperacao {
+  ENTRADA
+  SAIDA
 }

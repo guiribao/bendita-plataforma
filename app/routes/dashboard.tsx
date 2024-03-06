@@ -1,6 +1,10 @@
+//@ts-nocheck
 import { LoaderArgs, json } from '@remix-run/node';
 import type { V2_MetaFunction } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
+import Minicards from '~/component/Minicards';
+import pegarDadosOperacoesDashboard from '~/domain/Operation/pegar-dados-operacoes-dashboard.server';
+import pegarDadosPerfisDashboard from '~/domain/Perfil/pegar-dados-perfis-dashboard.server';
 import { authenticator } from '~/secure/authentication.server';
 
 export const meta: V2_MetaFunction = () => {
@@ -23,52 +27,38 @@ export async function loader({ request }: LoaderArgs) {
     failureRedirect: '/autentica/entrar',
   });
 
-  return json({ usuario });
+  // - Get operacoes data
+  let { ultimasDezOperacoes, qtdOperacoes } = await pegarDadosOperacoesDashboard();
+
+  // - Get perfis data
+  let { ultimasDezPerfis, qtdPerfis } = await pegarDadosPerfisDashboard();
+  // - Get eventos data
+
+  return json({ usuario, ultimasDezOperacoes, qtdOperacoes, ultimasDezPerfis, qtdPerfis });
 }
 
 export default function DashboardIndex() {
-  let { usuario } = useLoaderData();
+  let { usuario, ultimasDezOperacoes, qtdOperacoes, ultimasDezPerfis, qtdPerfis } = useLoaderData();
+
+  let qtdPerfilFardado = qtdPerfis.find(e => e.grupo == 'FARDADO')
+  let qtdPerfilVisitante = qtdPerfis.find(e => e.grupo == 'VISITANTE')
+
+  let qtdOperacaoEntrada = qtdOperacoes.find(e => e.grupo == 'ENTRADA')
+  let qtdOperacaoSaida = qtdOperacoes.find(e => e.grupo == 'SAIDA')
+
+  console.log(qtdPerfilFardado, qtdPerfilVisitante)
+
+  let minicardsData = [
+    {
+      quantidade: '',
+      label: '',
+      icon: '',
+    },
+  ];
 
   return (
     <main>
-      <div className='minicards'>
-        <div className='card-single'>
-          <div>
-            <h1>123</h1>
-            <span>Fardados</span>
-          </div>
-          <div>
-            <span className='las la-star'></span>
-          </div>
-        </div>
-        <div className='card-single'>
-          <div>
-            <h1>123</h1>
-            <span>Visitantes</span>
-          </div>
-          <div>
-            <span className='las la-users'></span>
-          </div>
-        </div>
-        <div className='card-single'>
-          <div>
-            <h1>123</h1>
-            <span>Operações saída</span>
-          </div>
-          <div>
-            <span className='las la-file-export'></span>
-          </div>
-        </div>
-        <div className='card-single'>
-          <div>
-            <h1>642</h1>
-            <span>Operações entrada</span>
-          </div>
-          <div>
-            <span className='las la-file-import'></span>
-          </div>
-        </div>
-      </div>
+      <Minicards data={{ qtdOperacoes, qtdPerfis }} />
 
       <div className='cards'>
         <div className='view operacoes'>

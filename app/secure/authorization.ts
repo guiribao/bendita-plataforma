@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { Papel } from '@prisma/client';
 import { PaginasAbertas, PaginasPorPapel } from './permissions';
 
@@ -13,5 +14,7 @@ export function canAccess (request: Request, papelUsuario: string) {
   const parsed_url = request[symbol].parsedURL;
   const papeisPermitidos = PaginasPorPapel[parsed_url.pathname];
 
-  return papeisPermitidos?.includes(papelUsuario);
+  return papeisPermitidos?.includes(papelUsuario) || PaginasAbertas.find(e => {
+    return parsed_url.pathname.includes(e) == true
+  })
 }
