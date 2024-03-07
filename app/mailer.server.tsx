@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 export const mailClient = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -9,6 +9,3 @@ export const mailClient = nodemailer.createTransport({
       pass: process.env.SMTP_PASS
   }
 });
-
-
-
