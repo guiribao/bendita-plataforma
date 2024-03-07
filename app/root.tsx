@@ -1,4 +1,5 @@
-import { LinksFunction, LoaderArgs, V2_MetaFunction, json, redirect } from '@remix-run/node';
+import { cssBundleHref } from '@remix-run/css-bundle';
+import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import {
   Links,
   LiveReload,
@@ -6,6 +7,8 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  json,
+  redirect,
   useLoaderData,
   useLocation,
   useNavigation,
@@ -25,22 +28,21 @@ import { createHashHistory } from 'history';
 import { canAccess, canView } from './secure/authorization';
 import NotAuthorized from './routes/autorizacao';
 
-export const links: LinksFunction = () => {
-  return [
-    { rel: 'stylesheet', href: line_awesome },
-    { rel: 'stylesheet', href: stylesheet },
-    { rel: 'stylesheet', href: toastyStyle },
-  ];
-};
+export const links: LinksFunction = () => [
+  { rel: 'stylesheet', href: line_awesome },
+  { rel: 'stylesheet', href: stylesheet },
+  { rel: 'stylesheet', href: toastyStyle },
+  ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
+];
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [
     { charset: 'utf-8', title: 'ChaveCloud', viewport: 'width=device-width, initial-scale=1' },
     { name: 'description', content: 'A Núvem do Chave!' },
   ];
 };
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   //@ts-ignore
   let usuario: Usuario = await authenticator.isAuthenticated(request);
   let perfil: Perfil | null = null;
@@ -67,7 +69,7 @@ export default function App() {
 
     if (usuario) {
       isAuthorized = canView(location.pathname, usuario.papel);
-      
+
       if (!perfil && location.pathname !== '/perfil/editar') {
         history.back();
       }
@@ -87,7 +89,7 @@ export default function App() {
           <Sidebar />
           <div className='content'>
             <Topbar />
-            {(isAuthorized) ? <Outlet /> : <NotAuthorized />}
+            {isAuthorized ? <Outlet /> : <NotAuthorized />}
           </div>
         </Layout>
 
