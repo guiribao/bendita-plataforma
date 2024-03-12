@@ -25,7 +25,7 @@ import { Perfil, Usuario } from '@prisma/client';
 import pegarPerfilPeloIdUsuario from './domain/Perfil/perfil-pelo-id-usuario.server';
 import { useEffect } from 'react';
 import { createHashHistory } from 'history';
-import { canAccess, canView } from './secure/authorization';
+import { canAccess, canView, specificDynPages } from './secure/authorization';
 import NotAuthorized from './routes/autorizacao';
 
 export const links: LinksFunction = () => [
@@ -51,7 +51,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
     perfil = await pegarPerfilPeloIdUsuario(usuario.id);
     if (!perfil?.id && !request.url.includes('/perfil/editar')) return redirect('/perfil/editar');
 
-    if (!request.url.includes('/autorizacao') && !canAccess(request, usuario.papel))
+    const symbol = Object.getOwnPropertySymbols(request)[1];
+    const parsed_url = request[symbol].parsedURL;
+
+    let canAccessSpecific = specificDynPages(parsed_url.pathname, usuario.papel);
+
+    if (
+      !canAccessSpecific &&
+      !request.url.includes('/autorizacao') &&
+      !canAccess(parsed_url.pathname, usuario.papel)
+    )
       return redirect('/autorizacao');
   }
 

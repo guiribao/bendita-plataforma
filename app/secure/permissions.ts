@@ -15,6 +15,8 @@ export const PaginasPorPapel = {
   '/dashboard': [Papel.USUARIO, Papel.ADMIN],
   '/calendario': [Papel.USUARIO, Papel.ADMIN],
   '/financeiro': [Papel.ADMIN],
+  '/financeiro/novo': [Papel.ADMIN],
+  '/financeiro/{id}': [Papel.ADMIN],
   '/gente': [Papel.USUARIO, Papel.ADMIN],
 };
 

@@ -21,14 +21,17 @@ export default function Sidebar() {
 
     elements.forEach((element) => {
       element.className = element.className.replace('active', '');
-      if (element.getAttribute('href') == location.pathname) {
+      if (
+        location.pathname.includes(element.getAttribute('href')) ||
+        element.getAttribute('href') == location.pathname
+      ) {
         element.className = 'active ' + element.classList.toString();
       }
     });
   }
 
   function toggleSidebar() {
-    setShowSidebar(showSidebar=='on'?'off':'on');
+    setShowSidebar(showSidebar == 'on' ? 'off' : 'on');
   }
 
   //@ts-ignore
@@ -41,19 +44,19 @@ export default function Sidebar() {
 
   useEffect(() => {
     window.addEventListener('resize', (e) => {
-      isSmallScreen(e.target.innerWidth)
+      isSmallScreen(e.target.innerWidth);
     });
 
     handleActivePage();
     isSmallScreen(window.innerWidth);
   }, [location]);
-  
+
   return (
     <>
       <input
         type='checkbox'
         id='nav-toggle'
-        defaultChecked={showSidebar=='on'?true:false}
+        defaultChecked={showSidebar == 'on' ? true : false}
         onChange={toggleSidebar}
       />
       <div className='sidebar'>

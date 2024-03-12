@@ -64,7 +64,7 @@ export default function DashboardIndex() {
         <div className='view operacoes'>
           <div className='view-header'>
             <h1>Últimas operações</h1>
-            <Link to={''}>Ver +</Link>
+            <Link to={'/financeiro'}>+ Financeiro</Link>
           </div>
           <div className='view-body'>
             <table>

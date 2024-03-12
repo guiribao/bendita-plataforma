@@ -49,7 +49,7 @@ body {
 
 @media screen and (min-width: 768px) {
   body {
-    font-size: 14px;
+    font-size: 16px;
   }
 }
 
@@ -69,9 +69,11 @@ body {
 }
 
 .sidebar-brand {
-  height: 90px;
   padding: 1em 0em 1em 2em;
   color: white;
+}
+.sidebar-brand img {
+  height: 48px;
 }
 .sidebar-brand h2 {
   display: flex;
@@ -140,6 +142,11 @@ header h2 {
   align-items: center;
 }
 
+#logo-mobile,
+#logo-desk {
+  display: none;
+}
+
 header label {
   display: none;
 }
@@ -148,9 +155,14 @@ header label {
   width: 45px;
 }
 
-#nav-toggle:not(:checked) + .sidebar .sidebar-brand h2 {
-  padding-left: 0.1em;
+#nav-toggle:not(:checked) + .sidebar .sidebar-brand #logo-mobile {
+  display: block;
 }
+
+#nav-toggle:checked + .sidebar .sidebar-brand #logo-desk {
+  display: block;
+}
+
 #nav-toggle:not(:checked) + .sidebar .sidebar-brand h2 span:first-child {
   font-size: 1.3em;
 }
@@ -324,31 +336,49 @@ main {
   color: white;
 }
 
+.view_container .view,
 .cards .view {
   min-width: 360px;
   display: flex;
   flex-direction: column;
   gap: 1.5em;
   background: white;
-  padding: 1.4em;
+  padding: 1.6em;
   box-shadow: 10px 0 50px -40px rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(0, 0, 0, 0.09);
   border-radius: 30px;
 }
+
+.view_container .view {
+  padding: 2em 3em;
+}
+
 .view-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+.view-header .view-header-action {
+  display: flex;
+  gap: .7em;
+}
+
+.view-header h1 {
+  color: var(--color-dark);
+  max-width: 60%;
+}
 .view-header a {
-  background: red;
-  padding: 0.5em 1.75em;
+  padding: 0.5em 1.25em;
   background: var(--main-color);
   color: #fff;
-  font-size: 0.99em;
+  font-size: .96em;
   font-weight: 800;
   border: none;
   border-radius: 30px;
+}
+.view-header .view-header-actions {
+  display: flex;
+  gap: 1em;
 }
 .view-body {
   padding: 0.5em 0;
@@ -365,7 +395,7 @@ main {
 .view-body table thead tr td {
   font-size: 1.05em;
   font-weight: 700;
-  text-align: center;
+  text-align: left;
   color: #424242;
   padding-top: 0.75em;
   padding-bottom: 0.75em;
@@ -379,15 +409,24 @@ main {
   padding-right: 1.2em;
 }
 
+.view-body table tr td {
+  min-width: 150px;
+  border: 1px solid white;
+}
+
+.view-body table tr td:first-child {
+  min-width: 100px;
+}
+
 .view-body table tbody tr td {
-  padding-top: 1em;
-  padding-bottom: 0.75em;
+  padding: 1em 20px 0.75em 0;
   border-bottom: 2px solid #f9f9f9;
   font-size: 1em;
   font-weight: 400;
   color: #727272;
-  text-align: center;
+  text-align: left;
 }
+
 .view-body table tbody tr:hover td {
   color: var(--color-dark);
 }
@@ -404,8 +443,31 @@ main {
   padding-right: 1.2em;
 }
 
-@media screen and (min-width: 1300px) {
+.view-body table tbody tr td#actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
 
+.view-body table tbody tr td#actions a {
+  font-size: 1.5em;
+  color: var(--title-gray);
+}
+
+.view-body table tbody tr td#actions button {
+  font-size: 1.5em;
+  color: var(--title-gray);
+  border: none;
+  outline: none;
+  background: white;
+  cursor: pointer;
+}
+
+.view-body table tbody tr td#actions a:hover {
+  color: var(--main-dark);
+}
+
+@media screen and (min-width: 1300px) {
 }
 
 main.nao-autorizado {
@@ -439,4 +501,35 @@ main.nao-autorizado .header {
   font-weight: 800;
   border-bottom: 3px solid var(--main-color);
   padding: 5px 0 6px 0;
+}
+
+.goback-button {
+  background: var(--main-dark);
+}
+
+.edit-button {
+  background: var(--main-dark);
+}
+
+.form-group > button {
+  width: fit-content;
+  max-width: 180px;
+  font-size: 1em;
+  font-weight: 800;
+  padding: .6em 15px;
+  background: var(--main-color);
+  border: 1px solid var(--main-color);
+  border-radius: 30px;
+  color: white;
+  cursor: pointer;
+  transition: background-color .5s linear;
+}
+
+.form-group button:disabled {
+  border: 5px solid var(--text-gray);
+  background-color: var(--title-gray);
+}
+
+.form-group button img {
+  width: 24px;
 }

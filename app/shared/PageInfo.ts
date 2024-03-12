@@ -4,6 +4,7 @@ const infos = [
   { path: '/dashboard', title: 'Dashboard' },
   { path: '/calendario', title: 'Calendário' },
   { path: '/financeiro', title: 'Financeiro' },
+  { path: '/financeiro/novo', title: '+ Operação' },
   { path: '/gente', title: 'Gente' },
   { path: '/perfil', title: 'Meu perfil' },
 ];

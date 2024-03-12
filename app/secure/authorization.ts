@@ -2,19 +2,35 @@
 import { Papel } from '@prisma/client';
 import { PaginasAbertas, PaginasPorPapel } from './permissions';
 
-export function canView (path: string, papelUsuario: string) {
-  const papeisPermitidos = PaginasPorPapel[path];
-  return papeisPermitidos?.includes(papelUsuario) || PaginasAbertas.find(e => {
-    return path.includes(e) == true
-  })
+export function canView(pathname: string, papelUsuario: string) {
+  
+  const papeisPermitidos = PaginasPorPapel[pathname];
+  return (
+    papeisPermitidos?.includes(papelUsuario) ||
+    PaginasAbertas.find((e) => {
+      return pathname.includes(e) == true;
+    }) ||
+    specificDynPages(pathname, papelUsuario)
+  );
 }
 
-export function canAccess (request: Request, papelUsuario: string) {
-  const symbol = Object.getOwnPropertySymbols(request)[1];
-  const parsed_url = request[symbol].parsedURL;
-  const papeisPermitidos = PaginasPorPapel[parsed_url.pathname];
+export function canAccess(pathname: string, papelUsuario: string) {
+  const papeisPermitidos = PaginasPorPapel[pathname];
+  return (
+    papeisPermitidos?.includes(papelUsuario) ||
+    PaginasAbertas.find((e) => {
+      return pathname.includes(e) == true;
+    })
+  );
+}
 
-  return papeisPermitidos?.includes(papelUsuario) || PaginasAbertas.find(e => {
-    return parsed_url.pathname.includes(e) == true
-  })
+export function specificDynPages(pathname: string, papelUsuario: string) {
+  let canI = false;
+
+  if (/\/financeiro\/[0-9]+/i.test(pathname)) {
+    const papeisPermitidos = PaginasPorPapel['/financeiro/{id}'];
+    return papeisPermitidos?.includes(papelUsuario);
+  }
+
+  return canI;
 }

@@ -22,7 +22,9 @@
     "isbot": "^4.1.0",
     "nodemailer": "^6.9.11",
     "react": "^18.2.0",
+    "react-currency-masked-input": "^2.5.0",
     "react-dom": "^18.2.0",
+    "react-input-mask": "^2.0.4",
     "remix-auth": "^3.4.0",
     "remix-auth-form": "^1.3.0",
     "toastify-js": "^1.12.0"
@@ -33,6 +35,7 @@
     "@types/nodemailer": "^6.4.8",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
+    "@types/react-input-mask": "^3.0.5",
     "@types/toastify-js": "^1.11.1",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",

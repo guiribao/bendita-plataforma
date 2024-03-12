@@ -56,9 +56,9 @@ model Perfil {
 
 model Operacao {
   id        Int          @id @default(autoincrement())
-  descricao String?       @db.VarChar(200)
+  descricao String?      @db.VarChar(200)
   tipo      TipoOperacao @default(ENTRADA)
-  valor     Decimal      @db.Decimal(10, 2)
+  valor     Decimal      @db.Money
   criado_em DateTime     @default(now()) @db.Timestamp(0)
   perfil    Perfil?      @relation(fields: [perfilId], references: [id])
   perfilId  Int?
