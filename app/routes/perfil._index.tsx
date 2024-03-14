@@ -99,11 +99,7 @@ export default function PerfilIndex() {
             {perfil?.hora_nascimento && (
               <div className='field'>
                 <label htmlFor='hora_nascimento'>Hora de nascimento</label>
-                <p id='hora_nascimento'>
-                  {format(new Date(perfil?.hora_nascimento), 'HH:mm', {
-                    locale: ptBR,
-                  })}
-                </p>
+                <p id='hora_nascimento'>{perfil?.hora_nascimento}</p>
               </div>
             )}
           </div>
