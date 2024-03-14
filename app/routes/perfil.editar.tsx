@@ -327,7 +327,7 @@ export default function PerfilEditar() {
               defaultValue={perfil?.rg ?? ''}
               autoComplete='off'
               required
-              readOnly={!!perfil.rg}
+              readOnly={!!perfil?.rg}
             />
           </div>
 
@@ -340,7 +340,7 @@ export default function PerfilEditar() {
               defaultValue={perfil?.cpf ?? ''}
               autoComplete='off'
               required
-              readOnly={!!perfil.cpf}
+              readOnly={!!perfil?.cpf}
             />
           </div>
         </div>
