@@ -1,18 +1,16 @@
 import {
   ActionFunction,
   LinksFunction,
-  LoaderArgs,
   LoaderFunctionArgs,
   MetaFunction,
   json,
   redirect,
 } from '@remix-run/node';
-import { Form, Link, useActionData, useNavigation, useSearchParams } from '@remix-run/react';
+import { Form, Link, useNavigation, useSearchParams } from '@remix-run/react';
 import { authenticator } from '~/secure/authentication.server';
-import cadastroLoginPageStyle from '~/assets/css/cadastro-login-page.css';
+import cadastroPageStyle from '~/assets/css/cadastro-page.css';
 import loading from '~/assets/img/loading.gif';
-import { useContext, useEffect } from 'react';
-import Constraints from '~/shared/Constraints';
+import { useEffect } from 'react';
 import Toastify from 'toastify-js';
 import { createBrowserHistory } from 'history';
 
@@ -21,7 +19,7 @@ export const meta: MetaFunction = () => {
 };
 
 export const links: LinksFunction = () => {
-  return [{ rel: 'stylesheet', href: cadastroLoginPageStyle }];
+  return [{ rel: 'stylesheet', href: cadastroPageStyle }];
 };
 
 export const action: ActionFunction = async ({ request, context }) => {
@@ -52,7 +50,7 @@ export default function Entrar() {
         text: 'Vish. Suas credenciais não estão batendo ...',
         className: 'info',
         style: {
-          background: Constraints.NOTIFY_COLOR,
+          background: window.CLOUD.NOTIFY_COLOR,
         },
       }).showToast();
       history.replace('/autentica/entrar');
@@ -63,10 +61,7 @@ export default function Entrar() {
     <main>
       <div className='header'>
         <h1>Entrar</h1>
-        <p>
-          Digite as informações abaixo <br />
-          para entrar
-        </p>
+        <p>Informe seus dados de login para entrar</p>
       </div>
       <Form method='POST' className='form-cadastro'>
         <div className='form-group'>

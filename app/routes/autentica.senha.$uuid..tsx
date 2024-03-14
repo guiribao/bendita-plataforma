@@ -10,7 +10,7 @@ import { Form, Link, useActionData, useLoaderData, useNavigation } from '@remix-
 import compareAsc from 'date-fns/compareAsc';
 
 import { authenticator } from '~/secure/authentication.server';
-import cadastroLoginPageStyle from '~/assets/css/cadastro-login-page.css';
+import cadastroPageStyle from '~/assets/css/cadastro-page.css';
 import loading from '~/assets/img/loading.gif';
 import pegarRequisicaoEsqueciSenha from '~/domain/Usuario/pegar-requisicao-esqueci-senha.server';
 import pegarUsuarioPeloId from '~/domain/Usuario/pegar-usuario-pelo-id.server';
@@ -19,7 +19,6 @@ import atualizarSenhaUsuario from '~/domain/Usuario/atualizar-senha-usuario.serv
 import desativarTokensEsqueciSenha from '~/domain/Usuario/desativar-tokens-esqueci-senha.server';
 import Toastify from 'toastify-js';
 import { useEffect } from 'react';
-import Constraints from '~/shared/Constraints';
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -29,7 +28,7 @@ export const meta: V2_MetaFunction = () => {
 };
 
 export const links: LinksFunction = () => {
-  return [{ rel: 'stylesheet', href: cadastroLoginPageStyle }];
+  return [{ rel: 'stylesheet', href: cadastroPageStyle }];
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -101,7 +100,7 @@ export default function NovaSenha() {
         text: "Sua senha foi atualizada",
         className: "info",
         style: {
-          background: Constraints.NOTIFY_COLOR,
+          background: window.CLOUD.NOTIFY_COLOR,
         }
       }).showToast();
     }

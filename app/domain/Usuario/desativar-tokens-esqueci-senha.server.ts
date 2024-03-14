@@ -1,5 +1,4 @@
 import { prisma } from '~/secure/db.server';
-import Constraints from '~/shared/Constraints';
 
 export default async function desativarTokensEsqueciSenha(usuarioId: number) {
   try {

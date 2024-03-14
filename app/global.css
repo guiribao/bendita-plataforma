@@ -61,12 +61,12 @@ body {
 }
 
 .container {
+  width: calc(100vw - 45px);
   display: flex;
 }
 
 .sidebar {
-  width: 30%;
-  max-width: 260px;
+  width: 260px;
   height: 100%;
   position: fixed;
   left: 0;
@@ -194,7 +194,7 @@ header label {
 }
 
 #nav-toggle:not(:checked) ~ .content {
-  width: calc(100% - 45px);
+  width: 100%;
   margin-left: 45px;
 }
 
@@ -204,55 +204,17 @@ header label {
 }
 
 #nav-toggle:checked ~ .content {
-  width: calc(100% - 260px);
+  width: calc(100vw - 260px);
   margin-left: 260px;
 }
 
 #nav-toggle:checked ~ .content header {
-  width: calc(100% - 260px);
+  width: calc(100vw - 260px);
   left: 260px;
-}
-
-@media screen and (min-width: 1024px) {
-  #nav-toggle:not(:checked) + .sidebar {
-    width: 75px;
-  }
-  #nav-toggle:not(:checked) + .sidebar .sidebar-brand h2 {
-    padding-left: 0.75em;
-  }
-  #nav-toggle:not(:checked) + .sidebar .sidebar-brand h2 span:first-child {
-    font-size: 1.7em;
-  }
-
-  #nav-toggle:not(:checked) + .sidebar .sidebar-menu li {
-    padding-left: 1.05em;
-  }
-  #nav-toggle:not(:checked) + .sidebar .sidebar-menu a {
-    font-size: 1.1em;
-    padding-left: 1em;
-    padding-top: 1em;
-    padding-bottom: 1em;
-  }
-  #nav-toggle:not(:checked) ~ .content {
-    width: calc(100% - 75px);
-    margin-left: 75px;
-  }
-
-  #nav-toggle:not(:checked) ~ .content header {
-    width: calc(100% - 75px);
-    left: 75px;
-  }
 }
 
 #nav-toggle {
   display: none;
-}
-
-@media screen and (min-width: 1300px) {
-  header label {
-    cursor: pointer;
-    display: block;
-  }
 }
 
 header label span {
@@ -279,13 +241,15 @@ header label span {
 }
 
 main {
+  width: calc(100vw - 45px);
   height: calc(100vh - 70px);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 40px;
+  margin: 0 auto;
   margin-top: 70px;
-  padding: 2em 1.5em;
+  padding: 20px 1.5em 70px 1.5em;
   background: #f9f9f9;
 }
 
@@ -294,24 +258,6 @@ main {
   display: grid;
   grid-template-columns: 1fr;
   gap: 15px;
-}
-
-@media screen and (min-width: 820px) {
-  .minicards {
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-  }
-  .cards {
-    grid-template-columns: 1fr 1fr;
-    gap: 35px;
-  }
-}
-
-@media screen and (min-width: 1300px) {
-  .minicards {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 35px;
-  }
 }
 
 .card-single {
@@ -344,9 +290,14 @@ main {
   color: white;
 }
 
+.view_container {
+  width: 100%;
+  margin: 0 auto;
+}
+
 .view_container .view,
 .cards .view {
-  min-width: 360px;
+  min-width: 260px;
   display: flex;
   flex-direction: column;
   gap: 1.5em;
@@ -362,7 +313,7 @@ main {
 }
 
 .view_container .view {
-  padding: 2em 3em;
+  padding: 2em 1.3em;
 }
 
 .view-header {
@@ -553,4 +504,76 @@ main.nao-autorizado .header {
 
 .form-group input:focus {
   border: 1px solid var(--main-color);
+}
+
+@media screen and (min-width: 768px) {
+  main {
+    padding: 2em 1.5em;
+  }
+
+  .minicards {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  .cards {
+    grid-template-columns: 1fr 1fr;
+    gap: 35px;
+  }
+}
+
+
+@media screen and (min-width: 1024px) {
+  #nav-toggle:not(:checked) + .sidebar {
+    width: 75px;
+  }
+  #nav-toggle:not(:checked) + .sidebar .sidebar-brand h2 {
+    padding-left: 0.75em;
+  }
+  #nav-toggle:not(:checked) + .sidebar .sidebar-brand h2 span:first-child {
+    font-size: 1.7em;
+  }
+
+  #nav-toggle:not(:checked) + .sidebar .sidebar-menu li {
+    padding-left: 1.05em;
+  }
+  #nav-toggle:not(:checked) + .sidebar .sidebar-menu a {
+    font-size: 1.1em;
+    padding-left: 1em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+  }
+  #nav-toggle:not(:checked) ~ .content {
+    width: calc(100% - 75px);
+    margin-left: 75px;
+  }
+
+  #nav-toggle:not(:checked) ~ .content header {
+    width: calc(100% - 75px);
+    left: 75px;
+  }
+
+  #nav-toggle:not(:checked) ~ .content main {
+    width: calc(100vw - 75px);
+  }
+
+  #nav-toggle:checked ~ .content {
+    width: calc(100vw - 260px);
+  }
+
+  #nav-toggle:checked ~ .content main {
+    width: calc(100vw - 260px);
+  }
+}
+
+
+@media screen and (min-width: 1300px) {
+  header label {
+    cursor: pointer;
+    display: block;
+  }
+
+  .minicards {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 35px;
+  }
 }

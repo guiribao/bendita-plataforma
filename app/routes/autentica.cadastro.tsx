@@ -4,7 +4,7 @@ import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
 import { authenticator } from '~/secure/authentication.server';
 import criarNovoUsuario from '~/domain/Usuario/criar-novo-usuario.server';
 
-import cadastroLoginPageStyle from '~/assets/css/cadastro-login-page.css';
+import cadastroPageStyle from '~/assets/css/cadastro-page.css';
 import loading from '~/assets/img/loading.gif';
 
 export const meta: MetaFunction = () => {
@@ -15,7 +15,7 @@ export const meta: MetaFunction = () => {
 };
 
 export const links: LinksFunction = () => {
-  return [{ rel: 'stylesheet', href: cadastroLoginPageStyle }];
+  return [{ rel: 'stylesheet', href: cadastroPageStyle }];
 };
 
 export const action: ActionFunction = async ({ request }) => {

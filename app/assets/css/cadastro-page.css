@@ -1,32 +1,40 @@
 main {
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 40px;
+  justify-content: space-between;
   margin-top: 0;
-  padding: 6em 1.5em 0em 1.5em;
+  padding: 0;
+  padding-top: 2em;
+  gap: 3em;
   background: #f9f9f9;
 }
 
 .header {
+  max-width: 80%;
   text-align: center;
 }
-.header h1 { font-size: 50px;}
-.header p { margin: 20px 0; font-size: 26px;}
+.header h1 {
+  font-size: 2.7em;
+}
+.header p {
+  margin: 1em 0;
+  font-size: 1.7em;
+}
 
 .form-cadastro {
-  padding: 2em 0;
+  max-width: 280px;
+  padding: 0 0;
   display: flex;
   flex-direction: column;
-  gap: 2em;
+  gap: 1em;
   position: relative;
 }
 
 .form-cadastro .mensagem-erro {
   background-color: rgb(212, 26, 26);
-  padding: .5em 0;
+  padding: 0.5em 0;
   text-align: center;
   color: #f9f9f9;
   border-radius: 6px;
@@ -34,7 +42,7 @@ main {
 
 .form-cadastro .mensagem-sucesso {
   background-color: var(--green);
-  padding: .5em 0;
+  padding: 0.5em 0;
   text-align: center;
   color: #f9f9f9;
   border-radius: 6px;
@@ -43,7 +51,7 @@ main {
 .form-cadastro .form-group {
   display: flex;
   flex-direction: column;
-  gap: .75em;
+  gap: 0.75em;
 }
 
 .form-cadastro .form-group.form-button {
@@ -51,35 +59,34 @@ main {
 }
 
 .form-cadastro .form-group label {
-  font-size: 1.3m;
+  font-size: 1.3em;
   font-weight: 800;
-  color: var(--text-gray);  
+  color: var(--text-gray);
 }
 
 .form-cadastro .form-group p {
-  font-size: 1.1m;
-  font-weight: 800;  
+  font-size: 1.1em;
+  font-weight: 800;
 }
 .form-cadastro .form-group a {
   color: var(--main-color);
 }
 
 .form-cadastro .form-group input {
-  max-width: 372px;
+  max-width: 100%;
   font-size: 1.35em;
-  padding: 5px 10px;
+  padding: 0.5em 0.79em;
   border: 1px solid var(--main-color);
   border-radius: 6px;
   background: #f9f9f9;
   outline: none;
 }
 
-
 .form-cadastro .form-group button {
   width: 180px;
   font-size: 1.1em;
   font-weight: 800;
-  padding: .6em 0;
+  padding: 0.6em 0;
   border: 1px solid var(--main-color);
   border-radius: 6px;
   box-shadow: 1px 2px 7px -4px black;
@@ -89,7 +96,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color .5s linear;
+  transition: background-color 0.5s linear;
 }
 
 .form-cadastro .form-group button:disabled {
@@ -104,12 +111,31 @@ main {
 .footer {
   font-size: 1.1em;
   font-weight: 700;
-  margin: 3em 0 0 0;
+  margin: 0;
 }
 .footer p {
   text-align: center;
   margin-bottom: 1em;
 }
 .footer a {
-  color: var(--main-color)
+  color: var(--main-color);
+}
+
+@media screen and (min-width: 768px) {
+  main {
+    padding: 3em 1.5em 0em 1.5em;
+  }
+
+  .form-cadastro {
+    max-width: 328px;
+  }
+
+  .header h1 {
+    font-size: 3.5em;
+  }
+
+  .header p {
+    margin: .5em 0;
+    font-size: 1.7em;
+  }
 }

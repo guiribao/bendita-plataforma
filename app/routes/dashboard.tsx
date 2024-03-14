@@ -31,7 +31,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   // - Get operacoes data
   let { ultimasDezOperacoes, qtdOperacoes } = await pegarDadosOperacoesDashboard();
-  console.log(qtdOperacoes);
   // - Get perfis data
   let { ultimosDezPerfis, qtdPerfis } = await pegarDadosPerfisDashboard();
   // - Get eventos data

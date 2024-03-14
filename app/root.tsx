@@ -28,6 +28,7 @@ import { useEffect } from 'react';
 import { createHashHistory } from 'history';
 import { canAccess, canView, specificDynPages } from './secure/authorization';
 import NotAuthorized from './routes/autorizacao';
+import { getEnv } from './env.server';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: line_awesome },
@@ -66,12 +67,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
       return redirect('/autorizacao');
   }
 
-  return json({ usuario, perfil });
+  return json({ ENV: getEnv(), usuario, perfil });
 }
 
 export default function App() {
   let location = useLocation();
-  let { usuario, perfil } = useLoaderData();
+  let { ENV, usuario, perfil } = useLoaderData();
   let isAuthorized = canView(location.pathname, usuario?.papel);
 
   // Redireciona pro preenchimento do perfil quando ainda estiver incompleto
@@ -106,6 +107,11 @@ export default function App() {
 
         <ScrollRestoration />
         <Scripts />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.CLOUD = ${JSON.stringify(ENV)}`,
+          }}
+        />
         <LiveReload />
       </body>
     </html>

@@ -1,7 +1,7 @@
-import { ActionFunction, LinksFunction, LoaderArgs, V2_MetaFunction, json } from '@remix-run/node';
+import { ActionFunction, LinksFunction, LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node';
 import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
 import { authenticator } from '~/secure/authentication.server';
-import cadastroLoginPageStyle from '~/assets/css/cadastro-login-page.css';
+import cadastroPageStyle from '~/assets/css/cadastro-page.css';
 import loading from '~/assets/img/loading.gif';
 import pegarUsuarioPeloEmail from '~/domain/Usuario/pegar-usuario-pelo-email.server';
 import criarTokenEsqueciSenha from '~/domain/Usuario/criar-token-esqueci-senha.server';
@@ -9,9 +9,8 @@ import enviarEmailEsqueciSenha from '~/domain/Usuario/enviar-email-esqueci-senha
 import desativarTokensEsqueciSenha from '~/domain/Usuario/desativar-tokens-esqueci-senha.server';
 import { useEffect } from 'react';
 import Toastify from 'toastify-js';
-import Constraints from '~/shared/Constraints';
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [
     { title: 'Esqueci minha senha - ChaveCloud' },
     { name: 'description', content: 'A Núvem do Chave!' },
@@ -19,7 +18,7 @@ export const meta: V2_MetaFunction = () => {
 };
 
 export const links: LinksFunction = () => {
-  return [{ rel: 'stylesheet', href: cadastroLoginPageStyle }];
+  return [{ rel: 'stylesheet', href: cadastroPageStyle }];
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -58,7 +57,7 @@ export const action: ActionFunction = async ({ request }) => {
   return json({ errors, success: true });
 };
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   let user = await authenticator.isAuthenticated(request, {
     successRedirect: '/dashboard',
   });
@@ -77,7 +76,7 @@ export default function EsqueciSenha() {
         text: "Enviamos uma mensagem para você. Verifique seu e-mail",
         className: "info",
         style: {
-          background: Constraints.NOTIFY_COLOR,
+          background: window.CLOUD.NOTIFY_COLOR,
         }
       }).showToast();
     }

@@ -1,7 +1,6 @@
-import { prisma } from '~/secure/db.server';
 import { mailClient } from '~/mailer.server';
-import { Usuario } from '@prisma/client';
-import Constraints from '~/shared/Constraints';
+
+const APP_URL = process.env.APP_URL
 
 export default async function enviarEmailEsqueciSenha(
   email: string,
@@ -15,7 +14,7 @@ export default async function enviarEmailEsqueciSenha(
     \n
     Você solicitou um link para resetar a sua senha, segue logo abaixo: \n
     
-    <a href="${Constraints.APP_URL}/autentica/senha/${token}">${Constraints.APP_URL}/autentica/senha/${token}</a> \n
+    <a href="${APP_URL}/autentica/senha/${token}">${APP_URL}/autentica/senha/${token}</a> \n
     \n
     Caso você não consiga clicar no link, copie e cole no seu navegador.`,
   };

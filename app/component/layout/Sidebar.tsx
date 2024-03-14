@@ -36,6 +36,7 @@ export default function Sidebar() {
 
   //@ts-ignore
   function isSmallScreen(width) {
+    console.log('aq')
     if (width < 1300) {
       setShowSidebar('off');
       document.getElementById('nav-toggle').checked = false;
