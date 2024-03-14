@@ -10,10 +10,11 @@ import Perfil from '~/model/Perfil.server';
 import Usuario from '~/model/Usuario.server';
 import editarPerfil from '~/domain/Perfil/editar-perfil.server';
 import pegarPerfilPeloIdUsuario from '~/domain/Perfil/perfil-pelo-id-usuario.server';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { parseDateTimeTZ } from '~/shared/Date.util';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import InputMask from 'react-input-mask';
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -55,7 +56,12 @@ export const action: ActionFunction = async ({ request }) => {
   const telefone_fixo: string = form.get('telefone_fixo') as string;
   const celular: string = form.get('celular') as string;
 
-  const endereco_completo: string = form.get('endereco_completo') as string;
+  const cep: string = form.get('cep') as string;
+  const endereco: string = form.get('endereco') as string;
+  const numero: string = form.get('numero') as string;
+  const bairro: string = form.get('bairro') as string;
+  const cidade: string = form.get('cidade') as string;
+  const estado: string = form.get('estado') as string;
 
   const estado_civil: string = form.get('estado_civil') as string;
   const nome_conjuge: string = form.get('nome_conjuge') as string;
@@ -83,9 +89,7 @@ export const action: ActionFunction = async ({ request }) => {
   let errors = {};
 
   if (
-    [!nome, !sobrenome, !nome_completo, !data_nascimento, !estado_civil, !endereco_completo].some(
-      Boolean
-    )
+    [!nome, !sobrenome, !nome_completo, !data_nascimento, !estado_civil, !endereco].some(Boolean)
   ) {
     errors = Object.assign(errors, { data: 'Preencha todos os campos obrigatórios' });
     return json({ errors });
@@ -106,9 +110,14 @@ export const action: ActionFunction = async ({ request }) => {
     foto: 'http://localhost:3000/user.png',
     grupo,
     email,
-    telefone_fixo,
-    celular,
-    endereco_completo,
+    telefone_fixo: telefone_fixo.replaceAll(' ', ''),
+    celular: celular.replaceAll(' ', ''),
+    cep,
+    endereco,
+    numero,
+    bairro,
+    cidade,
+    estado,
     estado_civil,
     nome_conjuge,
     escolaridade,
@@ -118,7 +127,7 @@ export const action: ActionFunction = async ({ request }) => {
     profissao,
     bio,
     nome_referencia,
-    telefone_referencia,
+    telefone_referencia: telefone_referencia.replaceAll(' ', ''),
     email_referencia,
     endereco_referencia,
     parentesco_referencia,
@@ -135,24 +144,81 @@ export async function loader({ request }: LoaderArgs) {
 
   let perfil: PrismaPerfil | null = await pegarPerfilPeloIdUsuario(usuario.id);
 
-  return json({ usuario, perfil });
+  let ufs = await fetch(
+    'https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome'
+  ).then((response) => response.json());
+
+  let cidades = [];
+
+  //@ts-ignore
+  if (perfil?.estado_nascimento) {
+    cidades = await fetch(
+      'https://servicodados.ibge.gov.br/api/v1/localidades/estados/' +
+        encodeURIComponent(perfil.estado_nascimento) +
+        '/municipios'
+    ).then((response) => response.json());
+  }
+
+  return json({ usuario, perfil, ufs, cidades });
 }
 
 export default function PerfilEditar() {
   const actionData = useActionData();
-  let { usuario, perfil } = useLoaderData();
+  let { usuario, perfil, ufs, cidades } = useLoaderData();
   let [_email, _setEmail] = useState(perfil?.email || usuario?.email || '');
   let [estadoCivil, setEstadoCivil] = useState(perfil?.estado_civil);
   let [grupo, setGrupo] = useState(perfil?.grupo || Grupo.VISITANTE);
   let [escolaridade, setEscolaridade] = useState(
     perfil?.escolaridade || Escolaridade.FUNDAMENTAL_COMPLETO
   );
+  let [arrayCidades, setArrayCidades] = useState(cidades);
+  let [endereco, setEndereco] = useState({
+    logradouro: perfil?.endereco,
+    numero: perfil?.numero,
+    bairro: perfil?.bairro,
+    cidade: perfil?.cidade,
+    estado: perfil?.estado,
+  });
 
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
 
   function handleEmail(e: ChangeEvent<HTMLInputElement>) {
     _setEmail(e.target.value);
+  }
+
+  async function carregarCidades(event) {
+    let uf = event.target.value;
+
+    let cidades = await fetch(
+      'https://servicodados.ibge.gov.br/api/v1/localidades/estados/' +
+        encodeURIComponent(uf) +
+        '/municipios'
+    );
+
+    setArrayCidades(await cidades.json());
+  }
+
+  async function carregarEndereco(event) {
+    let cep = event.target.value.replace(/\D/g, '');
+
+    if (cep.length < 8) return;
+
+    let { logradouro, bairro, localidade, uf } = await fetch(
+      'https://viacep.com.br/ws/' + encodeURIComponent(cep) + '/json/ '
+    ).then(async (response) => await response.json());
+
+    setEndereco({
+      logradouro,
+      numero: '',
+      bairro,
+      cidade: localidade,
+      estado: uf,
+    });
+
+    let numero = document.getElementById('numero');
+    numero.value = '';
+    numero?.focus();
   }
 
   return (
@@ -207,7 +273,7 @@ export default function PerfilEditar() {
               autoComplete='off'
             />
           </div>
-          
+
           <div className='form-field'>
             <label htmlFor='data_nascimento'>Data de nascimento *</label>
             <input
@@ -234,38 +300,34 @@ export default function PerfilEditar() {
             />
           </div>
           <div className='form-field'>
+            <label htmlFor='estado_nascimento'>Estado de nascimento</label>
+            <select
+              name='estado_nascimento'
+              id='estado_nascimento'
+              onChange={carregarCidades}
+              defaultValue={perfil?.estado_nascimento ?? ''}
+            >
+              {ufs.map((uf) => (
+                <option key={uf.sigla} value={uf.sigla}>
+                  {uf.nome}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className='form-field'>
             <label htmlFor='cidade_nascimento'>Cidade de nascimento</label>
-            <input
-              type='text'
+            <select
               name='cidade_nascimento'
               id='cidade_nascimento'
               defaultValue={perfil?.cidade_nascimento ?? ''}
-              autoComplete='off'
-            />
+            >
+              {arrayCidades.map((cidade) => (
+                <option key={cidade.id} value={cidade.nome}>
+                  {cidade.nome}
+                </option>
+              ))}
+            </select>
           </div>
-          <div className='form-field'>
-            <label htmlFor='estado_nascimento'>Estado de nascimento</label>
-            <input
-              type='text'
-              name='estado_nascimento'
-              id='estado_nascimento'
-              defaultValue={perfil?.estado_nascimento ?? ''}
-              autoComplete='off'
-            />
-          </div>
-
-          <div className='form-field'>
-            <label htmlFor='endereco_completo'>Endereço residencial *</label>
-            <input
-              type='text'
-              name='endereco_completo'
-              id='endereco_completo'
-              defaultValue={perfil?.endereco ?? ''}
-              autoComplete='off'
-              required
-            />
-          </div>
-
           <div className='form-field'>
             <label htmlFor='estado_civil'>Estado civíl *</label>
             <select
@@ -316,14 +378,16 @@ export default function PerfilEditar() {
 
           <div className='form-field'>
             <label htmlFor='cpf'>CPF *</label>
-            <input
-              type='number'
+            <InputMask
+              type='text'
               name='cpf'
               id='cpf'
               defaultValue={perfil?.cpf ?? ''}
               autoComplete='off'
               required
               readOnly={!!perfil?.cpf}
+              mask='999.999.999-99'
+              maskChar={' '}
             />
           </div>
         </div>
@@ -347,23 +411,106 @@ export default function PerfilEditar() {
           </div>
           <div className='form-field'>
             <label htmlFor='celular'>Celular *</label>
-            <input
+            <InputMask
               type='text'
               name='celular'
               id='celular'
               defaultValue={perfil?.celular ?? ''}
               autoComplete='off'
               required
+              mask='\+55 99 \9 9999-9999'
+              maskChar={' '}
             />
           </div>
           <div className='form-field'>
             <label htmlFor='telefone_fixo'>Telefone fixo</label>
-            <input
+            <InputMask
               type='text'
               name='telefone_fixo'
               id='telefone_fixo'
               defaultValue={perfil?.telefone_fixo ?? ''}
               autoComplete='off'
+              mask='\+55 99 9999-9999'
+              maskChar={' '}
+            />
+          </div>
+
+          <div className='form-group-header'>
+            <h2>Endereço</h2>
+          </div>
+
+          <div className='form-field'>
+            <label htmlFor='cep'>CEP *</label>
+            <InputMask
+              type='text'
+              name='cep'
+              id='cep'
+              defaultValue={perfil?.cep ?? ''}
+              autoComplete='off'
+              required
+              mask='99999\-999'
+              maskChar={' '}
+              onChange={carregarEndereco}
+            />
+          </div>
+
+          <div className='form-field form-field-full'>
+            <label htmlFor='endereco'>Endereço *</label>
+            <input
+              type='text'
+              name='endereco'
+              id='endereco'
+              defaultValue={endereco?.logradouro ?? ''}
+              autoComplete='off'
+              required
+            />
+          </div>
+
+          <div className='form-field'>
+            <label htmlFor='numero'>Número *</label>
+            <input
+              type='text'
+              name='numero'
+              id='numero'
+              defaultValue={endereco?.numero ?? ''}
+              autoComplete='off'
+              required
+            />
+          </div>
+
+          <div className='form-field'>
+            <label htmlFor='bairro'>Bairro *</label>
+            <input
+              type='text'
+              name='bairro'
+              id='bairro'
+              defaultValue={endereco?.bairro ?? ''}
+              autoComplete='off'
+              required
+            />
+          </div>
+
+          <div className='form-field'>
+            <label htmlFor='cidade'>Cidade *</label>
+            <input
+              type='text'
+              name='cidade'
+              id='cidade'
+              defaultValue={endereco?.cidade ?? ''}
+              autoComplete='off'
+              required
+            />
+          </div>
+
+          <div className='form-field'>
+            <label htmlFor='estado'>Estado *</label>
+            <input
+              type='text'
+              name='estado'
+              id='estado'
+              defaultValue={endereco?.estado ?? ''}
+              autoComplete='off'
+              required
             />
           </div>
 
@@ -385,9 +532,10 @@ export default function PerfilEditar() {
           <div className='form-field'>
             <label htmlFor='email_referencia'>E-mail da referencia *</label>
             <input
-              type='text'
+              type='email'
               name='email_referencia'
               id='email_referencia'
+              className='input-email'
               defaultValue={perfil?.email_referencia ?? ''}
               autoComplete='off'
               required
@@ -395,13 +543,15 @@ export default function PerfilEditar() {
           </div>
           <div className='form-field'>
             <label htmlFor='telefone_referencia'>Celular da referencia *</label>
-            <input
+            <InputMask
               type='text'
               name='telefone_referencia'
               id='telefone_referencia'
               defaultValue={perfil?.telefone_referencia ?? ''}
               autoComplete='off'
               required
+              mask='\+55 99 \9 9999-9999'
+              maskChar={' '}
             />
           </div>
           <div className='form-field'>

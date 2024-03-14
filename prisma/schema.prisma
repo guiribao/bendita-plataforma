@@ -40,20 +40,26 @@ model Perfil {
   id Int @id @default(autoincrement())
 
   // INFORMAÇÕES BASICAS
-  nome                  String
-  sobrenome             String
-  nome_completo         String
-  data_hora_nascimento  DateTime     @db.Timestamptz()
-  cidade_nascimento     String?
-  estado_nascimento     String?
-  estado_civil          EstadoCivil?
-  nome_conjuge          String?
-  rg                    String?      @db.VarChar(15)
-  cpf                   String?      @db.VarChar(15)
-  email                 String?
-  celular               String?
-  telefone_fixo         String?
-  endereco              String?
+  nome                 String
+  sobrenome            String
+  nome_completo        String
+  data_hora_nascimento DateTime     @db.Timestamptz()
+  cidade_nascimento    String?
+  estado_nascimento    String?
+  estado_civil         EstadoCivil?
+  nome_conjuge         String?
+  rg                   String?      @db.VarChar(15)
+  cpf                  String?      @db.VarChar(15)
+  email                String?
+  celular              String?
+  telefone_fixo        String?
+  cep                  String?
+  endereco             String?
+  numero               String?
+  bairro               String?
+  cidade               String?
+  estado               String?
+
   nome_referencia       String?
   email_referencia      String?
   telefone_referencia   String?

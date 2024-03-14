@@ -17,8 +17,12 @@ main {
   border: 1px solid var(--main-color);
   margin: 4em auto 0 auto;
 }
-.header h1 { font-size: 50px;}
-.header p { font-size: 26px;}
+.header h1 {
+  font-size: 50px;
+}
+.header p {
+  font-size: 26px;
+}
 
 .form-perfil {
   width: 90%;
@@ -43,12 +47,13 @@ main {
 .form-perfil .form-group .form-group-header {
   width: 100% !important;
   padding: 26px 0 15px 0;
-  border-bottom: 4px solid rgba(55, 114, 255, .066);
+  border-bottom: 4px solid rgba(55, 114, 255, 0.066);
   color: #323232;
 }
 
 .form-perfil .form-field {
   width: 100%;
+  max-width: 300px;
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -56,10 +61,11 @@ main {
 }
 
 .form-perfil .form-field-full {
-  width: 100%;
+  width: calc(100% - 1em);
+  max-width: 1000px;
   display: flex;
   justify-content: space-between;
-  gap: 1em
+  gap: 1em;
 }
 
 .form-perfil .form-field-bio {
@@ -69,7 +75,6 @@ main {
   align-items: start;
   justify-content: space-between;
 }
-
 
 .form-perfil .form-field .profissao {
   width: 100%;
@@ -154,8 +159,7 @@ main {
 .form-perfil .form-field-membro div {
   display: flex;
   flex-direction: row;
-  gap: .2em;
-
+  gap: 0.2em;
 }
 .form-field-membro-response {
   display: flex;
@@ -177,12 +181,12 @@ main {
   font-size: 1.1em;
   font-weight: 800;
   color: var(--text-gray);
-  margin: 0 0 .5em 0;
+  margin: 0 0 0.5em 0;
 }
 .form-perfil .form-field-bio textarea {
   width: 100%;
   height: 78px;
-  font-size: .95em;
+  font-size: 0.95em;
   padding: 5px 10px;
   border: 1px solid var(--main-color);
   border-radius: 6px;
@@ -195,7 +199,7 @@ main {
   width: 180px;
   font-size: 1.1em;
   font-weight: 800;
-  padding: .6em 0;
+  padding: 0.6em 0;
   border: 1px solid var(--main-color);
   border-radius: 6px;
   box-shadow: 1px 2px 7px -4px black;
@@ -205,7 +209,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color .5s linear;
+  transition: background-color 0.5s linear;
 }
 
 .form-perfil .form-field button:disabled {

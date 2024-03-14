@@ -14,8 +14,6 @@ export function parseTime(date: Date | string) {
 }
 
 export function parseDateTimeTZ(date, time) {
-  console.log(date, time);
   let dt = new Date(date + ' ' + time + ' -03');
-  console.log(dt);
   return dt;
 }

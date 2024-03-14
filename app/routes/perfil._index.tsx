@@ -97,7 +97,7 @@ export default function PerfilIndex() {
               <div className='field'>
                 <label htmlFor='hora_nascimento'>Hora de nascimento</label>
                 <p id='hora_nascimento'>
-                  {format(perfil?.data_hora_nascimento, "HH:mm", {
+                  {format(perfil?.data_hora_nascimento, 'HH:mm', {
                     locale: ptBR,
                   })}
                 </p>
@@ -121,13 +121,6 @@ export default function PerfilIndex() {
             )}
           </div>
 
-          {perfil?.endereco && (
-            <div className='field'>
-              <label htmlFor='endereco'>Endereço residencial</label>
-              <p id='endereco'>{perfil?.endereco}</p>
-            </div>
-          )}
-
           <div className='field-group'>
             {perfil?.estado_civil && (
               <div className='field'>
@@ -147,21 +140,30 @@ export default function PerfilIndex() {
 
         <div className='group view'>
           <div className='group-header'>
-            <h1>Documentos</h1>
+            <h1>Endereço</h1>
           </div>
+          {perfil?.cep && (
+            <div className='field'>
+              <label htmlFor='cep'>CEP</label>
+              <p id='cep'>{perfil?.cep}</p>
+            </div>
+          )}
+
           <div className='field'>
-            <label htmlFor='rg'>RG</label>
-            <p id='rg'>{perfil?.rg}</p>
-          </div>
-          <div className='field'>
-            <label htmlFor='cpf'>CPF</label>
-            <p id='cpf'>{perfil?.cpf}</p>
+            <label htmlFor='endereco'>Endereço completo</label>
+            <p id='endereco'>
+              {perfil?.endereco + (perfil?.numero ? ', ' + perfil?.numero : '')}
+              {', ' + perfil?.bairro}
+              {', ' + perfil?.cidade}
+              {', ' + perfil?.estado}
+
+            </p>
           </div>
         </div>
 
         <div className='group view'>
           <div className='group-header'>
-            <h1>Informações de contato</h1>
+            <h1>Contato </h1>
           </div>
           <div className='field'>
             <label htmlFor='email'>E-mail</label>
@@ -178,6 +180,20 @@ export default function PerfilIndex() {
               <p id='telefone_fixo'>{perfil?.telefone_fixo}</p>
             </div>
           )}
+        </div>
+
+        <div className='group view'>
+          <div className='group-header'>
+            <h1>Documentos</h1>
+          </div>
+          <div className='field'>
+            <label htmlFor='rg'>RG</label>
+            <p id='rg'>{perfil?.rg}</p>
+          </div>
+          <div className='field'>
+            <label htmlFor='cpf'>CPF</label>
+            <p id='cpf'>{perfil?.cpf}</p>
+          </div>
         </div>
 
         <div className='group view'>
