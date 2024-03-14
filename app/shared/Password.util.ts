@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 
-const PASSWORD_SALT = process.env.PASSWORD_SALT
+const PASSWORD_SALT = Number(process.env.PASSWORD_SALT);
 
 export async function encrypt(senha: string) {
   let salt = await bcrypt.genSalt(PASSWORD_SALT);
@@ -12,10 +12,10 @@ export async function compare(senha1: string, senha2: string): Promise<Boolean> 
 }
 
 export function createRandomPassword(tamanho: number) {
-    var stringAleatoria = '';
-    var caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for (var i = 0; i < tamanho; i++) {
-        stringAleatoria += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
-    }
-    return stringAleatoria;
+  var stringAleatoria = '';
+  var caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  for (var i = 0; i < tamanho; i++) {
+    stringAleatoria += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+  }
+  return stringAleatoria;
 }

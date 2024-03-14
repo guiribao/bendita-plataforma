@@ -33,10 +33,13 @@ main {
 }
 
 .form-cadastro .mensagem-erro {
-  background-color: rgb(212, 26, 26);
-  padding: 0.5em 0;
+  background: linear-gradient(90deg, rgba(227,10,10,1) 0%, rgba(187,52,47,1) 35%, rgba(255,74,66,1) 100%);
+  padding: 0.5em .6em;
+  font-size: 1.15em;
+  font-weight: 700;
   text-align: center;
-  color: #f9f9f9;
+  color: #f1f1f1;
+  
   border-radius: 6px;
 }
 

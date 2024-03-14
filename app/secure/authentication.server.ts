@@ -19,17 +19,16 @@ const formStrategy = new FormStrategy(async ({ form }) => {
   });
 
   if (!usuario) {
-    console.warn('E-mail não cadastrado na base de dados');
-    throw new AuthorizationError();
+    throw new AuthorizationError('Ué?! Não encontrei nenhum usuário com este e-mail.');
   }
 
-  const match = await compare(senha, usuario.senha as string)
+  const match = await compare(senha, usuario.senha as string);
 
   if (!match) {
     throw new AuthorizationError('Senha inválida para este usuário');
   }
 
-  return new Usuario(usuario)
+  return new Usuario(usuario);
 });
 
 authenticator.use(formStrategy, 'form');

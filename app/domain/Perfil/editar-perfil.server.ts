@@ -4,8 +4,6 @@ import { prisma } from '~/secure/db.server';
 //@ts-ignore
 export default async function editarPerfil(perfil): Promise<Perfil | null> {
   try {
-    console.log(perfil.data_fardamento);
-
     let perfilEditado = await prisma.perfil.upsert({
       where: {
         id: perfil.id,

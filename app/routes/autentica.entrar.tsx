@@ -6,7 +6,14 @@ import {
   json,
   redirect,
 } from '@remix-run/node';
-import { Form, Link, useNavigation, useSearchParams } from '@remix-run/react';
+import {
+  Form,
+  Link,
+  useActionData,
+  useNavigation,
+  useRouteError,
+  useSearchParams,
+} from '@remix-run/react';
 import { authenticator } from '~/secure/authentication.server';
 import cadastroPageStyle from '~/assets/css/cadastro-page.css';
 import loading from '~/assets/img/loading.gif';
@@ -23,10 +30,16 @@ export const links: LinksFunction = () => {
 };
 
 export const action: ActionFunction = async ({ request, context }) => {
-  await authenticator.authenticate('form', request, {
-    successRedirect: '/dashboard',
-    failureRedirect: '/autentica/entrar?fail=true',
-  });
+  try {
+    await authenticator.authenticate('form', request, {
+      successRedirect: '/dashboard',
+      throwOnError: true,
+    });
+  } catch (error) {
+    return json({ errors: { message: error.message } });
+  }
+
+  return {};
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -37,6 +50,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function Entrar() {
+  const actionData = useActionData();
   const navigation = useNavigation();
   const [searchParams] = useSearchParams();
 
@@ -64,6 +78,9 @@ export default function Entrar() {
         <p>Informe seus dados de login para entrar</p>
       </div>
       <Form method='POST' className='form-cadastro'>
+        {actionData?.errors?.message && (
+          <p className='mensagem-erro'>{actionData?.errors?.message}</p>
+        )}
         <div className='form-group'>
           <label>E-mail</label>
           <input type='email' name='email' id='email' autoComplete='off' />

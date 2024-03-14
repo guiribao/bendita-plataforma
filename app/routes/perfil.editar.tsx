@@ -265,38 +265,14 @@ export default function PerfilEditar() {
               name='estado_civil'
               id='estado_civil'
               onChange={(e) => setEstadoCivil(e.target.value)}
+              defaultValue={perfil?.estado_civil ?? EstadoCivil.SOLTEIRO}
               required
             >
-              <option
-                selected={perfil?.estado_civil == EstadoCivil.SOLTEIRO}
-                value={EstadoCivil.SOLTEIRO}
-              >
-                Solteiro(a)
-              </option>
-              <option
-                selected={perfil?.estado_civil == EstadoCivil.CONCUBINADO}
-                value={EstadoCivil.CONCUBINADO}
-              >
-                Concubinado
-              </option>
-              <option
-                selected={perfil?.estado_civil == EstadoCivil.CASADO}
-                value={EstadoCivil.CASADO}
-              >
-                Casado(a)
-              </option>
-              <option
-                selected={perfil?.estado_civil == EstadoCivil.VIUVO}
-                value={EstadoCivil.VIUVO}
-              >
-                Viúvo(a)
-              </option>
-              <option
-                selected={perfil?.estado_civil == EstadoCivil.DIVORCIADO}
-                value={EstadoCivil.DIVORCIADO}
-              >
-                Divorciado(a)
-              </option>
+              <option value={EstadoCivil.SOLTEIRO}>Solteiro(a)</option>
+              <option value={EstadoCivil.CONCUBINADO}>Concubinado</option>
+              <option value={EstadoCivil.CASADO}>Casado(a)</option>
+              <option value={EstadoCivil.VIUVO}>Viúvo(a)</option>
+              <option value={EstadoCivil.DIVORCIADO}>Divorciado(a)</option>
             </select>
           </div>
 
@@ -466,63 +442,30 @@ export default function PerfilEditar() {
               name='escolaridade'
               id='escolaridade'
               onChange={(e) => setEscolaridade(e.target.value)}
+              defaultValue={perfil?.escolaridade ?? Escolaridade.NAO_APLICA}
             >
-              <option
-                selected={perfil?.escolaridade == Escolaridade.NAO_APLICA}
-                value={Escolaridade.NAO_APLICA}
-              >
-                Prefiro não informar
-              </option>
-              <option
-                selected={perfil?.escolaridade == Escolaridade.FUNDAMENTAL_COMPLETO}
-                value={Escolaridade.FUNDAMENTAL_COMPLETO}
-              >
-                Fundamental completo{' '}
-              </option>
-              <option
-                selected={perfil?.escolaridade == Escolaridade.FUNDAMENTAL_INCOMPLETO}
-                value={Escolaridade.FUNDAMENTAL_INCOMPLETO}
-              >
-                Fundamental incompleto{' '}
-              </option>
+              <option value={Escolaridade.NAO_APLICA}>Prefiro não informar</option>
+              <option value={Escolaridade.FUNDAMENTAL_COMPLETO}>Fundamental completo </option>
+              <option value={Escolaridade.FUNDAMENTAL_INCOMPLETO}>Fundamental incompleto </option>
 
-              <option
-                selected={perfil?.escolaridade == Escolaridade.MEDIO_COMPLETO}
-                value={Escolaridade.MEDIO_COMPLETO}
-              >
-                Médio completo{' '}
-              </option>
-              <option
-                selected={perfil?.escolaridade == Escolaridade.MEDIO_INCOMPLETO}
-                value={Escolaridade.MEDIO_INCOMPLETO}
-              >
-                Médio incompleto{' '}
-              </option>
+              <option value={Escolaridade.MEDIO_COMPLETO}>Médio completo </option>
+              <option value={Escolaridade.MEDIO_INCOMPLETO}>Médio incompleto </option>
 
-              <option
-                selected={perfil?.escolaridade == Escolaridade.SUPERIOR_COMPLETO}
-                value={Escolaridade.SUPERIOR_COMPLETO}
-              >
-                Superior completo{' '}
-              </option>
-              <option
-                selected={perfil?.escolaridade == Escolaridade.SUPERIOR_INCOMPLETO}
-                value={Escolaridade.SUPERIOR_INCOMPLETO}
-              >
-                Superior incompleto{' '}
-              </option>
+              <option value={Escolaridade.SUPERIOR_COMPLETO}>Superior completo </option>
+              <option value={Escolaridade.SUPERIOR_INCOMPLETO}>Superior incompleto </option>
             </select>
           </div>
 
           <div className='form-field'>
             <label htmlFor='grupo'>Grupo *</label>
-            <select name='grupo' id='grupo' onChange={(e) => setGrupo(e.target.value)}>
-              <option selected={perfil?.grupo == Grupo.VISITANTE} value={Grupo.VISITANTE}>
-                Visitante{' '}
-              </option>
-              <option selected={perfil?.grupo == Grupo.FARDADO} value={Grupo.FARDADO}>
-                Fardado{' '}
-              </option>
+            <select
+              name='grupo'
+              id='grupo'
+              onChange={(e) => setGrupo(e.target.value)}
+              defaultValue={perfil?.grupo ?? Grupo.VISITANTE}
+            >
+              <option value={Grupo.VISITANTE}>Visitante </option>
+              <option value={Grupo.FARDADO}>Fardado </option>
             </select>
           </div>
 
