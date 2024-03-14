@@ -11,6 +11,7 @@ import Usuario from '~/model/Usuario.server';
 import editarPerfil from '~/domain/Perfil/editar-perfil.server';
 import pegarPerfilPeloIdUsuario from '~/domain/Perfil/perfil-pelo-id-usuario.server';
 import { ChangeEvent, useState } from 'react';
+import { parseDateTimeTZ } from '~/shared/Date.util';
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -88,13 +89,14 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors });
   }
 
+  let data_hora_nascimento = parseDateTimeTZ(data_nascimento, hora_nascimento);
+
   await editarPerfil({
     id: Number(perfilId),
     nome,
     sobrenome,
     nome_completo,
-    data_nascimento,
-    hora_nascimento,
+    data_hora_nascimento,
     cidade_nascimento,
     estado_nascimento,
     registro_geral,
@@ -209,7 +211,7 @@ export default function PerfilEditar() {
               type='date'
               name='data_nascimento'
               id='data_nascimento'
-              defaultValue={perfil?.data_nascimento.slice(0, 10) ?? ''}
+              defaultValue={perfil?.data_hora_nascimento.slice(0, 10) ?? ''}
               autoComplete='off'
               required
             />
@@ -221,7 +223,7 @@ export default function PerfilEditar() {
               name='hora_nascimento'
               id='hora_nascimento'
               defaultValue={
-                new Date(perfil?.hora_nascimento).toLocaleTimeString().slice(0, 5) ?? ''
+                new Date(perfil?.data_hora_nascimento).toLocaleTimeString().slice(0, 5) ?? ''
               }
               autoComplete='off'
             />

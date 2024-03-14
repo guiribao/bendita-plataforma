@@ -9,6 +9,7 @@ import pegarPerfilPeloIdUsuario from '~/domain/Perfil/perfil-pelo-id-usuario.ser
 import { Escolaridade, Perfil } from '@prisma/client';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { parseTime } from '~/shared/Date.util';
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -86,21 +87,19 @@ export default function PerfilIndex() {
             <div className='field'>
               <label htmlFor='data_nascimento'>Data de nascimento</label>
               <p id='data_nascimento'>
-                {format(
-                  perfil?.data_nascimento.replaceAll('-', '/').slice(0, 10),
-                  "d 'de' LLLL 'de' yyyy",
-                  {
-                    locale: ptBR,
-                  }
-                )}
+                {format(perfil?.data_hora_nascimento, "d 'de' LLLL 'de' yyyy", {
+                  locale: ptBR,
+                })}
               </p>
             </div>
 
-            {perfil?.hora_nascimento && (
+            {perfil?.data_hora_nascimento && (
               <div className='field'>
-                <label htmlFor='hora_nascimento'>Data / Hora de nascimento</label>
+                <label htmlFor='hora_nascimento'>Hora de nascimento</label>
                 <p id='hora_nascimento'>
-                  {new Date(perfil?.hora_nascimento).toLocaleTimeString().slice(0, 5)}
+                  {format(perfil?.data_hora_nascimento, "HH:mm", {
+                    locale: ptBR,
+                  })}
                 </p>
               </div>
             )}

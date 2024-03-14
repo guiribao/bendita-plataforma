@@ -12,8 +12,7 @@ export default async function editarPerfil(perfil): Promise<Perfil | null> {
         nome: perfil.nome,
         sobrenome: perfil.sobrenome,
         nome_completo: perfil.nome_completo,
-        data_nascimento: new Date(perfil.data_nascimento),
-        hora_nascimento: new Date(perfil.data_nascimento + " " + perfil.hora_nascimento)  || null,
+        data_hora_nascimento: perfil.data_hora_nascimento,
         cidade_nascimento: perfil.cidade_nascimento || null,
         estado_nascimento: perfil.estado_nascimento || null,
         rg: perfil.registro_geral || null,
@@ -42,8 +41,7 @@ export default async function editarPerfil(perfil): Promise<Perfil | null> {
         nome: perfil.nome,
         sobrenome: perfil.sobrenome,
         nome_completo: perfil.nome_completo,
-        data_nascimento: new Date(perfil.data_nascimento),
-        hora_nascimento: new Date(perfil.data_nascimento + " " + perfil.hora_nascimento) || null,
+        data_hora_nascimento: perfil.data_hora_nascimento,
         cidade_nascimento: perfil.cidade_nascimento || null,
         estado_nascimento: perfil.estado_nascimento || null,
         rg: perfil.registro_geral || null,
@@ -73,7 +71,7 @@ export default async function editarPerfil(perfil): Promise<Perfil | null> {
 
     return perfilEditado;
   } catch (error) {
-    console.log(error)
+    console.log(error);
 
     return null;
   }
