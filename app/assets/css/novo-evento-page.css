@@ -1,0 +1,48 @@
+.form-calendario {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.form-calendario .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+}
+
+.tipo-evento {
+  display: flex;
+  justify-content: start;
+  font-size: 1.4em;
+  gap: 1em;
+  padding: 0.7em 0.3em;
+  border-radius: 2em;
+}
+
+.tipo-evento .evento {
+  display: flex;
+  gap: 0.3em;
+  cursor: pointer;
+}
+.tipo-evento input[type='radio'] {
+  visibility: hidden;
+}
+
+.tipo-evento input[type='radio'] ~ label {
+  min-width: 120px;
+  padding: 0.3em 0.7em;
+  border-radius: 2em;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-gray);
+  cursor: pointer;
+}
+
+.tipo-evento input[type='radio'] ~ label {
+  background: #e1e1e1;
+}
+
+.tipo-evento input[type='radio']:checked ~ label {
+  color: white;
+  background: var(--main-color);
+}

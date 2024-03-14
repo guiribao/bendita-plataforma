@@ -1,12 +1,14 @@
-import { LoaderArgs, json } from '@remix-run/node';
-import type { V2_MetaFunction } from '@remix-run/node';
+import { json } from '@remix-run/node';
+import type { ActionFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import pegarOperacoes from '~/domain/Operation/pegar-operacoes.server';
-import { getPageInfo } from '~/shared/PageInfo';
+import { useState } from 'react';
+import DeletingModal from '~/component/DeletingModal';
+import deletarOperacaoPorId from '~/domain/Financeiro/deletar-operacao-por-id.server';
+import pegarOperacoes from '~/domain/Financeiro/pegar-operacoes.server';
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [
     {
       charset: 'utf-8',
@@ -18,6 +20,18 @@ export const meta: V2_MetaFunction = () => {
       content: 'Gerenciamento de operações financeiras de entrada e saída do Chave',
     },
   ];
+};
+
+export const action: ActionFunction = async ({ request }) => {
+  const form = await request.formData();
+  const action: string = form.get('_action') as string;
+  const operacaoId: number = Number(form.get('resource') as string);
+
+  if (action !== 'delete' && !operacaoId) return { success: false };
+
+  await deletarOperacaoPorId(operacaoId);
+
+  return { success: true };
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -38,9 +52,27 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function FinanceiroIndex() {
   const { operacoes } = useLoaderData();
-  
+
+  // Dados para modal deletar item
+  let [deleting, setDeleting] = useState(false);
+  let [deletingItem, setDeletingItem] = useState({});
+
+  function openDeletingModal(operacao) {
+    setDeleting(true);
+    setDeletingItem(operacao);
+  }
+
+  function closeDeletingModal() {
+    setDeleting(false);
+    setDeletingItem({});
+  }
+
   return (
     <main>
+      {deleting && (
+        <DeletingModal item={deletingItem} close={closeDeletingModal} entity='financeiro' />
+      )}
+
       <div className='view_container'>
         <div className='view'>
           <div className='view-header'>
@@ -82,7 +114,7 @@ export default function FinanceiroIndex() {
                       <Link to={`/financeiro/${operacao.id}/editar`}>
                         <i className='las la-pen'></i>
                       </Link>
-                      <button onClick={() => openDeletingModal(captador)}>
+                      <button onClick={() => openDeletingModal(operacao)}>
                         <i className='las la-trash'></i>
                       </button>
                     </td>

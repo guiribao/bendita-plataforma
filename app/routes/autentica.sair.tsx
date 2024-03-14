@@ -1,15 +1,15 @@
-import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node';
+import { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { authenticator } from '~/secure/authentication.server';
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [{ title: 'Saindo...' }, { name: 'description', content: 'A Núvem do Chave!' }];
 };
 
-export async function loader({ request }: LoaderArgs) {
-  await authenticator.logout(request, {redirectTo: '/autentica/entrar'})
+export async function loader({ request }: LoaderFunctionArgs) {
+  await authenticator.logout(request, { redirectTo: '/autentica/entrar' });
   return {};
 }
 
 export default function Sair() {
-  return null
+  return null;
 }

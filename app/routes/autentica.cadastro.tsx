@@ -1,14 +1,13 @@
-import { ActionFunction, LinksFunction, LoaderArgs, V2_MetaFunction, json } from '@remix-run/node';
+import { ActionFunction, LinksFunction, LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node';
 import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
 
 import { authenticator } from '~/secure/authentication.server';
-import criarNovoUsuario from '~/domain/User/criar-novo-usuario.server';
+import criarNovoUsuario from '~/domain/Usuario/criar-novo-usuario.server';
 
 import cadastroLoginPageStyle from '~/assets/css/cadastro-login-page.css';
 import loading from '~/assets/img/loading.gif';
-import { Usuario } from '@prisma/client';
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [
     { title: 'Cadastro - ChaveCloud' },
     { name: 'description', content: 'A Núvem do Chave!' },
@@ -59,7 +58,7 @@ export const action: ActionFunction = async ({ request }) => {
   return json({ errors });
 };
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   // If the user is already authenticated redirect to /dashboard directly
   return await authenticator.isAuthenticated(request, {
     successRedirect: '/dashboard',

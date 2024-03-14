@@ -16,8 +16,8 @@ model Usuario {
   email         String   @unique
   senha         String   @db.VarChar(100)
   papel         Papel    @default(USUARIO)
-  criado_em     DateTime @default(now()) @db.Timestamp(0)
-  atualizado_em DateTime @updatedAt @db.Timestamp(0)
+  criado_em     DateTime @default(now()) @db.Timestamptz()
+  atualizado_em DateTime @updatedAt @db.Timestamptz()
   perfil        Perfil?
 }
 
@@ -26,9 +26,9 @@ model Usuario_Esqueci_Senha {
   usuarioId     Int
   token         String   @unique @default(uuid())
   ativo         Boolean  @default(true)
-  valido_ate    DateTime @default(now()) @db.Timestamp(0)
-  criado_em     DateTime @default(now()) @db.Timestamp(0)
-  atualizado_em DateTime @updatedAt @db.Timestamp(0)
+  valido_ate    DateTime @default(now()) @db.Timestamptz()
+  criado_em     DateTime @default(now()) @db.Timestamptz()
+  atualizado_em DateTime @updatedAt @db.Timestamptz()
 }
 
 enum Papel {
@@ -37,41 +37,144 @@ enum Papel {
 }
 
 model Perfil {
-  id            Int        @id @default(autoincrement())
-  nome          String
-  sobrenome     String
-  foto          String?    @db.VarChar(200)
-  grupo         Grupo      @default(VISITANTE)
-  email         String
-  celular       String
-  bio           String?    @db.Text
-  profissao     String?
-  membro        Boolean    @default(false)
+  id Int @id @default(autoincrement())
+
+  // INFORMAÇÕES BASICAS
+  nome              String
+  sobrenome         String
+  nome_completo     String
+  data_nascimento   DateTime  @db.Date
+  hora_nascimento   DateTime? @db.Time()
+  cidade_nascimento String?
+  estado_nascimento String?
+  estado_civil EstadoCivil?
+  nome_conjuge String?
+  rg                String?    @db.VarChar(15)
+  cpf               String?    @db.VarChar(15)
+  email             String?
+  celular           String?
+  telefone_fixo          String?
+  endereco          String?
+  nome_referencia       String?
+  email_referencia      String?
+  telefone_referencia   String?
+  endereco_referencia   String?
+  parentesco_referencia String?
+
+  grupo            Grupo     @default(VISITANTE)
+  membro           Boolean   @default(false)
+  data_fardamento  DateTime? @db.Date
+  local_fardamento String?
+
+  foto         String?       @db.VarChar(200)
+  bio          String?       @db.Text
+  profissao    String?
+  escolaridade Escolaridade?
+
   usuario       Usuario?   @relation(fields: [usuarioId], references: [id])
   usuarioId     Int?       @unique
-  criado_em     DateTime   @default(now()) @db.Timestamp(0)
-  atualizado_em DateTime   @updatedAt @db.Timestamp(0)
-  operacao      Operacao[]
+  criado_em     DateTime   @default(now()) @db.Timestamptz()
+  atualizado_em DateTime   @updatedAt @db.Timestamptz()
+  Ref_operacao  Operacao[] @relation("Ref_operacao")
+  Operacao      Operacao[] @relation("Operacao")
+}
+
+model Filhos {
+  id            Int @id @default(autoincrement())
+  perfilPaiId   Int
+  perfilFilhoId Int
 }
 
 model Operacao {
-  id        Int          @id @default(autoincrement())
-  descricao String?      @db.VarChar(200)
-  tipo      TipoOperacao @default(ENTRADA)
-  valor     Decimal      @db.Money
-  criado_em DateTime     @default(now()) @db.Timestamp(0)
-  perfil    Perfil?      @relation(fields: [perfilId], references: [id])
-  perfilId  Int?
+  id                Int          @id @default(autoincrement())
+  descricao         String?      @db.VarChar(200)
+  tipo              TipoOperacao @default(ENTRADA)
+  valor             Decimal      @db.Money
+  criado_em         DateTime     @default(now()) @db.Timestamptz()
+  perfil            Perfil?      @relation("Ref_operacao", fields: [perfilId], references: [id])
+  perfilId          Int?
+  criado_por_perfil Perfil       @relation("Operacao", fields: [criado_por], references: [id])
+  criado_por        Int
 
   @@index([perfilId])
+  @@index([criado_por])
 }
+
+model Eventos {
+  id            Int        @id @default(autoincrement())
+  titulo        String     @db.VarChar(200)
+  descricao     String?
+  tipo          TipoEvento
+  vestimenta    TipoFarda
+  data_hora     DateTime   @default(now()) @db.Timestamptz()
+  criado_em     DateTime   @default(now()) @db.Timestamptz()
+  atualizado_em DateTime   @updatedAt @db.Timestamptz()
+}
+
+// TO-DO: Entender questionarios (Anamnese e COVID)
+model Questionario {
+  id        Int                      @id @default(autoincrement())
+  nome      String                   @db.VarChar(200)
+  descricao String
+  criado_em DateTime                 @default(now()) @db.Timestamptz()
+  perguntas Questionario_Perguntas[]
+}
+
+model Questionario_Perguntas {
+  id             Int          @id @default(autoincrement())
+  pergunta       String       @db.VarChar(200)
+  criado_em      DateTime     @default(now()) @db.Timestamptz()
+  atualizado_em  DateTime     @updatedAt @db.Timestamptz()
+  questionario   Questionario @relation(fields: [questionarioId], references: [id])
+  questionarioId Int
+
+  @@index([questionarioId])
+}
+
+// model Questionario_Respostas_Usuario {
+//   id             Int @id @default(autoincrement())
+//   respostas
+//   questionarioId
+//   perfilId
+// }
 
 enum Grupo {
   FARDADO
   VISITANTE
 }
 
+enum EstadoCivil {
+  SOLTEIRO
+  CASADO
+  CONCUBINADO
+  VIUVO
+  DIVORCIADO
+}
+
+enum Escolaridade {
+  FUNDAMENTAL_INCOMPLETO
+  FUNDAMENTAL_COMPLETO
+  MEDIO_INCOMPLETO
+  MEDIO_COMPLETO
+  SUPERIOR_INCOMPLETO
+  SUPERIOR_COMPLETO
+  NAO_APLICA
+}
+
 enum TipoOperacao {
   ENTRADA
   SAIDA
+}
+
+enum TipoEvento {
+  TRABALHO_ABERTO
+  TRABALHO_FECHADO
+  EVENTO_ABERTO
+}
+
+enum TipoFarda {
+  FARDA_AZUL
+  FARDA_BRANCA
+  ROUPA_BRANCA
+  NAO_APLICA
 }

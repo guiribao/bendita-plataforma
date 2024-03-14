@@ -8,13 +8,14 @@ import type {
 import { Form, Link, json, redirect, useLoaderData, useNavigation } from '@remix-run/react';
 import { useState } from 'react';
 //@ts-ignore
-import CurrencyInput from 'react-currency-masked-input';
-import criarNovaOperacao from '~/domain/Operation/criar-nova-operacao.server';
+import { CurrencyInput } from 'react-currency-mask';
+import { authenticator } from '~/secure/authentication.server';
+import pegarOperacaoPorId from '~/domain/Financeiro/pegar-operacao-por-id.server';
+import atualizarOperacao from '~/domain/Financeiro/atualizar-operacao.server';
+
 import novaOperacaoPageStyle from '~/assets/css/nova-operacao-page.css';
 import loading from '~/assets/img/loading.gif';
-import pegarOperacoes from '~/domain/Operation/pegar-operacoes.server';
-import { authenticator } from '~/secure/authentication.server';
-import pegarOperacaoPorId from '~/domain/Operation/pegar-operacao-por-id.server';
+
 
 export const meta: MetaFunction = () => {
   return [
@@ -36,12 +37,13 @@ export const links: LinksFunction = () => {
 
 export async function action({ request }: ActionFunctionArgs) {
   let form = await request.formData();
+  let id = form.get('id') as string;
   let tipo = form.get('tipo') as TipoOperacao;
   let descricao = form.get('descricao') as string;
-  let valor = form.get('valor') as string;
+  let valor = form.get('valor_real') as string;
   let referenciaId = form.get('perfil') as number | null;
 
-  await criarNovaOperacao(tipo, descricao, valor, referenciaId);
+  await atualizarOperacao(id, tipo, descricao, valor, referenciaId);
 
   return redirect('/financeiro');
 }
@@ -61,8 +63,7 @@ export default function FinanceiroEditarIndex() {
 
   let [perfis, setPerfis] = useState([]);
   let [referencia, setReferencia] = useState(operacao.perfil);
-  
-  console.log(operacao.perfil)
+  let [valorReal, setValorReal] = useState(0);
 
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
@@ -82,11 +83,12 @@ export default function FinanceiroEditarIndex() {
       <div className='view_container'>
         <div className='view'>
           <div className='view-header'>
-            <h1> </h1>
+            <h1>Editar #{operacao.id}</h1>
             <Link to={'/financeiro'}>Voltar</Link>
           </div>
           <div className='view-body'>
             <Form method='post' className='form-financeiro'>
+              <input type='hidden' name='id' defaultValue={operacao.id} />
               {/* TIPO               */}
 
               <div className='tipo-operacao'>
@@ -133,11 +135,13 @@ export default function FinanceiroEditarIndex() {
               {/* Valor */}
               <div className='form-group valor'>
                 <label htmlFor='valor'>Valor da operação</label>
+                <input type='hidden' name='valor_real' defaultValue={valorReal} />
                 <CurrencyInput
                   name='valor'
-                  id='valor'
-                  placeholder='Algum valor em R$'
-                  defaultValue={operacao.valor}
+                  defaultValue={parseFloat(operacao.valor)}
+                  onChangeValue={(event, original, masked) => {
+                    setValorReal(Number(original));
+                  }}
                 ></CurrencyInput>
               </div>
 

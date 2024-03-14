@@ -3,8 +3,9 @@ const infos = [
   { path: '/autentica/cadastro', title: ' ' },
   { path: '/dashboard', title: 'Dashboard' },
   { path: '/calendario', title: 'Calendário' },
+  { path: '/calendario/novo', title: 'Novo evento' },
   { path: '/financeiro', title: 'Financeiro' },
-  { path: '/financeiro/novo', title: '+ Operação' },
+  { path: '/financeiro/novo', title: 'Nova operação' },
   { path: '/gente', title: 'Gente' },
   { path: '/perfil', title: 'Meu perfil' },
 ];

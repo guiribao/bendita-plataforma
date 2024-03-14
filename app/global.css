@@ -2,6 +2,7 @@
 
 :root {
   --main-color: #3772ff;
+  --alert-color: #d32f2f;
   --color-dark: #080708;
   --text-gray: #808080;
   --green: #06ba63;
@@ -47,7 +48,13 @@ body {
   font-size: 12px;
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 1208px) {
+  body {
+    font-size: 14px;
+  }
+}
+
+@media screen and (min-width: 1408px) {
   body {
     font-size: 16px;
   }
@@ -58,7 +65,8 @@ body {
 }
 
 .sidebar {
-  width: 260px;
+  width: 30%;
+  max-width: 260px;
   height: 100%;
   position: fixed;
   left: 0;
@@ -293,15 +301,15 @@ main {
     grid-template-columns: 1fr 1fr;
     gap: 15px;
   }
+  .cards {
+    grid-template-columns: 1fr 1fr;
+    gap: 35px;
+  }
 }
 
 @media screen and (min-width: 1300px) {
   .minicards {
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 35px;
-  }
-  .cards {
-    grid-template-columns: 1fr 1fr;
     gap: 35px;
   }
 }
@@ -349,6 +357,10 @@ main {
   border-radius: 30px;
 }
 
+.cards .full {
+  width: 100% !important;
+}
+
 .view_container .view {
   padding: 2em 3em;
 }
@@ -360,7 +372,7 @@ main {
 }
 .view-header .view-header-action {
   display: flex;
-  gap: .7em;
+  gap: 0.7em;
 }
 
 .view-header h1 {
@@ -371,7 +383,7 @@ main {
   padding: 0.5em 1.25em;
   background: var(--main-color);
   color: #fff;
-  font-size: .96em;
+  font-size: 0.96em;
   font-weight: 800;
   border: none;
   border-radius: 30px;
@@ -467,9 +479,6 @@ main {
   color: var(--main-dark);
 }
 
-@media screen and (min-width: 1300px) {
-}
-
 main.nao-autorizado {
   display: flex;
   flex-direction: column;
@@ -516,13 +525,13 @@ main.nao-autorizado .header {
   max-width: 180px;
   font-size: 1em;
   font-weight: 800;
-  padding: .6em 15px;
+  padding: 0.6em 15px;
   background: var(--main-color);
   border: 1px solid var(--main-color);
   border-radius: 30px;
   color: white;
   cursor: pointer;
-  transition: background-color .5s linear;
+  transition: background-color 0.5s linear;
 }
 
 .form-group button:disabled {
@@ -532,4 +541,16 @@ main.nao-autorizado .header {
 
 .form-group button img {
   width: 24px;
+}
+
+.form-group input {
+  padding: 0.3em 0.7em;
+  font-size: 1.2em;
+  outline: none;
+  border: 1px solid var(--text-gray);
+  border-radius: 6px;
+}
+
+.form-group input:focus {
+  border: 1px solid var(--main-color);
 }

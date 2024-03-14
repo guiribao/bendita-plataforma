@@ -1,13 +1,18 @@
-import { TipoOperacao } from '@prisma/client';
-import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
+import { TipoOperacao, Usuario } from '@prisma/client';
+import type {
+  ActionFunctionArgs,
+  LinksFunction,
+  MetaFunction,
+} from '@remix-run/node';
 import { Form, Link, redirect, useLoaderData, useNavigation } from '@remix-run/react';
 import { useState } from 'react';
 //@ts-ignore
-import CurrencyInput from 'react-currency-masked-input';
-import criarNovaOperacao from '~/domain/Operation/criar-nova-operacao.server';
+import { CurrencyInput } from 'react-currency-mask';
+import criarNovaOperacao from '~/domain/Financeiro/criar-nova-operacao.server';
+import { authenticator } from '~/secure/authentication.server';
+
 import novaOperacaoPageStyle from '~/assets/css/nova-operacao-page.css';
 import loading from '~/assets/img/loading.gif';
-import pegarOperacoes from '~/domain/Operation/pegar-operacoes.server';
 
 export const meta: MetaFunction = () => {
   return [
@@ -28,13 +33,16 @@ export const links: LinksFunction = () => {
 };
 
 export async function action({ request }: ActionFunctionArgs) {
+  //@ts-ignore
+  let usuario: Usuario = await authenticator.isAuthenticated(request);
+
   let form = await request.formData();
   let tipo = form.get('tipo') as TipoOperacao;
   let descricao = form.get('descricao') as string;
-  let valor = form.get('valor') as string;
+  let valor = form.get('valor_real') as string;
   let referenciaId = form.get('perfil') as number | null;
 
-  await criarNovaOperacao(tipo, descricao, valor, referenciaId);
+  await criarNovaOperacao(tipo, descricao, parseFloat(valor), referenciaId, usuario?.id);
 
   return redirect('/financeiro');
 }
@@ -42,7 +50,8 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function FinanceiroNovoIndex() {
   let [perfis, setPerfis] = useState([]);
   let [referencia, setReferencia] = useState(null);
-  
+  let [valorReal, setValorReal] = useState(0);
+
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
 
@@ -55,7 +64,7 @@ export default function FinanceiroNovoIndex() {
 
     setPerfis(response?.perfis);
   }
-  
+
   return (
     <main>
       <div className='view_container'>
@@ -111,11 +120,12 @@ export default function FinanceiroNovoIndex() {
               {/* Valor */}
               <div className='form-group valor'>
                 <label htmlFor='valor'>Valor da operação</label>
+                <input type='hidden' name='valor_real' defaultValue={valorReal} />
                 <CurrencyInput
                   name='valor'
-                  id='valor'
-                  placeholder='Algum valor em R$'
-                  defaultValue={''}
+                  onChangeValue={(event, original, masked) => {
+                    setValorReal(Number(original));
+                  }}
                 ></CurrencyInput>
               </div>
 

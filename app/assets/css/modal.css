@@ -1,0 +1,70 @@
+.modal-container {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, .3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: white;
+  border: 1px solid var(--main-dark);
+  width: 892px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-radius: 30px;
+}
+
+.modal-header {
+  padding: 10px;
+}
+
+.modal-header h2 {
+  color: var(--main-color);
+}
+
+.modal-body {
+  padding: 20px 10px;
+}
+
+.modal-body p {
+  color: var(--title-gray);
+  font-size: 1.2em;
+}
+
+.modal-body p strong {
+
+}
+
+.modal-footer {
+  padding: 20px 10px;
+}
+
+.modal-footer form {
+  display: flex;
+  gap: 1.5em;
+}
+
+.modal-footer .btnSim {
+  padding: 6px 16px;
+  background: var(--alert-color);
+  border: 1px solid var(--alert-color);
+  color: white;
+  border-radius: 30px;
+  cursor:pointer;
+}
+
+.modal-footer .btnNao {
+  padding: 6px 16px;
+  background: var(--main-dark);
+  border: 1px solid var(--main-dark);
+  color: var(--main-color);
+  border-radius: 30px;
+  cursor:pointer;
+}

@@ -6,7 +6,7 @@ interface MinicardsProps {
   data: object;
 }
 
-export default function Minicards({ data }: MinicardsProps) {
+export default function Minicards({ cards }: MinicardsProps) {
   let location = useLocation();
 
   // Minicards deve ser um componente universal
@@ -15,42 +15,17 @@ export default function Minicards({ data }: MinicardsProps) {
 
   return (
     <div className='minicards'>
-      <div className='card-single'>
-        <div>
-          <h1>{1}</h1>
-          <span>Fardados</span>
+      {cards.map((card) => (
+        <div className='card-single' key={card.label}>
+          <div>
+            <h1>{card.quantidade||0}</h1>
+            <span>{card.label}</span>
+          </div>
+          <div>
+            <span className={`${card.icon}`}></span>
+          </div>
         </div>
-        <div>
-          <span className='las la-star'></span>
-        </div>
-      </div>
-      <div className='card-single'>
-        <div>
-          <h1>{1}</h1>
-          <span>Visitantes</span>
-        </div>
-        <div>
-          <span className='las la-users'></span>
-        </div>
-      </div>
-      <div className='card-single'>
-        <div>
-          <h1>123</h1>
-          <span>Operações saída</span>
-        </div>
-        <div>
-          <span className='las la-file-export'></span>
-        </div>
-      </div>
-      <div className='card-single'>
-        <div>
-          <h1>642</h1>
-          <span>Operações entrada</span>
-        </div>
-        <div>
-          <span className='las la-file-import'></span>
-        </div>
-      </div>
+      ))}
     </div>
   );
 }

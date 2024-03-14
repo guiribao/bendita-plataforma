@@ -17,6 +17,7 @@ import {
 import stylesheet from '~/global.css';
 import toastyStyle from 'toastify-js/src/toastify.css';
 import line_awesome from '~/assets/lib/line-awesome/css/line-awesome.min.css';
+import modalStyle from '~/assets/css/modal.css';
 import Sidebar from './component/layout/Sidebar';
 import Layout from './component/layout/Layout';
 import Topbar from './component/layout/Topbar';
@@ -32,6 +33,7 @@ export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: line_awesome },
   { rel: 'stylesheet', href: stylesheet },
   { rel: 'stylesheet', href: toastyStyle },
+  { rel: 'stylesheet', href: modalStyle },
   ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
 ];
 

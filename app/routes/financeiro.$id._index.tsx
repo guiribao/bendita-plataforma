@@ -1,6 +1,5 @@
 import { TipoOperacao } from '@prisma/client';
 import type {
-  ActionFunctionArgs,
   LinksFunction,
   LoaderFunctionArgs,
   MetaFunction,
@@ -8,13 +7,13 @@ import type {
 import { Form, Link, json, redirect, useLoaderData, useNavigation } from '@remix-run/react';
 import { useState } from 'react';
 //@ts-ignore
-import CurrencyInput from 'react-currency-masked-input';
-import criarNovaOperacao from '~/domain/Operation/criar-nova-operacao.server';
-import novaOperacaoPageStyle from '~/assets/css/nova-operacao-page.css';
-import loading from '~/assets/img/loading.gif';
-import pegarOperacoes from '~/domain/Operation/pegar-operacoes.server';
+import {CurrencyInput} from 'react-currency-mask';
+
+
 import { authenticator } from '~/secure/authentication.server';
-import pegarOperacaoPorId from '~/domain/Operation/pegar-operacao-por-id.server';
+import pegarOperacaoPorId from '~/domain/Financeiro/pegar-operacao-por-id.server';
+
+import novaOperacaoPageStyle from '~/assets/css/nova-operacao-page.css';
 
 export const meta: MetaFunction = () => {
   return [
@@ -34,18 +33,6 @@ export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: novaOperacaoPageStyle }];
 };
 
-export async function action({ request }: ActionFunctionArgs) {
-  let form = await request.formData();
-  let tipo = form.get('tipo') as TipoOperacao;
-  let descricao = form.get('descricao') as string;
-  let valor = form.get('valor') as string;
-  let referenciaId = form.get('perfil') as number | null;
-
-  await criarNovaOperacao(tipo, descricao, valor, referenciaId);
-
-  return redirect('/financeiro');
-}
-
 export async function loader({ request, params }: LoaderFunctionArgs) {
   await authenticator.isAuthenticated(request, {
     failureRedirect: '/autentica/entrar',
@@ -61,8 +48,6 @@ export default function FinanceiroEditarIndex() {
 
   let [perfis, setPerfis] = useState([]);
   let [referencia, setReferencia] = useState(operacao.perfil);
-
-  console.log(operacao.perfil);
 
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
@@ -82,7 +67,7 @@ export default function FinanceiroEditarIndex() {
       <div className='view_container'>
         <div className='view'>
           <div className='view-header'>
-            <h1> </h1>
+            <h1>Operação: #{operacao.id}</h1>
             <div className='view-header-action'>
               <Link to={`/financeiro/${operacao.id}/editar`}>Editar</Link>
               <Link to={'/financeiro'}>Voltar</Link>
@@ -163,13 +148,6 @@ export default function FinanceiroEditarIndex() {
                     <small>Nenhum perfil vinculado a esta operação</small>
                   </div>
                 )}
-              </div>
-
-              <div className='form-group'>
-                <button type='submit' className='btn-cadastro' disabled={isSubmitting}>
-                  {!isSubmitting && 'Cadastrar'}
-                  {isSubmitting && <img src={loading} alt='Cadastrando' />}
-                </button>
               </div>
             </Form>
           </div>

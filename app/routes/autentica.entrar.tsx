@@ -2,7 +2,8 @@ import {
   ActionFunction,
   LinksFunction,
   LoaderArgs,
-  V2_MetaFunction,
+  LoaderFunctionArgs,
+  MetaFunction,
   json,
   redirect,
 } from '@remix-run/node';
@@ -15,7 +16,7 @@ import Constraints from '~/shared/Constraints';
 import Toastify from 'toastify-js';
 import { createBrowserHistory } from 'history';
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [{ title: 'Entrar - ChaveCloud' }, { name: 'description', content: 'A Núvem do Chave!' }];
 };
 
@@ -30,7 +31,7 @@ export const action: ActionFunction = async ({ request, context }) => {
   });
 };
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   let user = await authenticator.isAuthenticated(request, {
     successRedirect: '/dashboard',
   });
@@ -40,13 +41,12 @@ export async function loader({ request }: LoaderArgs) {
 export default function Entrar() {
   const navigation = useNavigation();
   const [searchParams] = useSearchParams();
-  
 
   const isSubmitting = navigation.state === 'submitting';
 
   useEffect(() => {
     const history = createBrowserHistory();
-    
+
     if (Boolean(searchParams.get('fail')) == true && navigation.state === 'idle') {
       Toastify({
         text: 'Vish. Suas credenciais não estão batendo ...',
@@ -55,7 +55,7 @@ export default function Entrar() {
           background: Constraints.NOTIFY_COLOR,
         },
       }).showToast();
-      history.replace('/autentica/entrar')
+      history.replace('/autentica/entrar');
     }
   }, [navigation.state]);
 

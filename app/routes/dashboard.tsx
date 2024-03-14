@@ -1,13 +1,15 @@
 //@ts-nocheck
 import { LoaderArgs, json } from '@remix-run/node';
-import type { V2_MetaFunction } from '@remix-run/node';
+import type { LoaderFunctionArgs, MetaFunctiond } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import Minicards from '~/component/Minicards';
-import pegarDadosOperacoesDashboard from '~/domain/Operation/pegar-dados-operacoes-dashboard.server';
+import pegarDadosOperacoesDashboard from '~/domain/Financeiro/pegar-dados-operacoes-dashboard.server';
 import pegarDadosPerfisDashboard from '~/domain/Perfil/pegar-dados-perfis-dashboard.server';
 import { authenticator } from '~/secure/authentication.server';
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [
     {
       charset: 'utf-8',
@@ -22,43 +24,56 @@ export const meta: V2_MetaFunction = () => {
   ];
 };
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   let usuario = await authenticator.isAuthenticated(request, {
     failureRedirect: '/autentica/entrar',
   });
 
   // - Get operacoes data
   let { ultimasDezOperacoes, qtdOperacoes } = await pegarDadosOperacoesDashboard();
-
+  console.log(qtdOperacoes);
   // - Get perfis data
-  let { ultimasDezPerfis, qtdPerfis } = await pegarDadosPerfisDashboard();
+  let { ultimosDezPerfis, qtdPerfis } = await pegarDadosPerfisDashboard();
   // - Get eventos data
 
-  return json({ usuario, ultimasDezOperacoes, qtdOperacoes, ultimasDezPerfis, qtdPerfis });
+  return json({ usuario, ultimasDezOperacoes, qtdOperacoes, ultimosDezPerfis, qtdPerfis });
 }
 
 export default function DashboardIndex() {
-  let { usuario, ultimasDezOperacoes, qtdOperacoes, ultimasDezPerfis, qtdPerfis } = useLoaderData();
+  let { usuario, ultimasDezOperacoes, qtdOperacoes, ultimosDezPerfis, qtdPerfis } = useLoaderData();
 
-  let qtdPerfilFardado = qtdPerfis.find(e => e.grupo == 'FARDADO')
-  let qtdPerfilVisitante = qtdPerfis.find(e => e.grupo == 'VISITANTE')
+  let qtdPerfilFardado = qtdPerfis.find((e) => e.grupo == 'FARDADO');
+  let qtdPerfilVisitante = qtdPerfis.find((e) => e.grupo == 'VISITANTE');
 
-  let qtdOperacaoEntrada = qtdOperacoes.find(e => e.grupo == 'ENTRADA')
-  let qtdOperacaoSaida = qtdOperacoes.find(e => e.grupo == 'SAIDA')
-
-  console.log(qtdPerfilFardado, qtdPerfilVisitante)
+  let qtdOperacaoEntrada = qtdOperacoes.find((e) => e.tipo == 'ENTRADA');
+  let qtdOperacaoSaida = qtdOperacoes.find((e) => e.tipo == 'SAIDA');
 
   let minicardsData = [
     {
-      quantidade: '',
-      label: '',
-      icon: '',
+      quantidade: qtdPerfilFardado?._count,
+      label: 'Fardados',
+      icon: 'las la-star',
+    },
+    {
+      quantidade: qtdPerfilVisitante?._count,
+      label: 'Visitantes',
+      icon: 'las la-users',
+    },
+    {
+      quantidade: qtdOperacaoEntrada?._count,
+      label: 'Entradas',
+      icon: 'las la-file-export',
+    },
+    {
+      quantidade: qtdOperacaoSaida?._count,
+      label: 'Saídas',
+      icon: 'las la-file-import',
     },
   ];
 
   return (
     <main>
-      <Minicards data={{ qtdOperacoes, qtdPerfis }} />
+      <Minicards cards={minicardsData} />
 
       <div className='cards'>
         <div className='view operacoes'>
@@ -71,55 +86,30 @@ export default function DashboardIndex() {
               <thead>
                 <tr>
                   <td>Id</td>
-                  <td>Data</td>
                   <td>Descrição</td>
-                  <td>Valor</td>
                   <td>Tipo</td>
+                  <td>Valor</td>
+                  <td>Data</td>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>101</td>
-                  <td>5 jun de 2023</td>
-                  <td>Lenha para feitio #55</td>
-                  <td>R$4.200,00</td>
-                  <td>Saída</td>
-                </tr>
-                <tr>
-                  <td>102</td>
-                  <td>4 jun de 2023</td>
-                  <td>Doação anônima</td>
-                  <td>R$5.000,00</td>
-                  <td>Entrada</td>
-                </tr>
-                <tr>
-                  <td>103</td>
-                  <td>4 jun de 2023</td>
-                  <td>Doação do Salomão</td>
-                  <td>R$700,00</td>
-                  <td>Entrada</td>
-                </tr>
-                <tr>
-                  <td>104</td>
-                  <td>3 jun de 2023</td>
-                  <td>Pagamento internet</td>
-                  <td>R$99,00</td>
-                  <td>Saída</td>
-                </tr>
-                <tr>
-                  <td>105</td>
-                  <td>2 jun de 2023</td>
-                  <td>Doação do Jesus</td>
-                  <td>R$10,00</td>
-                  <td>Entrada</td>
-                </tr>
-                <tr>
-                  <td>106</td>
-                  <td>2 jun de 2023</td>
-                  <td>Doação da Maria</td>
-                  <td>R$20,00</td>
-                  <td>Entrada</td>
-                </tr>
+                {ultimasDezOperacoes.map((operacao) => (
+                  <tr key={operacao.id}>
+                    <td>{operacao.id}</td>
+                    <td>{operacao.descricao}</td>
+                    <td>{operacao.tipo}</td>
+                    <td>{operacao.valor}</td>
+                    <td
+                      title={format(new Date(operacao.criado_em), "dd/MM/yyyy 'às' HH:mm", {
+                        locale: ptBR,
+                      })}
+                    >
+                      {format(new Date(operacao.criado_em), "d 'de' LLLL 'de' yyyy", {
+                        locale: ptBR,
+                      })}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -143,56 +133,25 @@ export default function DashboardIndex() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>2301</td>
-                  <td>Paloma Dutra</td>
-                  <td>Fardado</td>
-                  <td>
-                    <i className='las la-check'></i>
-                  </td>
-                  <td>20 mai de 2023 </td>
-                </tr>
-                <tr>
-                  <td>2302</td>
-                  <td>Guilherme Rosa</td>
-                  <td>Fardado</td>
-                  <td>
-                    <i className='las la-check'></i>
-                  </td>
-                  <td>20 mai de 2023 </td>
-                </tr>
-                <tr>
-                  <td>2303</td>
-                  <td>Bruno Soares</td>
-                  <td>Fardado</td>
-                  <td>
-                    <i className='las la-check'></i>
-                  </td>
-                  <td>20 mai de 2023 </td>
-                </tr>
-                <tr>
-                  <td>2304</td>
-                  <td>Janaina Camargo</td>
-                  <td>Fardado</td>
-                  <td>
-                    <i className='las la-check'></i>
-                  </td>
-                  <td>20 mai de 2023 </td>
-                </tr>
-                <tr>
-                  <td>2305</td>
-                  <td>José Maria</td>
-                  <td>Visitante</td>
-                  <td></td>
-                  <td>21 mai de 2023 </td>
-                </tr>
-                <tr>
-                  <td>2306</td>
-                  <td>Albertina Alves</td>
-                  <td>Visitante</td>
-                  <td></td>
-                  <td>21 mai de 2023 </td>
-                </tr>
+                {ultimosDezPerfis.map((perfil) => (
+                  <tr key={perfil.id}>
+                    <td>{perfil.id}</td>
+                    <td>
+                      {perfil.nome} {perfil.sobrenome}
+                    </td>
+                    <td>{perfil.grupo}</td>
+                    <td>{perfil.membro && <i className='las la-check'></i>}</td>
+                    <td
+                      title={format(new Date(perfil.criado_em), "dd/MM/yyyy 'às' HH:mm", {
+                        locale: ptBR,
+                      })}
+                    >
+                      {format(new Date(perfil.criado_em), "d 'de' LLLL 'de' yyyy", {
+                        locale: ptBR,
+                      })}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
