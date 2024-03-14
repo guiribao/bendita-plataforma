@@ -280,9 +280,9 @@ export default function PerfilEditar() {
               type='date'
               name='data_nascimento'
               id='data_nascimento'
-              defaultValue={format(perfil?.data_hora_nascimento, "yyyy'-'MM'-'dd", {
+              defaultValue={perfil?.data_hora_nascimento ? format(perfil?.data_hora_nascimento, "yyyy'-'MM'-'dd", {
                 locale: ptBR,
-              })}
+              }) : ''}
               autoComplete='off'
               required
             />
