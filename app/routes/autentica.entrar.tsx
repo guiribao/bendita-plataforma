@@ -30,16 +30,21 @@ export const links: LinksFunction = () => {
 };
 
 export const action: ActionFunction = async ({ request, context }) => {
+  let errors = {};
+
   try {
     await authenticator.authenticate('form', request, {
       successRedirect: '/dashboard',
       throwOnError: true,
     });
   } catch (error) {
-    return json({ errors: { message: error.message } });
-  }
+    if (error instanceof Response) {
+      return error;
+    }
 
-  return {};
+    errors = { message: error.message };
+    return { errors };
+  }
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -52,24 +57,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Entrar() {
   const actionData = useActionData();
   const navigation = useNavigation();
-  const [searchParams] = useSearchParams();
 
-  const isSubmitting = navigation.state === 'submitting';
-
-  useEffect(() => {
-    const history = createBrowserHistory();
-
-    if (Boolean(searchParams.get('fail')) == true && navigation.state === 'idle') {
-      Toastify({
-        text: 'Vish. Suas credenciais não estão batendo ...',
-        className: 'info',
-        style: {
-          background: window.CLOUD.NOTIFY_COLOR,
-        },
-      }).showToast();
-      history.replace('/autentica/entrar');
-    }
-  }, [navigation.state]);
+  const isSubmitting = ['submitting', 'loading'].includes(navigation.state);
 
   return (
     <main>
@@ -95,7 +84,7 @@ export default function Entrar() {
         <div className='form-group form-button'>
           <button type='submit' className='btn-cadastro' disabled={isSubmitting}>
             {!isSubmitting && 'Entrar'}
-            {isSubmitting && <img src={loading} alt='Carregando' />}
+            {isSubmitting && 'Entrando'}
           </button>
         </div>
       </Form>
