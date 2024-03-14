@@ -211,7 +211,9 @@ export default function PerfilEditar() {
               type='date'
               name='data_nascimento'
               id='data_nascimento'
-              defaultValue={perfil?.data_hora_nascimento.slice(0, 10) ?? ''}
+              defaultValue={
+                new Date(perfil?.data_hora_nascimento).toLocaleTimeString().slice(0, 10) ?? ''
+              }
               autoComplete='off'
               required
             />
