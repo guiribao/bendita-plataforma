@@ -12,6 +12,8 @@ import editarPerfil from '~/domain/Perfil/editar-perfil.server';
 import pegarPerfilPeloIdUsuario from '~/domain/Perfil/perfil-pelo-id-usuario.server';
 import { ChangeEvent, useState } from 'react';
 import { parseDateTimeTZ } from '~/shared/Date.util';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -205,15 +207,16 @@ export default function PerfilEditar() {
               autoComplete='off'
             />
           </div>
+          
           <div className='form-field'>
             <label htmlFor='data_nascimento'>Data de nascimento *</label>
             <input
               type='date'
               name='data_nascimento'
               id='data_nascimento'
-              defaultValue={
-                new Date(perfil?.data_hora_nascimento).toLocaleTimeString().slice(0, 10) ?? ''
-              }
+              defaultValue={format(perfil?.data_hora_nascimento, "yyyy'-'MM'-'dd", {
+                locale: ptBR,
+              })}
               autoComplete='off'
               required
             />
