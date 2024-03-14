@@ -98,7 +98,7 @@ export default function PerfilIndex() {
 
             {perfil?.hora_nascimento && (
               <div className='field'>
-                <label htmlFor='hora_nascimento'>Hora de nascimento</label>
+                <label htmlFor='hora_nascimento'>Data / Hora de nascimento</label>
                 <p id='hora_nascimento'>
                   {new Date(perfil?.hora_nascimento).toLocaleTimeString().slice(0, 5)}
                 </p>

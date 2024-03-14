@@ -44,7 +44,7 @@ model Perfil {
   sobrenome         String
   nome_completo     String
   data_nascimento   DateTime  @db.Date
-  hora_nascimento   DateTime? @db.Time()
+  hora_nascimento   DateTime? @db.Timetz()
   cidade_nascimento String?
   estado_nascimento String?
   estado_civil EstadoCivil?
