@@ -72,16 +72,6 @@ export default function PerfilIndex() {
           <div className='group-header'>
             <h1>Informações básicas</h1>
           </div>
-          <div className='field-group'>
-            <div className='field'>
-              <label htmlFor='nome'>Primeiro nome</label>
-              <p>{perfil?.nome}</p>
-            </div>
-            <div className='field'>
-              <label htmlFor='sobrenome'>Último nome</label>
-              <p id='sobrenome'>{perfil?.sobrenome}</p>
-            </div>
-          </div>
 
           <div className='field-group'>
             <div className='field'>

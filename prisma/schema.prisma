@@ -40,8 +40,6 @@ model Perfil {
   id Int @id @default(autoincrement())
 
   // INFORMAÇÕES BASICAS
-  nome                 String
-  sobrenome            String
   nome_completo        String
   data_hora_nascimento DateTime     @db.Timestamptz()
   cidade_nascimento    String?
@@ -56,6 +54,7 @@ model Perfil {
   cep                  String?
   endereco             String?
   numero               String?
+  complemento          String?
   bairro               String?
   cidade               String?
   estado               String?
@@ -151,7 +150,6 @@ enum Grupo {
 enum EstadoCivil {
   SOLTEIRO
   CASADO
-  CONCUBINADO
   VIUVO
   DIVORCIADO
 }

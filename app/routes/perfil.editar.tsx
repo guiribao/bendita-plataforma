@@ -59,6 +59,7 @@ export const action: ActionFunction = async ({ request }) => {
   const cep: string = form.get('cep') as string;
   const endereco: string = form.get('endereco') as string;
   const numero: string = form.get('numero') as string;
+  const complemento: string = form.get('complemento') as string;
   const bairro: string = form.get('bairro') as string;
   const cidade: string = form.get('cidade') as string;
   const estado: string = form.get('estado') as string;
@@ -115,6 +116,7 @@ export const action: ActionFunction = async ({ request }) => {
     cep,
     endereco,
     numero,
+    complemento,
     bairro,
     cidade,
     estado,
@@ -241,28 +243,6 @@ export default function PerfilEditar() {
           <div className='form-group-header'>
             <h2>Informações básicas</h2>
           </div>
-          <div className='form-field'>
-            <label htmlFor='nome'>Primeiro nome *</label>
-            <input
-              type='text'
-              name='nome'
-              id='nome'
-              defaultValue={perfil?.nome ?? ''}
-              autoComplete='off'
-              required
-            />
-          </div>
-          <div className='form-field'>
-            <label htmlFor='sobrenome'>Último nome *</label>
-            <input
-              type='text'
-              name='sobrenome'
-              id='sobrenome'
-              defaultValue={perfil?.sobrenome ?? ''}
-              autoComplete='off'
-              required
-            />
-          </div>
           <div className='form-field form-field-full'>
             <label htmlFor='nome_completo'>Nome completo *</label>
             <input
@@ -280,9 +260,13 @@ export default function PerfilEditar() {
               type='date'
               name='data_nascimento'
               id='data_nascimento'
-              defaultValue={perfil?.data_hora_nascimento ? format(perfil?.data_hora_nascimento, "yyyy'-'MM'-'dd", {
-                locale: ptBR,
-              }) : ''}
+              defaultValue={
+                perfil?.data_hora_nascimento
+                  ? format(perfil?.data_hora_nascimento, "yyyy'-'MM'-'dd", {
+                      locale: ptBR,
+                    })
+                  : ''
+              }
               autoComplete='off'
               required
             />
@@ -338,7 +322,6 @@ export default function PerfilEditar() {
               required
             >
               <option value={EstadoCivil.SOLTEIRO}>Solteiro(a)</option>
-              <option value={EstadoCivil.CONCUBINADO}>Concubinado</option>
               <option value={EstadoCivil.CASADO}>Casado(a)</option>
               <option value={EstadoCivil.VIUVO}>Viúvo(a)</option>
               <option value={EstadoCivil.DIVORCIADO}>Divorciado(a)</option>
@@ -479,6 +462,17 @@ export default function PerfilEditar() {
           </div>
 
           <div className='form-field'>
+            <label htmlFor='numero'>Complemento</label>
+            <input
+              type='text'
+              name='complemento'
+              id='complemento'
+              defaultValue={endereco?.complemento ?? ''}
+              autoComplete='off'
+              required
+            />
+          </div>
+          <div className='form-field'>
             <label htmlFor='bairro'>Bairro *</label>
             <input
               type='text'
@@ -530,7 +524,7 @@ export default function PerfilEditar() {
             />
           </div>
           <div className='form-field'>
-            <label htmlFor='email_referencia'>E-mail da referencia *</label>
+            <label htmlFor='email_referencia'>E-mail da referencia</label>
             <input
               type='email'
               name='email_referencia'
@@ -538,7 +532,6 @@ export default function PerfilEditar() {
               className='input-email'
               defaultValue={perfil?.email_referencia ?? ''}
               autoComplete='off'
-              required
             />
           </div>
           <div className='form-field'>
@@ -555,14 +548,13 @@ export default function PerfilEditar() {
             />
           </div>
           <div className='form-field'>
-            <label htmlFor='endereco_referencia'>Endereço da referencia *</label>
+            <label htmlFor='endereco_referencia'>Endereço da referencia</label>
             <input
               type='text'
               name='endereco_referencia'
               id='endereco_referencia'
               defaultValue={perfil?.endereco_referencia ?? ''}
               autoComplete='off'
-              required
             />
           </div>
           <div className='form-field'>
