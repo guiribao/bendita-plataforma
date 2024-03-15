@@ -142,6 +142,18 @@ export default function PerfilIndex() {
           <div className='group-header'>
             <h1>Endereço</h1>
           </div>
+
+          {!perfil?.cep &&
+            !perfil?.endereco &&
+            !perfil?.numero &&
+            !perfil?.bairro &&
+            !perfil?.cidade &&
+            !perfil?.estado && (
+              <div className='field'>
+                <p>Nenhum dado de endereço cadastrado</p>
+              </div>
+            )}
+
           {perfil?.cep && (
             <div className='field'>
               <label htmlFor='cep'>CEP</label>
@@ -149,18 +161,30 @@ export default function PerfilIndex() {
             </div>
           )}
 
-          <div className='field'>
-            <label htmlFor='endereco'>Endereço completo</label>
-            <p id='endereco'>
-              {perfil?.endereco + (perfil?.numero ? ', ' + perfil?.numero : '')}
-              {', ' + perfil?.bairro}
-              {', ' + perfil?.cidade}
-              {', ' + perfil?.estado}
+          {perfil?.endereco && !perfil?.numero && (
+            <div className='field'>
+              <label htmlFor='endereco'>Endereço</label>
+              <p id='endereco'>{perfil?.endereco}</p>
+            </div>
+          )}
 
-            </p>
-          </div>
+          {perfil?.cep &&
+            perfil?.endereco &&
+            perfil?.numero &&
+            perfil?.bairro &&
+            perfil?.cidade &&
+            perfil?.estado && (
+              <div className='field'>
+                <label htmlFor='endereco'>Endereço completo</label>
+                <p id='endereco'>
+                  {perfil?.endereco + (perfil?.numero ? ', ' + perfil?.numero : '')}
+                  {', ' + perfil?.bairro}
+                  {', ' + perfil?.cidade}
+                  {', ' + perfil?.estado}
+                </p>
+              </div>
+            )}
         </div>
-
         <div className='group view'>
           <div className='group-header'>
             <h1>Contato </h1>
