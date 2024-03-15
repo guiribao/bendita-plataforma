@@ -9,7 +9,8 @@ export default async function editarPerfil(perfil): Promise<Perfil | null> {
         id: perfil.id,
       },
       update: {
-        nome_completo: perfil.nome_completo,
+        primeiro_nome: perfil.primeiro_nome,
+        ultimo_nome: perfil.ultimo_nome,
         data_hora_nascimento: perfil.data_hora_nascimento,
         cidade_nascimento: perfil.cidade_nascimento || null,
         estado_nascimento: perfil.estado_nascimento || null,
@@ -42,7 +43,8 @@ export default async function editarPerfil(perfil): Promise<Perfil | null> {
         parentesco_referencia: perfil.parentesco_referencia || null,
       },
       create: {
-        nome_completo: perfil.nome_completo,
+        primeiro_nome: perfil.primeiro_nome,
+        ultimo_nome: perfil.ultimo_nome,
         data_hora_nascimento: perfil.data_hora_nascimento,
         cidade_nascimento: perfil.cidade_nascimento || null,
         estado_nascimento: perfil.estado_nascimento || null,

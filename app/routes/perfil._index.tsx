@@ -64,7 +64,7 @@ export default function PerfilIndex() {
     <main>
       <div className='header'>
         <img src={userImage} alt='Imagem do usuário' />
-        <h1>{perfil?.nome_completo}</h1>
+        <h1>{perfil?.primeiro_nome} {perfil?.ultimo_nome}</h1>
         <Link to='/perfil/editar'>Editar perfil</Link>
       </div>
       <div className='meu-perfil cards'>
@@ -72,7 +72,7 @@ export default function PerfilIndex() {
           <div className='group-header'>
             <h1>Informações básicas</h1>
           </div>
-
+          
           <div className='field-group'>
             <div className='field'>
               <label htmlFor='data_nascimento'>Data de nascimento</label>

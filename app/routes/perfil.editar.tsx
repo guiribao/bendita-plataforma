@@ -39,9 +39,8 @@ export const action: ActionFunction = async ({ request }) => {
 
   const perfilId: number = Number(form.get('perfilId') as string);
 
-  const nome: string = form.get('nome') as string;
-  const sobrenome: string = form.get('sobrenome') as string;
-  const nome_completo: string = form.get('nome_completo') as string;
+  const primeiro_nome: string = form.get('primeiro_nome') as string;
+  const ultimo_nome: string = form.get('ultimo_nome') as string;
 
   const email: string = form.get('email') as string;
 
@@ -90,7 +89,7 @@ export const action: ActionFunction = async ({ request }) => {
   let errors = {};
 
   if (
-    [!nome, !sobrenome, !nome_completo, !data_nascimento, !estado_civil, !endereco].some(Boolean)
+    [!primeiro_nome, !ultimo_nome, !data_nascimento, !estado_civil, !endereco].some(Boolean)
   ) {
     errors = Object.assign(errors, { data: 'Preencha todos os campos obrigatórios' });
     return json({ errors });
@@ -100,9 +99,8 @@ export const action: ActionFunction = async ({ request }) => {
 
   await editarPerfil({
     id: Number(perfilId),
-    nome,
-    sobrenome,
-    nome_completo,
+    primeiro_nome,
+    ultimo_nome,
     data_hora_nascimento,
     cidade_nascimento,
     estado_nascimento,
@@ -243,13 +241,24 @@ export default function PerfilEditar() {
           <div className='form-group-header'>
             <h2>Informações básicas</h2>
           </div>
-          <div className='form-field form-field-full'>
-            <label htmlFor='nome_completo'>Nome completo *</label>
+          <div className='form-field'>
+            <label htmlFor='primeiro_nome'>Primeiro nome *</label>
             <input
               type='text'
-              name='nome_completo'
-              id='nome_completo'
-              defaultValue={perfil?.nome_completo ?? ''}
+              name='primeiro_nome'
+              id='primeiro_nome'
+              defaultValue={perfil?.nome ?? ''}
+              autoComplete='off'
+            />
+          </div>
+
+          <div className='form-field'>
+            <label htmlFor='nome_completo'>Último nome *</label>
+            <input
+              type='text'
+              name='ultimo_nome'
+              id='ultimo_nome'
+              defaultValue={perfil?.sobrenome ?? ''}
               autoComplete='off'
             />
           </div>
@@ -328,7 +337,7 @@ export default function PerfilEditar() {
             </select>
           </div>
 
-          {(estadoCivil == EstadoCivil.CASADO || estadoCivil == EstadoCivil.CONCUBINADO) && (
+          {(estadoCivil == EstadoCivil.CASADO) && (
             <div className='form-field form-field-full'>
               <label htmlFor='nome_conjuge'>Nome conjuge</label>
               <input

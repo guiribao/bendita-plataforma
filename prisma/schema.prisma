@@ -40,7 +40,8 @@ model Perfil {
   id Int @id @default(autoincrement())
 
   // INFORMAÇÕES BASICAS
-  nome_completo        String
+  primeiro_nome        String
+  ultimo_nome          String
   data_hora_nascimento DateTime     @db.Timestamptz()
   cidade_nascimento    String?
   estado_nascimento    String?
