@@ -216,9 +216,15 @@ export default function PerfilEditar() {
       estado: uf,
     });
 
-    let numero = document.getElementById('numero');
-    numero.value = '';
-    numero?.focus();
+    if(logradouro) {
+      let numero = document.getElementById('numero');
+      numero.value = '';
+      numero?.focus();
+      return;
+    } 
+
+    let endereco = document.getElementById('endereco');
+    endereco?.focus();
   }
 
   return (
@@ -247,7 +253,7 @@ export default function PerfilEditar() {
               type='text'
               name='primeiro_nome'
               id='primeiro_nome'
-              defaultValue={perfil?.nome ?? ''}
+              defaultValue={perfil?.primeiro_nome ?? ''}
               autoComplete='off'
             />
           </div>
@@ -258,7 +264,7 @@ export default function PerfilEditar() {
               type='text'
               name='ultimo_nome'
               id='ultimo_nome'
-              defaultValue={perfil?.sobrenome ?? ''}
+              defaultValue={perfil?.ultimo_nome ?? ''}
               autoComplete='off'
             />
           </div>
