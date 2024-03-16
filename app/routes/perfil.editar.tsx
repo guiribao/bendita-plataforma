@@ -39,8 +39,8 @@ export const action: ActionFunction = async ({ request }) => {
 
   const perfilId: number = Number(form.get('perfilId') as string);
 
-  const primeiro_nome: string = form.get('primeiro_nome') as string;
-  const ultimo_nome: string = form.get('ultimo_nome') as string;
+  const nome: string = form.get('nome') as string;
+  const sobrenome: string = form.get('sobrenome') as string;
 
   const email: string = form.get('email') as string;
 
@@ -89,7 +89,7 @@ export const action: ActionFunction = async ({ request }) => {
   let errors = {};
 
   if (
-    [!primeiro_nome, !ultimo_nome, !data_nascimento, !estado_civil, !endereco].some(Boolean)
+    [!nome, !sobrenome, !data_nascimento, !estado_civil, !endereco].some(Boolean)
   ) {
     errors = Object.assign(errors, { data: 'Preencha todos os campos obrigatórios' });
     return json({ errors });
@@ -99,8 +99,8 @@ export const action: ActionFunction = async ({ request }) => {
 
   await editarPerfil({
     id: Number(perfilId),
-    primeiro_nome,
-    ultimo_nome,
+    nome,
+    sobrenome,
     data_hora_nascimento,
     cidade_nascimento,
     estado_nascimento,
@@ -248,12 +248,12 @@ export default function PerfilEditar() {
             <h2>Informações básicas</h2>
           </div>
           <div className='form-field'>
-            <label htmlFor='primeiro_nome'>Primeiro nome *</label>
+            <label htmlFor='nome'>Primeiro nome *</label>
             <input
               type='text'
-              name='primeiro_nome'
-              id='primeiro_nome'
-              defaultValue={perfil?.primeiro_nome ?? ''}
+              name='nome'
+              id='nome'
+              defaultValue={perfil?.nome ?? ''}
               autoComplete='off'
             />
           </div>
@@ -262,9 +262,9 @@ export default function PerfilEditar() {
             <label htmlFor='nome_completo'>Último nome *</label>
             <input
               type='text'
-              name='ultimo_nome'
-              id='ultimo_nome'
-              defaultValue={perfil?.ultimo_nome ?? ''}
+              name='sobrenome'
+              id='sobrenome'
+              defaultValue={perfil?.sobrenome ?? ''}
               autoComplete='off'
             />
           </div>

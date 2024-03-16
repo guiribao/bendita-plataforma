@@ -65,7 +65,7 @@ export default function PerfilIndex() {
       <div className='header'>
         <img src={userImage} alt='Imagem do usuário' />
         <h1>
-          {perfil?.primeiro_nome} {perfil?.ultimo_nome}
+          {perfil?.nome} {perfil?.sobrenome}
         </h1>
 
         <Link to='/perfil/editar'>Editar perfil</Link>

@@ -153,7 +153,7 @@ export default function DashboardIndex() {
                   <tr key={perfil.id}>
                     <td>{perfil.id}</td>
                     <td>
-                      {perfil.primeiro_nome} {perfil.ultimo_nome}
+                      {perfil.nome} {perfil.sobrenome}
                     </td>
                     <td>{perfil.grupo}</td>
                     <td>{perfil.membro && <i className='las la-check'></i>}</td>
