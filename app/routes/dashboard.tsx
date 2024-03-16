@@ -175,10 +175,17 @@ export default function DashboardIndex() {
                   <td>Id</td>
                   <td>Tipo</td>
                   <td>Titulo</td>
-                  <td style={{minWidth: '200px'}}>Data hora</td>
+                  <td style={{ minWidth: '200px' }}>Data hora</td>
                 </tr>
               </thead>
               <tbody>
+                {eventos.length === 0 && (
+                  <tr>
+                    <td style={{ textAlign: 'center' }} colSpan={7}>
+                      Nenhum dado foi encontrado
+                    </td>
+                  </tr>
+                )}
                 {eventos.map((evento) => (
                   <tr key={evento.id}>
                     <td>{evento.id}</td>
