@@ -12,7 +12,7 @@ export default async function pegarOperacaoPorId(operacaoId: string): Promise<Op
       }
     });
 
-    return curso || [];
+    return curso;
   } catch (error) {
     return null;
   }

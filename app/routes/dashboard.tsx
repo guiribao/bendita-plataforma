@@ -5,6 +5,7 @@ import { Link, useLoaderData } from '@remix-run/react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import Minicards from '~/component/Minicards';
+import pegarDadosEventosDashboard from '~/domain/Calendario/pegar-dados-eventos-dashboard.server';
 import pegarDadosOperacoesDashboard from '~/domain/Financeiro/pegar-dados-operacoes-dashboard.server';
 import pegarDadosPerfisDashboard from '~/domain/Perfil/pegar-dados-perfis-dashboard.server';
 import { authenticator } from '~/secure/authentication.server';
@@ -34,12 +35,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // - Get perfis data
   let { ultimosDezPerfis, qtdPerfis } = await pegarDadosPerfisDashboard();
   // - Get eventos data
+  let eventos = await pegarDadosEventosDashboard();
 
-  return json({ usuario, ultimasDezOperacoes, qtdOperacoes, ultimosDezPerfis, qtdPerfis });
+  return json({ usuario, ultimasDezOperacoes, qtdOperacoes, ultimosDezPerfis, qtdPerfis, eventos });
 }
 
 export default function DashboardIndex() {
-  let { usuario, ultimasDezOperacoes, qtdOperacoes, ultimosDezPerfis, qtdPerfis } = useLoaderData();
+  let { usuario, eventos, ultimasDezOperacoes, qtdOperacoes, ultimosDezPerfis, qtdPerfis } =
+    useLoaderData();
 
   let qtdPerfilFardado = qtdPerfis.find((e) => e.grupo == 'FARDADO');
   let qtdPerfilVisitante = qtdPerfis.find((e) => e.grupo == 'VISITANTE');
@@ -88,10 +91,16 @@ export default function DashboardIndex() {
                   <td>Descrição</td>
                   <td>Tipo</td>
                   <td>Valor</td>
-                  <td>Data</td>
                 </tr>
               </thead>
               <tbody>
+                {ultimasDezOperacoes.length === 0 && (
+                  <tr>
+                    <td style={{ textAlign: 'center' }} colSpan={5}>
+                      Nenhum dado foi encontrado
+                    </td>
+                  </tr>
+                )}
                 {ultimasDezOperacoes.map((operacao) => (
                   <tr key={operacao.id}>
                     <td>{operacao.id}</td>
@@ -118,7 +127,7 @@ export default function DashboardIndex() {
         <div className='view ultimos-perfis'>
           <div className='view-header'>
             <h1>Últimos perfis</h1>
-            <Link to={''}>Ver +</Link>
+            <Link to={''}>+ Gente</Link>
           </div>
           <div className='view-body'>
             <table>
@@ -128,27 +137,24 @@ export default function DashboardIndex() {
                   <td>Nome</td>
                   <td>Grupo</td>
                   <td>É membro</td>
-                  <td>Cadastro em</td>
                 </tr>
               </thead>
               <tbody>
+                {ultimosDezPerfis.length === 0 && (
+                  <tr>
+                    <td style={{ textAlign: 'center' }} colSpan={7}>
+                      Nenhum dado foi encontrado
+                    </td>
+                  </tr>
+                )}
                 {ultimosDezPerfis.map((perfil) => (
                   <tr key={perfil.id}>
                     <td>{perfil.id}</td>
                     <td>
-                      {perfil.nome} {perfil.sobrenome}
+                      {perfil.primeiro_nome} {perfil.ultimo_nome}
                     </td>
                     <td>{perfil.grupo}</td>
                     <td>{perfil.membro && <i className='las la-check'></i>}</td>
-                    <td
-                      title={format(new Date(perfil.criado_em), "dd/MM/yyyy 'às' HH:mm", {
-                        locale: ptBR,
-                      })}
-                    >
-                      {format(new Date(perfil.criado_em), "d 'de' LLLL 'de' yyyy", {
-                        locale: ptBR,
-                      })}
-                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -159,26 +165,36 @@ export default function DashboardIndex() {
 
         <div className='view eventos'>
           <div className='view-header'>
-            <h1>Eventos</h1>
-            <Link to={''}>Ver +</Link>
+            <h1>Próximos eventos</h1>
+            <Link to={''}>+ Calendário</Link>
           </div>
           <div className='view-body'>
             <table>
               <thead>
                 <tr>
                   <td>Id</td>
-                  <td>Data</td>
-                  <td>Nome</td>
                   <td>Tipo</td>
+                  <td>Titulo</td>
+                  <td style={{minWidth: '200px'}}>Data hora</td>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>101</td>
-                  <td>15 jun de 2023</td>
-                  <td>Concentração</td>
-                  <td>Trabalho</td>
-                </tr>
+                {eventos.map((evento) => (
+                  <tr key={evento.id}>
+                    <td>{evento.id}</td>
+                    <td>{evento.tipo}</td>
+                    <td>{evento.titulo}</td>
+                    <td
+                      title={format(new Date(evento.data_hora), "dd/MM/yyyy 'às' HH:mm", {
+                        locale: ptBR,
+                      })}
+                    >
+                      {format(new Date(evento.data_hora), "dd/MM/yyyy 'às' HH:mm", {
+                        locale: ptBR,
+                      })}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

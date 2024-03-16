@@ -1,11 +1,27 @@
 import { TipoEvento, TipoFarda } from '@prisma/client';
-import type { ActionFunctionArgs, LinksFunction, MetaFunction } from '@remix-run/node';
-import { Form, Link, json, redirect, useActionData, useNavigation } from '@remix-run/react';
+import type {
+  ActionFunctionArgs,
+  LinksFunction,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from '@remix-run/node';
+import {
+  Form,
+  Link,
+  json,
+  redirect,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from '@remix-run/react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { useState } from 'react';
 
 import novoEventoPageStyle from '~/assets/css/novo-evento-page.css';
 import loading from '~/assets/img/loading.gif';
 import criarNovoEvento from '~/domain/Calendario/criar-novo-evento.server';
+import pegarEventoPorId from '~/domain/Calendario/pegar-evento-por-id.server';
 import { authenticator } from '~/secure/authentication.server';
 
 export const meta: MetaFunction = () => {
@@ -61,11 +77,23 @@ export async function action({ request }: ActionFunctionArgs) {
   return redirect('/calendario');
 }
 
+export async function loader({ request, params }: LoaderFunctionArgs) {
+  await authenticator.isAuthenticated(request, {
+    failureRedirect: '/autentica/entrar',
+  });
+
+  let evento = await pegarEventoPorId(params.id);
+
+  return json({ evento });
+}
+
 export default function CalendarioNovoIndex() {
+  const { evento } = useLoaderData();
   const actionData = useActionData();
+
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
-  const [tipoEvento, setTipoEvento] = useState(TipoEvento.EVENTO);
+  const [tipoEvento, setTipoEvento] = useState(evento?.tipo);
 
   function setarTipoEvento(event) {
     let value = event.target.value;
@@ -94,7 +122,7 @@ export default function CalendarioNovoIndex() {
                     id='tipo_evento_evento'
                     name='tipo'
                     value={TipoEvento.EVENTO}
-                    defaultChecked={true}
+                    defaultChecked={evento.tipo == TipoEvento.EVENTO}
                     onChange={setarTipoEvento}
                   />
                   <label htmlFor='tipo_evento_evento'>Evento</label>
@@ -106,6 +134,7 @@ export default function CalendarioNovoIndex() {
                     id='tipo_evento_feirinha'
                     name='tipo'
                     value={TipoEvento.FEIRINHA}
+                    defaultChecked={evento.tipo == TipoEvento.FEIRINHA}
                     onChange={setarTipoEvento}
                   />
                   <label htmlFor='tipo_evento_feirinha'>Feirinha</label>
@@ -117,6 +146,7 @@ export default function CalendarioNovoIndex() {
                     id='tipo_evento_trabalho'
                     name='tipo'
                     value={TipoEvento.TRABALHO}
+                    defaultChecked={evento.tipo == TipoEvento.TRABALHO}
                     onChange={setarTipoEvento}
                   />
                   <label htmlFor='tipo_evento_trabalho'>Trabalho</label>
@@ -128,6 +158,7 @@ export default function CalendarioNovoIndex() {
                     id='tipo_evento_treinamento'
                     name='tipo'
                     value={TipoEvento.TREINAMENTO}
+                    defaultChecked={evento.tipo == TipoEvento.TREINAMENTO}
                     onChange={setarTipoEvento}
                   />
                   <label htmlFor='tipo_evento_treinamento'>Treinamento</label>
@@ -142,7 +173,7 @@ export default function CalendarioNovoIndex() {
                   id='titulo'
                   placeholder='ex: Concentração'
                   name='titulo'
-                  defaultValue={''}
+                  defaultValue={evento?.titulo}
                   required
                 />
               </div>
@@ -155,7 +186,7 @@ export default function CalendarioNovoIndex() {
                   id='descricao'
                   placeholder='ex: Caderno de hinos e orações'
                   name='descricao'
-                  defaultValue={''}
+                  defaultValue={evento?.descricao}
                   required
                 />
               </div>
@@ -163,7 +194,14 @@ export default function CalendarioNovoIndex() {
               {/* Data e hora */}
               <div className='form-group descricao'>
                 <label htmlFor='data'>Data hora</label>
-                <input type='datetime-local' id='data' name='data_hora' defaultValue={''} />
+                <input
+                  type='datetime-local'
+                  id='data'
+                  name='data_hora'
+                  defaultValue={format(evento.data_hora, "yyyy'-'MM'-'dd HH:mm", {
+                    locale: ptBR,
+                  })}
+                />
               </div>
 
               {/* TIPO VESTIMENTA*/}
@@ -174,15 +212,30 @@ export default function CalendarioNovoIndex() {
                   </div>
                   <div className='observacoes'>
                     <div className='form-group'>
-                      <input type='checkbox' id='trabalho_terco' name='trabalho_terco' />
+                      <input
+                        type='checkbox'
+                        id='trabalho_terco'
+                        name='trabalho_terco'
+                        defaultChecked={evento?.trabalho_terco}
+                      />
                       <label htmlFor='trabalho_terco'>Tem terço</label>
                     </div>
                     <div className='form-group'>
-                      <input type='checkbox' id='trabalho_missa' name='trabalho_missa' />
+                      <input
+                        type='checkbox'
+                        id='trabalho_missa'
+                        name='trabalho_missa'
+                        defaultChecked={evento?.trabalho_missa}
+                      />
                       <label htmlFor='trabalho_missa'>Tem missa</label>
                     </div>
                     <div className='form-group'>
-                      <input type='checkbox' id='trabalho_fechado' name='trabalho_fechado' />
+                      <input
+                        type='checkbox'
+                        id='trabalho_fechado'
+                        name='trabalho_fechado'
+                        defaultChecked={evento?.trabalho_fechado}
+                      />
                       <label htmlFor='trabalho_fechado'>Trabalho fechado</label>
                     </div>
                   </div>
@@ -194,6 +247,7 @@ export default function CalendarioNovoIndex() {
                         id='farda_azul'
                         name='vestimenta'
                         value={TipoFarda.FARDA_AZUL}
+                        defaultChecked={evento?.vestimenta == TipoFarda.FARDA_AZUL}
                       />
                       <label htmlFor='farda_azul'>Farda azul</label>
                     </div>
@@ -204,6 +258,7 @@ export default function CalendarioNovoIndex() {
                         id='farda_branca'
                         name='vestimenta'
                         value={TipoFarda.FARDA_BRANCA}
+                        defaultChecked={evento?.vestimenta == TipoFarda.FARDA_BRANCA}
                       />
                       <label htmlFor='farda_branca'>Farda branca</label>
                     </div>
@@ -214,6 +269,7 @@ export default function CalendarioNovoIndex() {
                         id='roupa_branca'
                         name='vestimenta'
                         value={TipoFarda.ROUPA_BRANCA}
+                        defaultChecked={evento?.vestimenta == TipoFarda.ROUPA_BRANCA}
                       />
                       <label htmlFor='roupa_branca'>Roupa branca</label>
                     </div>
@@ -224,7 +280,7 @@ export default function CalendarioNovoIndex() {
                         id='nao_aplica'
                         name='vestimenta'
                         value={TipoFarda.NAO_APLICA}
-                        defaultChecked={true}
+                        defaultChecked={evento?.vestimenta == TipoFarda.NAO_APLICA}
                       />
                       <label htmlFor='nao_aplica'>Não aplicável</label>
                     </div>

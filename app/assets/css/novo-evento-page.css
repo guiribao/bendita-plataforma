@@ -1,7 +1,7 @@
 .form-calendario {
   display: flex;
   flex-direction: column;
-  gap: 1em;
+  gap: 2em;
 }
 
 .form-calendario .form-group {
@@ -13,9 +13,10 @@
 .tipo-evento {
   display: flex;
   justify-content: start;
+  flex-wrap: wrap;
   font-size: 1.4em;
-  gap: 1em;
-  padding: 0.7em 0.3em;
+  gap: 0.79em;
+  padding: 0;
   border-radius: 2em;
 }
 
@@ -26,10 +27,11 @@
 }
 .tipo-evento input[type='radio'] {
   visibility: hidden;
+  position: absolute;
 }
 
 .tipo-evento input[type='radio'] ~ label {
-  min-width: 120px;
+  width: fit-content;
   padding: 0.3em 0.7em;
   border-radius: 2em;
   font-weight: 700;
@@ -45,4 +47,48 @@
 .tipo-evento input[type='radio']:checked ~ label {
   color: white;
   background: var(--main-color);
+}
+
+.detalhes-trabalho {
+  background: #ededed;
+  padding: 1em 1.3em;
+  border-radius: 0.3em;
+  gap: 1em;
+}
+
+.detalhes-trabalho h2 {
+  color: var(--text-gray);
+  margin: 0.3em 0 0.7em 0;
+}
+
+.detalhes-trabalho .form-group {
+  display: flex;
+  flex-direction: row;
+}
+
+.detalhes-trabalho .observacoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2em;
+  align-items: center;
+  align-content: center;
+  padding: 1em 0 2em 0;
+  font-size: 1.1em;
+  font-weight: 700;
+  line-height: 1.2em;
+  color: var(--text-gray);
+}
+
+@media screen and (min-width: 768px) {
+  .detalhes-trabalho .observacoes {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+input[type='checkbox'] {
+  width: 20px;
+}
+
+.detalhes-trabalho .observacoes input[type='checkbox']:checked ~ label {
+  color: var(--main-color);
 }

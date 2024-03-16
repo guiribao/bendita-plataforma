@@ -3,6 +3,7 @@ import { Form } from '@remix-run/react';
 function DeletingModal({ item, close, entity }) {
   const endPointMatch = {
     financeiro: { id: item.id, name: 'Operação financeira', endpoint: '/financeiro' },
+    calendario: { id: item.id, name: 'Evento', endpoint: '/calendario' }
   };
 
   function handleSubmit(event) {

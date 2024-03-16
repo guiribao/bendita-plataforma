@@ -106,14 +106,17 @@ model Operacao {
 }
 
 model Eventos {
-  id            Int        @id @default(autoincrement())
-  titulo        String     @db.VarChar(200)
-  descricao     String?
-  tipo          TipoEvento
-  vestimenta    TipoFarda
-  data_hora     DateTime   @default(now()) @db.Timestamptz()
-  criado_em     DateTime   @default(now()) @db.Timestamptz()
-  atualizado_em DateTime   @updatedAt @db.Timestamptz()
+  id               Int        @id @default(autoincrement())
+  titulo           String     @db.VarChar(200)
+  descricao        String?
+  tipo             TipoEvento
+  vestimenta       TipoFarda
+  trabalho_terco   Boolean    @default(false)
+  trabalho_missa   Boolean    @default(false)
+  trabalho_fechado Boolean    @default(false)
+  data_hora        DateTime   @default(now()) @db.Timestamptz()
+  criado_em        DateTime   @default(now()) @db.Timestamptz()
+  atualizado_em    DateTime   @updatedAt @db.Timestamptz()
 }
 
 // TO-DO: Entender questionarios (Anamnese e COVID)
@@ -171,9 +174,10 @@ enum TipoOperacao {
 }
 
 enum TipoEvento {
-  TRABALHO_ABERTO
-  TRABALHO_FECHADO
-  EVENTO_ABERTO
+  EVENTO
+  FEIRINHA
+  TRABALHO
+  TREINAMENTO
 }
 
 enum TipoFarda {

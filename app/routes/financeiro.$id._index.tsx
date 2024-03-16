@@ -46,21 +46,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export default function FinanceiroEditarIndex() {
   let { operacao } = useLoaderData();
 
-  let [perfis, setPerfis] = useState([]);
   let [referencia, setReferencia] = useState(operacao.perfil);
-
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === 'submitting';
-
-  async function buscarPerfil(e) {
-    let valorBusca = e.target.value;
-
-    let response = await fetch(`/buscar/perfil/${valorBusca}`, { method: 'get' }).then((res) =>
-      res.json()
-    );
-
-    setPerfis(response?.perfis);
-  }
 
   return (
     <main>

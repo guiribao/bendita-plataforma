@@ -1,11 +1,27 @@
 import { TipoEvento, TipoFarda } from '@prisma/client';
-import type { ActionFunctionArgs, LinksFunction, MetaFunction } from '@remix-run/node';
-import { Form, Link, json, redirect, useActionData, useNavigation } from '@remix-run/react';
+import type {
+  ActionFunctionArgs,
+  LinksFunction,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from '@remix-run/node';
+import {
+  Form,
+  Link,
+  json,
+  redirect,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from '@remix-run/react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { useState } from 'react';
 
 import novoEventoPageStyle from '~/assets/css/novo-evento-page.css';
 import loading from '~/assets/img/loading.gif';
 import criarNovoEvento from '~/domain/Calendario/criar-novo-evento.server';
+import pegarEventoPorId from '~/domain/Calendario/pegar-evento-por-id.server';
 import { authenticator } from '~/secure/authentication.server';
 
 export const meta: MetaFunction = () => {
@@ -26,51 +42,20 @@ export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: novoEventoPageStyle }];
 };
 
-export async function action({ request }: ActionFunctionArgs) {
-  //@ts-ignore
-  let usuario: Usuario = await authenticator.isAuthenticated(request);
-  let errors = {};
+export async function loader({ request, params }: LoaderFunctionArgs) {
+  await authenticator.isAuthenticated(request, {
+    failureRedirect: '/autentica/entrar',
+  });
 
-  let form = await request.formData();
+  let evento = await pegarEventoPorId(params.id);
 
-  let tipoEvento = form.get('tipo') as string;
-  let titulo = form.get('titulo') as string;
-  let descricao = form.get('descricao') as string;
-  let dataHora = form.get('data_hora') as string;
-  let vestimenta = form.get('vestimenta') as string;
-  let trabalho_terco = form.get('trabalho_terco');
-  let trabalho_missa = form.get('trabalho_missa');
-  let trabalho_fechado = form.get('trabalho_fechado');
-
-  if ([!dataHora, !titulo, !descricao].some(Boolean)) {
-    errors = Object.assign(errors, { data: 'Preencha todos os campos obrigatórios' });
-    return json({ errors });
-  }
-
-  await criarNovoEvento(
-    tipoEvento,
-    titulo,
-    descricao,
-    vestimenta,
-    dataHora,
-    !!trabalho_terco,
-    !!trabalho_missa,
-    !!trabalho_fechado
-  );
-
-  return redirect('/calendario');
+  return json({ evento });
 }
 
 export default function CalendarioNovoIndex() {
-  const actionData = useActionData();
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === 'submitting';
-  const [tipoEvento, setTipoEvento] = useState(TipoEvento.EVENTO);
+  const { evento } = useLoaderData();
+  const [tipoEvento, setTipoEvento] = useState(evento?.tipo);
 
-  function setarTipoEvento(event) {
-    let value = event.target.value;
-    if (value != tipoEvento) setTipoEvento(value);
-  }
 
   return (
     <main>
@@ -82,9 +67,6 @@ export default function CalendarioNovoIndex() {
           </div>
           <div className='view-body'>
             <Form method='post' className='form-calendario'>
-              {actionData?.errors?.data && (
-                <p className='mensagem-erro'>{actionData?.errors?.data}</p>
-              )}
               {/* TIPO EVENTO*/}
 
               <div className='tipo-evento'>
@@ -94,8 +76,7 @@ export default function CalendarioNovoIndex() {
                     id='tipo_evento_evento'
                     name='tipo'
                     value={TipoEvento.EVENTO}
-                    defaultChecked={true}
-                    onChange={setarTipoEvento}
+                    checked={evento.tipo == TipoEvento.EVENTO}
                   />
                   <label htmlFor='tipo_evento_evento'>Evento</label>
                 </div>
@@ -106,7 +87,7 @@ export default function CalendarioNovoIndex() {
                     id='tipo_evento_feirinha'
                     name='tipo'
                     value={TipoEvento.FEIRINHA}
-                    onChange={setarTipoEvento}
+                    checked={evento.tipo == TipoEvento.FEIRINHA}
                   />
                   <label htmlFor='tipo_evento_feirinha'>Feirinha</label>
                 </div>
@@ -117,7 +98,7 @@ export default function CalendarioNovoIndex() {
                     id='tipo_evento_trabalho'
                     name='tipo'
                     value={TipoEvento.TRABALHO}
-                    onChange={setarTipoEvento}
+                    checked={evento.tipo == TipoEvento.TRABALHO}
                   />
                   <label htmlFor='tipo_evento_trabalho'>Trabalho</label>
                 </div>
@@ -128,7 +109,8 @@ export default function CalendarioNovoIndex() {
                     id='tipo_evento_treinamento'
                     name='tipo'
                     value={TipoEvento.TREINAMENTO}
-                    onChange={setarTipoEvento}
+                    checked={evento.tipo == TipoEvento.TREINAMENTO}
+                    
                   />
                   <label htmlFor='tipo_evento_treinamento'>Treinamento</label>
                 </div>
@@ -142,8 +124,9 @@ export default function CalendarioNovoIndex() {
                   id='titulo'
                   placeholder='ex: Concentração'
                   name='titulo'
-                  defaultValue={''}
+                  defaultValue={evento?.titulo}
                   required
+                  disabled
                 />
               </div>
 
@@ -155,34 +138,58 @@ export default function CalendarioNovoIndex() {
                   id='descricao'
                   placeholder='ex: Caderno de hinos e orações'
                   name='descricao'
-                  defaultValue={''}
-                  required
+                  defaultValue={evento?.descricao}
+                  disabled
                 />
               </div>
 
               {/* Data e hora */}
               <div className='form-group descricao'>
                 <label htmlFor='data'>Data hora</label>
-                <input type='datetime-local' id='data' name='data_hora' defaultValue={''} />
+                <input
+                  type='datetime-local'
+                  id='data'
+                  name='data_hora'
+                  defaultValue={format(evento.data_hora, "yyyy'-'MM'-'dd HH:mm", {
+                    locale: ptBR,
+                  })}
+                  disabled
+                />
               </div>
 
               {/* TIPO VESTIMENTA*/}
-              {tipoEvento == TipoEvento.TRABALHO && (
+              {evento?.tipo == TipoEvento.TRABALHO && (
                 <div className='detalhes-trabalho'>
                   <div>
                     <h2>Detalhes do trabalho</h2>
                   </div>
                   <div className='observacoes'>
                     <div className='form-group'>
-                      <input type='checkbox' id='trabalho_terco' name='trabalho_terco' />
+                      <input
+                        type='checkbox'
+                        id='trabalho_terco'
+                        name='trabalho_terco'
+                        checked={evento?.trabalho_terco}
+                      />
                       <label htmlFor='trabalho_terco'>Tem terço</label>
                     </div>
                     <div className='form-group'>
-                      <input type='checkbox' id='trabalho_missa' name='trabalho_missa' />
+                      <input
+                        type='checkbox'
+                        id='trabalho_missa'
+                        name='trabalho_missa'
+                        checked={evento?.trabalho_missa}
+                      />
                       <label htmlFor='trabalho_missa'>Tem missa</label>
                     </div>
                     <div className='form-group'>
-                      <input type='checkbox' id='trabalho_fechado' name='trabalho_fechado' />
+                      <input
+                        type='checkbox'
+                        id='trabalho_fechado'
+                        name='trabalho_fechado'
+                        checked={evento?.trabalho_fechado}
+                        
+                      />
                       <label htmlFor='trabalho_fechado'>Trabalho fechado</label>
                     </div>
                   </div>
@@ -194,6 +201,7 @@ export default function CalendarioNovoIndex() {
                         id='farda_azul'
                         name='vestimenta'
                         value={TipoFarda.FARDA_AZUL}
+                        checked={evento?.vestimenta == TipoFarda.FARDA_AZUL}
                       />
                       <label htmlFor='farda_azul'>Farda azul</label>
                     </div>
@@ -204,6 +212,7 @@ export default function CalendarioNovoIndex() {
                         id='farda_branca'
                         name='vestimenta'
                         value={TipoFarda.FARDA_BRANCA}
+                        checked={evento?.vestimenta == TipoFarda.FARDA_BRANCA}
                       />
                       <label htmlFor='farda_branca'>Farda branca</label>
                     </div>
@@ -214,6 +223,7 @@ export default function CalendarioNovoIndex() {
                         id='roupa_branca'
                         name='vestimenta'
                         value={TipoFarda.ROUPA_BRANCA}
+                        checked={evento?.vestimenta == TipoFarda.ROUPA_BRANCA}
                       />
                       <label htmlFor='roupa_branca'>Roupa branca</label>
                     </div>
@@ -224,20 +234,13 @@ export default function CalendarioNovoIndex() {
                         id='nao_aplica'
                         name='vestimenta'
                         value={TipoFarda.NAO_APLICA}
-                        defaultChecked={true}
+                        checked={evento?.vestimenta == TipoFarda.NAO_APLICA}
                       />
                       <label htmlFor='nao_aplica'>Não aplicável</label>
                     </div>
                   </div>
                 </div>
               )}
-
-              <div className='form-group'>
-                <button type='submit' className='btn-cadastro' disabled={isSubmitting}>
-                  {!isSubmitting && 'Cadastrar'}
-                  {isSubmitting && <img src={loading} alt='Cadastrando' />}
-                </button>
-              </div>
             </Form>
           </div>
           <div className='view-footer'></div>

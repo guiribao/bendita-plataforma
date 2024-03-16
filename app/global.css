@@ -350,7 +350,6 @@ main {
 
 .view-body table {
   width: 100%;
-  min-width: 700px;
   margin-left: -1.4em;
   overflow-x: scroll;
   border-collapse: collapse;
@@ -521,7 +520,6 @@ main.nao-autorizado .header {
   }
 }
 
-
 @media screen and (min-width: 1024px) {
   #nav-toggle:not(:checked) + .sidebar {
     width: 75px;
@@ -565,7 +563,6 @@ main.nao-autorizado .header {
   }
 }
 
-
 @media screen and (min-width: 1300px) {
   header label {
     cursor: pointer;
@@ -576,4 +573,31 @@ main.nao-autorizado .header {
     grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 35px;
   }
+}
+
+.mensagem-erro {
+  width: fit-content;
+  background: linear-gradient(
+    90deg,
+    rgba(227, 10, 10, 1) 0%,
+    rgba(187, 52, 47, 1) 35%,
+    rgba(255, 74, 66, 1) 100%
+  );
+  margin: 0 auto;
+  padding: 0.5em 0.6em;
+  font-size: 1.15em;
+  font-weight: 700;
+  text-align: center;
+  color: #f1f1f1;
+  border-radius: 30px;
+}
+
+.mensagem-sucesso {
+  width: fit-content;
+  background-color: var(--green);
+  margin: 0 auto;
+  padding: 0.5em 0;
+  text-align: center;
+  color: #f9f9f9;
+  border-radius: 6px;
 }

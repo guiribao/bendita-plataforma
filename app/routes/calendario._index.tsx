@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useState } from 'react';
 import DeletingModal from '~/component/DeletingModal';
+import deletarEventoPorId from '~/domain/Calendario/deletar-evento-por-id.server';
 import pegarEventos from '~/domain/Calendario/pegar-eventos.server';
 
 export const meta: MetaFunction = () => {
@@ -21,17 +22,17 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-// export const action: ActionFunction = async ({ request }) => {
-//   const form = await request.formData();
-//   const action: string = form.get('_action') as string;
-//   const operacaoId: number = Number(form.get('resource') as string);
+export const action: ActionFunction = async ({ request }) => {
+  const form = await request.formData();
+  const action: string = form.get('_action') as string;
+  const eventoId: number = Number(form.get('resource') as string);
 
-//   if (action !== 'delete' && !operacaoId) return { success: false };
+  if (action !== 'delete' && !eventoId) return { success: false };
 
-//   await deletarOperacaoPorId(operacaoId);
+  await deletarEventoPorId(eventoId);
 
-//   return { success: true };
-// };
+  return { success: true };
+};
 
 export async function loader({ request }: LoaderFunctionArgs) {
   // TODO: Limit e offset - Paginação
@@ -42,6 +43,21 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function CalendarioIndex() {
   const { eventos } = useLoaderData();
+
+  const TIPO_EVENTO_ENUM = {
+    EVENTO: 'Evento',
+    FEIRINHA: 'Feirinha',
+    TRABALHO: 'Trabalho',
+    FEITIO: 'Feitio',
+    TREINAMENTO: 'Treinamento',
+  };
+
+  const VESTIMENTA_ENUM = {
+    FARDA_AZUL: 'Farda azul',
+    FARDA_BRANCA: 'Farda branca',
+    ROUPA_BRANCA: 'Roupas claras/brancas',
+    NAO_APLICA: 'Não aplicável',
+  };
 
   // Dados para modal deletar item
   let [deleting, setDeleting] = useState(false);
@@ -74,42 +90,40 @@ export default function CalendarioIndex() {
               <thead>
                 <tr>
                   <td>Id</td>
+                  <td>Tipo de evento</td>
                   <td>Nome</td>
                   <td>Descrição</td>
-                  <td>Tipo de evento</td>
                   <td>Vestimenta</td>
-                  <td>Data e hora</td>
-                  <td>Criado em</td>
-                  <td></td>
+                  <td style={{ minWidth: '220px', textAlign: 'center' }}>Data hora</td>
+                  <td style={{ textAlign: 'right' }}></td>
                 </tr>
               </thead>
               <tbody>
+                {eventos.length === 0 && (
+                  <tr>
+                    <td style={{ textAlign: 'center' }} colSpan={7}>
+                      Nenhum dado foi encontrado
+                    </td>
+                  </tr>
+                )}
                 {eventos.map((evento) => (
                   <tr key={evento.id}>
                     <td>{evento.id}</td>
+                    <td>{evento.tipo}</td>
                     <td>{evento.titulo}</td>
                     <td>{evento.descricao}</td>
-                    <td>{evento.tipo}</td>
-                    <td>{evento.vestimenta}</td>
+                    <td>{VESTIMENTA_ENUM[evento.vestimenta]}</td>
                     <td
+                      style={{ textAlign: 'center' }}
                       title={format(new Date(evento.data_hora), "dd/MM/yyyy 'às' HH:mm", {
                         locale: ptBR,
                       })}
                     >
-                      {format(new Date(evento.data_hora), "d 'de' LLLL 'de' yyyy", {
+                      {format(new Date(evento.data_hora), 'dd/MM/yyyy HH:mm', {
                         locale: ptBR,
                       })}
                     </td>
-                    <td
-                      title={format(new Date(evento.criado_em), "dd/MM/yyyy 'às' HH:mm", {
-                        locale: ptBR,
-                      })}
-                    >
-                      {format(new Date(evento.criado_em), "d 'de' LLLL 'de' yyyy", {
-                        locale: ptBR,
-                      })}
-                    </td>
-                    <td id='actions'>
+                    <td id='actions' style={{ textAlign: 'right' }}>
                       <Link to={`/calendario/${evento.id}`}>
                         <i className='lar la-eye'></i>
                       </Link>

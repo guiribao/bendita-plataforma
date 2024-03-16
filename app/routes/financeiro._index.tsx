@@ -92,6 +92,13 @@ export default function FinanceiroIndex() {
                 </tr>
               </thead>
               <tbody>
+                {operacoes.length === 0 && (
+                  <tr>
+                    <td style={{ textAlign: 'center' }} colSpan={7}>
+                      Nenhum dado foi encontrado
+                    </td>
+                  </tr>
+                )}
                 {operacoes.map((operacao) => (
                   <tr key={operacao.id}>
                     <td>{operacao.id}</td>
