@@ -478,7 +478,6 @@ export default function PerfilEditar() {
               id='complemento'
               defaultValue={endereco?.complemento ?? ''}
               autoComplete='off'
-              required
             />
           </div>
           <div className='form-field'>

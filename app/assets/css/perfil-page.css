@@ -1,14 +1,18 @@
 main {
   height: 100vh;
   display: flex;
-  flex-direction: column;
-  gap: 40px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1em;
   margin-top: 0;
   padding: 2em 1.5em;
   background: #f9f9f9;
 }
 .header {
+  width: 100%;
   text-align: center;
+  padding-bottom: 2em;
 }
 .header img {
   width: 128px;
@@ -40,7 +44,16 @@ main {
 }
 
 .meu-perfil {
-  padding: 1em 0;
+  width: 100%;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+@media screen and (min-width: 768px) {
+  .meu-perfil {
+    max-width: 43%;
+  }
 }
 
 .meu-perfil .group {

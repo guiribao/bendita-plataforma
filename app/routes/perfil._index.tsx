@@ -64,7 +64,10 @@ export default function PerfilIndex() {
     <main>
       <div className='header'>
         <img src={userImage} alt='Imagem do usuário' />
-        <h1>{perfil?.primeiro_nome} {perfil?.ultimo_nome}</h1>
+        <h1>
+          {perfil?.primeiro_nome} {perfil?.ultimo_nome}
+        </h1>
+
         <Link to='/perfil/editar'>Editar perfil</Link>
       </div>
       <div className='meu-perfil cards'>
@@ -72,7 +75,7 @@ export default function PerfilIndex() {
           <div className='group-header'>
             <h1>Informações básicas</h1>
           </div>
-          
+
           <div className='field-group'>
             <div className='field'>
               <label htmlFor='data_nascimento'>Data de nascimento</label>
@@ -127,8 +130,27 @@ export default function PerfilIndex() {
             )}
           </div>
         </div>
+        <div className='group view contato'>
+          <div className='group-header'>
+            <h1>Contato </h1>
+          </div>
+          <div className='field'>
+            <label htmlFor='email'>E-mail</label>
+            <p id='email'>{perfil?.email}</p>
+          </div>
+          <div className='field'>
+            <label htmlFor='celular'>Celular</label>
+            <p id='celular'>{perfil?.celular}</p>
+          </div>
 
-        <div className='group view'>
+          {perfil?.telefone_fixo && (
+            <div className='field'>
+              <label htmlFor='telefone_fixo'>Telefone fixo</label>
+              <p id='telefone_fixo'>{perfil?.telefone_fixo}</p>
+            </div>
+          )}
+        </div>
+        <div className='group view endereco'>
           <div className='group-header'>
             <h1>Endereço</h1>
           </div>
@@ -175,28 +197,17 @@ export default function PerfilIndex() {
               </div>
             )}
         </div>
-        <div className='group view'>
+        <div className='group view bio'>
           <div className='group-header'>
-            <h1>Contato </h1>
+            <h1>Bio</h1>
           </div>
-          <div className='field'>
-            <label htmlFor='email'>E-mail</label>
-            <p id='email'>{perfil?.email}</p>
+          <div className='field-bio'>
+            <p id='bio'>{perfil?.bio}</p>
           </div>
-          <div className='field'>
-            <label htmlFor='celular'>Celular</label>
-            <p id='celular'>{perfil?.celular}</p>
-          </div>
-
-          {perfil?.telefone_fixo && (
-            <div className='field'>
-              <label htmlFor='telefone_fixo'>Telefone fixo</label>
-              <p id='telefone_fixo'>{perfil?.telefone_fixo}</p>
-            </div>
-          )}
         </div>
-
-        <div className='group view'>
+      </div>
+      <div className='meu-perfil cards'>
+        <div className='group view documentos'>
           <div className='group-header'>
             <h1>Documentos</h1>
           </div>
@@ -209,8 +220,7 @@ export default function PerfilIndex() {
             <p id='cpf'>{perfil?.cpf}</p>
           </div>
         </div>
-
-        <div className='group view'>
+        <div className='group view referencia'>
           <div className='group-header'>
             <h1>Contato referencia</h1>
           </div>
@@ -250,8 +260,7 @@ export default function PerfilIndex() {
             </div>
           )}
         </div>
-
-        <div className='group view'>
+        <div className='group view social'>
           <div className='group-header'>
             <h1>Social</h1>
           </div>
@@ -299,15 +308,8 @@ export default function PerfilIndex() {
             <p id='membro'>{perfil?.membro ? 'Sim' : 'Não'}</p>
           </div>
         </div>
-        <div className='group view'>
-          <div className='group-header'>
-            <h1>Bio</h1>
-          </div>
-          <div className='field-bio'>
-            <p id='bio'>{perfil?.bio}</p>
-          </div>
-        </div>
       </div>
+
       <div className='footer'></div>
     </main>
   );
