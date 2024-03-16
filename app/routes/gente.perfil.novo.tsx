@@ -36,7 +36,7 @@ export async function loader({ request }: LoaderArgs) {
 export default function GenteIndex() {
   let { usuario, perfil } = useLoaderData();
   const navigation = useNavigation();
-  const isSubmitting = navigation.state === 'submitting';
+  const isSubmitting = ['submitting', 'loading'].includes(navigation.state);
 
   return (
     <main>

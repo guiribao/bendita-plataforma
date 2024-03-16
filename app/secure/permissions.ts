@@ -6,8 +6,8 @@ export const PaginasAbertas = [
   '/autentica/senha',
   '/autentica/sair',
   '/perfil',
-  '/perfil/editar'
-]
+  '/perfil/editar',
+];
 
 export const PaginasPorPapel = {
   '/autorizacao': [Papel.USUARIO, Papel.ADMIN],
@@ -15,7 +15,7 @@ export const PaginasPorPapel = {
   '/dashboard': [Papel.USUARIO, Papel.ADMIN],
   '/calendario': [Papel.USUARIO, Papel.ADMIN],
   '/calendario/novo': [Papel.ADMIN],
-  '/calendario/{id}': [Papel.ADMIN],
+  '/calendario/{id}': [Papel.ADMIN, Papel.USUARIO],
   '/financeiro': [Papel.ADMIN],
   '/financeiro/novo': [Papel.ADMIN],
   '/financeiro/{id}': [Papel.ADMIN],
@@ -24,16 +24,15 @@ export const PaginasPorPapel = {
 
 export const FuncionalidadesPorPapel = {
   '/dashboard': {
-    CARDS_GENTE: [Papel.ADMIN],
-    ULTIMOS_USUARIOS: [Papel.ADMIN],
+    MINICARDS_ADM: [Papel.ADMIN],
+    ULTIMOS_PERFIS: [Papel.USUARIO, Papel.ADMIN],
     ULTIMAS_OPERACOES: [Papel.ADMIN],
     PROXIMOS_EVENTOS: [Papel.USUARIO, Papel.ADMIN],
   },
   '/calendario': {
-    PROXIMOS_EVENTOS: [Papel.USUARIO, Papel.ADMIN],
-    VISAO_CALENDARIO_MES: [Papel.USUARIO, Papel.ADMIN],
-    VISAO_CALENDARIO_PASSADO: [Papel.ADMIN],
     CRIAR_EVENTO: [Papel.ADMIN],
+    DELETAR_EVENTO: [Papel.ADMIN],
+    EDITAR_EVENTO: [Papel.ADMIN],
   },
   '/financeiro': {
     CARDS_FINANCEIRO_MES: [Papel.ADMIN],

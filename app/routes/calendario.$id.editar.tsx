@@ -20,7 +20,8 @@ import { useState } from 'react';
 
 import novoEventoPageStyle from '~/assets/css/novo-evento-page.css';
 import loading from '~/assets/img/loading.gif';
-import criarNovoEvento from '~/domain/Calendario/criar-novo-evento.server';
+import DeletingModal from '~/component/DeletingModal';
+import editarEvento from '~/domain/Calendario/editar-evento.server';
 import pegarEventoPorId from '~/domain/Calendario/pegar-evento-por-id.server';
 import { authenticator } from '~/secure/authentication.server';
 
@@ -57,13 +58,14 @@ export async function action({ request }: ActionFunctionArgs) {
   let trabalho_terco = form.get('trabalho_terco');
   let trabalho_missa = form.get('trabalho_missa');
   let trabalho_fechado = form.get('trabalho_fechado');
+  let eventoId = form.get('eventoId');
 
   if ([!dataHora, !titulo, !descricao].some(Boolean)) {
     errors = Object.assign(errors, { data: 'Preencha todos os campos obrigatórios' });
     return json({ errors });
   }
 
-  await criarNovoEvento(
+  await editarEvento(
     tipoEvento,
     titulo,
     descricao,
@@ -71,7 +73,8 @@ export async function action({ request }: ActionFunctionArgs) {
     dataHora,
     !!trabalho_terco,
     !!trabalho_missa,
-    !!trabalho_fechado
+    !!trabalho_fechado,
+    Number(eventoId)
   );
 
   return redirect('/calendario');
@@ -92,7 +95,7 @@ export default function CalendarioNovoIndex() {
   const actionData = useActionData();
 
   const navigation = useNavigation();
-  const isSubmitting = navigation.state === 'submitting';
+  const isSubmitting = ['submitting', 'loading'].includes(navigation.state);
   const [tipoEvento, setTipoEvento] = useState(evento?.tipo);
 
   function setarTipoEvento(event) {
@@ -100,13 +103,33 @@ export default function CalendarioNovoIndex() {
     if (value != tipoEvento) setTipoEvento(value);
   }
 
+  // Dados para modal deletar item
+  let [deleting, setDeleting] = useState(false);
+  let [deletingItem, setDeletingItem] = useState({});
+
+  function openDeletingModal(evento) {
+    setDeleting(true);
+    setDeletingItem(evento);
+  }
+
+  function closeDeletingModal() {
+    setDeleting(false);
+    setDeletingItem({});
+  }
+
   return (
     <main>
+      {deleting && (
+        <DeletingModal item={deletingItem} close={closeDeletingModal} entity='calendario' />
+      )}
       <div className='view_container'>
         <div className='view'>
           <div className='view-header'>
             <h1> </h1>
-            <Link to={'/calendario'}>Voltar</Link>
+
+            <div className='view-header-actions'>
+              <Link to={'/calendario'}>Voltar</Link>
+            </div>
           </div>
           <div className='view-body'>
             <Form method='post' className='form-calendario'>
@@ -114,6 +137,14 @@ export default function CalendarioNovoIndex() {
                 <p className='mensagem-erro'>{actionData?.errors?.data}</p>
               )}
               {/* TIPO EVENTO*/}
+
+              <input
+                type='hidden'
+                value={evento?.id}
+                name='eventoId'
+                id='eventoId'
+                autoComplete='off'
+              />
 
               <div className='tipo-evento'>
                 <div className='form-group evento'>
@@ -288,10 +319,20 @@ export default function CalendarioNovoIndex() {
                 </div>
               )}
 
-              <div className='form-group'>
+              <div className='form-group btn-save-delete'>
                 <button type='submit' className='btn-cadastro' disabled={isSubmitting}>
-                  {!isSubmitting && 'Cadastrar'}
-                  {isSubmitting && <img src={loading} alt='Cadastrando' />}
+                  {!isSubmitting && 'Salvar'}
+                  {isSubmitting && 'Salvando'}
+                </button>
+
+                <button
+                  type='button'
+                  className='delete-button'
+                  data-role='DELETAR_EVENTO'
+                  onClick={() => openDeletingModal(evento)}
+                >
+                  <i className='las la-trash'></i>
+                  Excluir
                 </button>
               </div>
             </Form>

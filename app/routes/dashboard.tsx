@@ -4,11 +4,14 @@ import type { LoaderFunctionArgs, MetaFunctiond } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useEffect } from 'react';
 import Minicards from '~/component/Minicards';
 import pegarDadosEventosDashboard from '~/domain/Calendario/pegar-dados-eventos-dashboard.server';
 import pegarDadosOperacoesDashboard from '~/domain/Financeiro/pegar-dados-operacoes-dashboard.server';
 import pegarDadosPerfisDashboard from '~/domain/Perfil/pegar-dados-perfis-dashboard.server';
 import { authenticator } from '~/secure/authentication.server';
+import { handleElements } from '~/secure/authorization';
+import { FuncionalidadesPorPapel } from '~/secure/permissions';
 
 export const meta: MetaFunction = () => {
   return [
@@ -37,12 +40,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // - Get eventos data
   let eventos = await pegarDadosEventosDashboard();
 
-  return json({ usuario, ultimasDezOperacoes, qtdOperacoes, ultimosDezPerfis, qtdPerfis, eventos });
+  return json({ ultimasDezOperacoes, qtdOperacoes, ultimosDezPerfis, qtdPerfis, eventos });
 }
 
 export default function DashboardIndex() {
-  let { usuario, eventos, ultimasDezOperacoes, qtdOperacoes, ultimosDezPerfis, qtdPerfis } =
-    useLoaderData();
+  let { eventos, ultimasDezOperacoes, qtdOperacoes, ultimosDezPerfis, qtdPerfis } = useLoaderData();
 
   let qtdPerfilFardado = qtdPerfis.find((e) => e.grupo == 'FARDADO');
   let qtdPerfilVisitante = qtdPerfis.find((e) => e.grupo == 'VISITANTE');
@@ -75,10 +77,10 @@ export default function DashboardIndex() {
 
   return (
     <main>
-      <Minicards cards={minicardsData} />
+      <Minicards cards={minicardsData} role='MINICARDS_ADM' />
 
       <div className='cards'>
-        <div className='view operacoes'>
+        <div className='view operacoes' data-role='ULTIMAS_OPERACOES'>
           <div className='view-header'>
             <h1>Últimas operações</h1>
             <Link to={'/financeiro'}>+ Financeiro</Link>
@@ -124,10 +126,10 @@ export default function DashboardIndex() {
           <div className='view-footer'></div>
         </div>
 
-        <div className='view ultimos-perfis'>
+        <div className='view ultimos-perfis' data-role='ULTIMOS_PERFIS'>
           <div className='view-header'>
             <h1>Últimos perfis</h1>
-            <Link to={''}>+ Gente</Link>
+            <Link to={'/gente'}>+ Gente</Link>
           </div>
           <div className='view-body'>
             <table>
@@ -163,10 +165,10 @@ export default function DashboardIndex() {
           <div className='view-footer'></div>
         </div>
 
-        <div className='view eventos'>
+        <div className='view eventos' data-role='PROXIMOS_EVENTOS'>
           <div className='view-header'>
             <h1>Próximos eventos</h1>
-            <Link to={''}>+ Calendário</Link>
+            <Link to={'/calendario'}>+ Calendário</Link>
           </div>
           <div className='view-body'>
             <table>
@@ -175,7 +177,7 @@ export default function DashboardIndex() {
                   <td>Id</td>
                   <td>Tipo</td>
                   <td>Titulo</td>
-                  <td style={{ minWidth: '200px' }}>Data hora</td>
+                  <td style={{ minWidth: '180px' }}>Data hora</td>
                 </tr>
               </thead>
               <tbody>

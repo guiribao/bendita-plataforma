@@ -1,9 +1,8 @@
 //@ts-nocheck
 import { Papel } from '@prisma/client';
-import { PaginasAbertas, PaginasPorPapel } from './permissions';
+import { FuncionalidadesPorPapel, PaginasAbertas, PaginasPorPapel } from './permissions';
 
 export function canView(pathname: string, papelUsuario: string) {
-  
   const papeisPermitidos = PaginasPorPapel[pathname];
   return (
     papeisPermitidos?.includes(papelUsuario) ||
@@ -38,4 +37,20 @@ export function specificDynPages(pathname: string, papelUsuario: string) {
   }
 
   return canI;
+}
+
+export function handleElements(document, papel, path) {
+  let saned = '/' + path.split('/')[1];
+  let elements = document.querySelectorAll('[data-role]');
+  if (!FuncionalidadesPorPapel[saned]) return;
+  let funcionalidades = FuncionalidadesPorPapel[saned];
+  
+  for (let element of elements) {
+    if (
+      !funcionalidades[element.dataset.role] ||
+      !funcionalidades[element.dataset.role].includes(papel)
+    ) {
+      element.parentNode?.removeChild(element);
+    }
+  }
 }

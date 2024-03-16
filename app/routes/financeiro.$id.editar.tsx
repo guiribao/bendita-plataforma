@@ -66,7 +66,7 @@ export default function FinanceiroEditarIndex() {
   let [valorReal, setValorReal] = useState(0);
 
   const navigation = useNavigation();
-  const isSubmitting = navigation.state === 'submitting';
+  const isSubmitting = ['submitting', 'loading'].includes(navigation.state);
 
   async function buscarPerfil(e) {
     let valorBusca = e.target.value;

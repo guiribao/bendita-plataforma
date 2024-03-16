@@ -20,7 +20,7 @@ import { useState } from 'react';
 
 import novoEventoPageStyle from '~/assets/css/novo-evento-page.css';
 import loading from '~/assets/img/loading.gif';
-import criarNovoEvento from '~/domain/Calendario/criar-novo-evento.server';
+import criarNovoEvento from '~/domain/Calendario/editar-evento.server';
 import pegarEventoPorId from '~/domain/Calendario/pegar-evento-por-id.server';
 import { authenticator } from '~/secure/authentication.server';
 
@@ -63,7 +63,10 @@ export default function CalendarioNovoIndex() {
         <div className='view'>
           <div className='view-header'>
             <h1> </h1>
-            <Link to={'/calendario'}>Voltar</Link>
+            <div className='view-header-actions'>
+              <Link data-role="EDITAR_EVENTO" to={`/calendario/${evento.id}/editar`}>Editar</Link>
+              <Link to={'/calendario'}>Voltar</Link>
+            </div>
           </div>
           <div className='view-body'>
             <Form method='post' className='form-calendario'>

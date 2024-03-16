@@ -54,7 +54,7 @@ export default function FinanceiroEditarIndex() {
         <div className='view'>
           <div className='view-header'>
             <h1>Operação: #{operacao.id}</h1>
-            <div className='view-header-action'>
+            <div className='view-header-actions'>
               <Link to={`/financeiro/${operacao.id}/editar`}>Editar</Link>
               <Link to={'/financeiro'}>Voltar</Link>
             </div>

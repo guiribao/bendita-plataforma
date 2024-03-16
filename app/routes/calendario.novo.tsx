@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import novoEventoPageStyle from '~/assets/css/novo-evento-page.css';
 import loading from '~/assets/img/loading.gif';
-import criarNovoEvento from '~/domain/Calendario/criar-novo-evento.server';
+import editarEvento from '~/domain/Calendario/editar-evento.server';
 import { authenticator } from '~/secure/authentication.server';
 
 export const meta: MetaFunction = () => {
@@ -42,12 +42,13 @@ export async function action({ request }: ActionFunctionArgs) {
   let trabalho_missa = form.get('trabalho_missa');
   let trabalho_fechado = form.get('trabalho_fechado');
 
+
   if ([!dataHora, !titulo, !descricao].some(Boolean)) {
     errors = Object.assign(errors, { data: 'Preencha todos os campos obrigatórios' });
     return json({ errors });
   }
 
-  await criarNovoEvento(
+  await editarEvento(
     tipoEvento,
     titulo,
     descricao,
@@ -55,7 +56,8 @@ export async function action({ request }: ActionFunctionArgs) {
     dataHora,
     !!trabalho_terco,
     !!trabalho_missa,
-    !!trabalho_fechado
+    !!trabalho_fechado,
+    0
   );
 
   return redirect('/calendario');
@@ -235,7 +237,7 @@ export default function CalendarioNovoIndex() {
               <div className='form-group'>
                 <button type='submit' className='btn-cadastro' disabled={isSubmitting}>
                   {!isSubmitting && 'Cadastrar'}
-                  {isSubmitting && <img src={loading} alt='Cadastrando' />}
+                  {isSubmitting && 'Cadastrando'}
                 </button>
               </div>
             </Form>

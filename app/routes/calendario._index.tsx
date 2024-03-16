@@ -83,7 +83,7 @@ export default function CalendarioIndex() {
         <div className='view'>
           <div className='view-header'>
             <h1> </h1>
-            <Link to={'/calendario/novo'}>+ Evento</Link>
+            <Link data-role="CRIAR_EVENTO" to={'/calendario/novo'}>+ Evento</Link>
           </div>
           <div className='view-body'>
             <table>
@@ -127,10 +127,10 @@ export default function CalendarioIndex() {
                       <Link to={`/calendario/${evento.id}`}>
                         <i className='lar la-eye'></i>
                       </Link>
-                      <Link to={`/calendario/${evento.id}/editar`}>
+                      <Link data-role="EDITAR_EVENTO" to={`/calendario/${evento.id}/editar`}>
                         <i className='las la-pen'></i>
                       </Link>
-                      <button onClick={() => openDeletingModal(evento)}>
+                      <button data-role="DELETAR_EVENTO" onClick={() => openDeletingModal(evento)}>
                         <i className='las la-trash'></i>
                       </button>
                     </td>

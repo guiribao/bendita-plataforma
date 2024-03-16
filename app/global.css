@@ -321,10 +321,6 @@ main {
   justify-content: space-between;
   align-items: center;
 }
-.view-header .view-header-action {
-  display: flex;
-  gap: 0.7em;
-}
 
 .view-header h1 {
   color: var(--color-dark);
@@ -343,6 +339,26 @@ main {
   display: flex;
   gap: 1em;
 }
+
+.view-body .form-group.btn-save-delete {
+  flex-direction: row;
+  gap: 1em;
+}
+
+.form-group .delete-button {
+  width: fit-content;
+  max-width: 180px;
+  font-size: 1em;
+  font-weight: 800;
+  padding: 0.6em 15px;
+  background: var(--alert-color);
+  border: 1px solid var(--alert-color);
+  border-radius: 30px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.5s linear;
+}
+
 .view-body {
   padding: 0.5em 0;
   overflow-x: auto;
@@ -484,9 +500,9 @@ main.nao-autorizado .header {
   transition: background-color 0.5s linear;
 }
 
-.form-group button:disabled {
-  border: 5px solid var(--text-gray);
-  background-color: var(--title-gray);
+button:disabled {
+  border: 1px solid #9cbafe;
+  background-color: #9cbafe;
 }
 
 .form-group button img {
@@ -498,7 +514,7 @@ main.nao-autorizado .header {
   font-size: 1.2em;
   outline: none;
   border: 1px solid var(--text-gray);
-  border-radius: 6px;
+  border-radius: 30px;
 }
 
 .form-group input:focus {
@@ -599,5 +615,5 @@ main.nao-autorizado .header {
   padding: 0.5em 0;
   text-align: center;
   color: #f9f9f9;
-  border-radius: 6px;
+  border-radius: 30px;
 }

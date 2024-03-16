@@ -4,9 +4,10 @@ import { ReactElement, useEffect } from 'react';
 
 interface MinicardsProps {
   data: object;
+  role: string;
 }
 
-export default function Minicards({ cards }: MinicardsProps) {
+export default function Minicards({ cards, role }: MinicardsProps) {
   let location = useLocation();
 
   // Minicards deve ser um componente universal
@@ -14,7 +15,7 @@ export default function Minicards({ cards }: MinicardsProps) {
   // quantidade, label, icon
 
   return (
-    <div className='minicards'>
+    <div className='minicards' data-role={role}>
       {cards.map((card) => (
         <div className='card-single' key={card.label}>
           <div>

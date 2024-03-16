@@ -181,7 +181,7 @@ export default function PerfilEditar() {
   });
 
   const navigation = useNavigation();
-  const isSubmitting = navigation.state === 'submitting';
+  const isSubmitting = ['submitting', 'loading'].includes(navigation.state);
 
   function handleEmail(e: ChangeEvent<HTMLInputElement>) {
     _setEmail(e.target.value);

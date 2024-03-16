@@ -212,10 +212,6 @@ main {
   transition: background-color 0.5s linear;
 }
 
-.form-perfil .form-field button:disabled {
-  border: 5px solid #608ef8;
-  background-color: #608ef8;
-}
 .form-perfil .form-field button img {
   width: 24px;
 }

@@ -68,7 +68,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Cadastro() {
   const actionData = useActionData();
   const navigation = useNavigation();
-  const isSubmitting = navigation.state === 'submitting';
+  const isSubmitting = ['submitting', 'loading'].includes(navigation.state);
 
   return (
     <main>
