@@ -88,9 +88,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   let errors = {};
 
-  if (
-    [!nome, !sobrenome, !data_nascimento, !estado_civil, !endereco].some(Boolean)
-  ) {
+  if ([!nome, !sobrenome, !data_nascimento, !estado_civil, !endereco].some(Boolean)) {
     errors = Object.assign(errors, { data: 'Preencha todos os campos obrigatórios' });
     return json({ errors });
   }
@@ -216,15 +214,15 @@ export default function PerfilEditar() {
       estado: uf,
     });
 
-    if(logradouro) {
-      let numero = document.getElementById('numero');
-      numero.value = '';
-      numero?.focus();
+    if (!logradouro) {
+      let endereco = document.getElementById('endereco');
+      endereco?.focus();
       return;
-    } 
+    }
 
-    let endereco = document.getElementById('endereco');
-    endereco?.focus();
+    let numero = document.getElementById('numero');
+    numero.value = '';
+    numero?.focus();
   }
 
   return (
@@ -343,7 +341,7 @@ export default function PerfilEditar() {
             </select>
           </div>
 
-          {(estadoCivil == EstadoCivil.CASADO) && (
+          {estadoCivil == EstadoCivil.CASADO && (
             <div className='form-field form-field-full'>
               <label htmlFor='nome_conjuge'>Nome conjuge</label>
               <input
