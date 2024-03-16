@@ -4,7 +4,7 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "build": "npx remix build",
+    "build": "remix build",
     "dev": "remix dev --manual",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/index.js",
@@ -49,6 +49,6 @@
     "typescript": "^5.1.6"
   },
   "engines": {
-    "node": "=18.0.0"
+    "node": ">=18.0.0"
   }
 }
