@@ -246,7 +246,7 @@ export default function PerfilEditar() {
             <h2>Informações básicas</h2>
           </div>
           <div className='form-field'>
-            <label htmlFor='nome'>Primeiro nome *</label>
+            <label htmlFor='nome'>Nome *</label>
             <input
               type='text'
               name='nome'
@@ -257,7 +257,7 @@ export default function PerfilEditar() {
           </div>
 
           <div className='form-field'>
-            <label htmlFor='nome_completo'>Último nome *</label>
+            <label htmlFor='nome_completo'>Sobrenome *</label>
             <input
               type='text'
               name='sobrenome'

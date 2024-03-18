@@ -1,4 +1,10 @@
-import { ActionFunction, LinksFunction, LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node';
+import {
+  ActionFunction,
+  LinksFunction,
+  LoaderFunctionArgs,
+  MetaFunction,
+  json,
+} from '@remix-run/node';
 import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
 
 import { authenticator } from '~/secure/authentication.server';
@@ -6,6 +12,9 @@ import criarNovoUsuario from '~/domain/Usuario/criar-novo-usuario.server';
 
 import cadastroPageStyle from '~/assets/css/cadastro-page.css';
 import loading from '~/assets/img/loading.gif';
+import InputMask from 'react-input-mask';
+import perfilPorEmailCpf from '~/domain/Perfil/perfil-por-email-cpf.serve';
+import atualizarUsuarioDoPerfil from '~/domain/Perfil/atualizar-usuario-do-perfil.server';
 
 export const meta: MetaFunction = () => {
   return [
@@ -22,11 +31,13 @@ export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
   const email: string = form.get('email') as string;
   const senha: string = form.get('senha') as string;
+  const cpf: string = form.get('cpf') as string;
   const senhaRepetida: string = form.get('senha_repetida') as string;
 
   let errors = {
     email: !email,
     senha: !senha,
+    cpf: !cpf,
   };
 
   if (Object.values(errors).some(Boolean)) {
@@ -44,7 +55,30 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors });
   }
 
+  let perfilSeExistir = await perfilPorEmailCpf(email, cpf);
+
+  if (email == perfilSeExistir?.email) {
+    return json({
+      errors: {
+        data: 'Já existe uma conta associada a este e-mail, solicite recuperação de senha.',
+      },
+    });
+  }
+
+  if (perfilSeExistir?.cpf == cpf && perfilSeExistir?.usuarioId) {
+    return json({
+      errors: {
+        data:
+          perfilSeExistir?.usuario.email +
+          ', é você? Caso sim, utilize o campo esqueci minha senha.',
+      },
+    });
+  }
+
   let criarUsuario = await criarNovoUsuario(email, senha);
+
+  if (perfilSeExistir)
+    await atualizarUsuarioDoPerfil(Number(criarUsuario?.id), Number(perfilSeExistir.id));
 
   if (criarUsuario) {
     await authenticator.authenticate('form', request, {
@@ -54,8 +88,8 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  errors = Object.assign(errors, { data: 'Ops! Algo deu errado ao criar o usuário' });
-  return json({ errors });
+  // errors = Object.assign(errors, { data: 'Ops! Algo deu errado ao criar o usuário' });
+  // return json({ errors });
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -86,7 +120,7 @@ export default function Cadastro() {
           <p className='mensagem-erro'>Por favor, preencha o campo senha </p>
         )}
         <div className='form-group'>
-          <label htmlFor='email'>E-mail</label>
+          <label htmlFor='email'>Seu e-mail *</label>
           <input type='email' name='email' id='email' autoComplete='off' />
         </div>
         <div className='form-group'>
@@ -96,6 +130,18 @@ export default function Cadastro() {
         <div className='form-group'>
           <label htmlFor='senha_repetida'>Repita a senha</label>
           <input type='password' name='senha_repetida' id='senha_repetida' autoComplete='off' />
+        </div>
+        <div className='form-group'>
+          <label htmlFor='cpf'>Número CPF *</label>
+          <InputMask
+            type='text'
+            name='cpf'
+            id='cpf'
+            autoComplete='off'
+            mask='999.999.999-99'
+            maskChar={' '}
+            required
+          />
         </div>
         <div className='form-group form-button'>
           <button type='submit' className='btn-cadastro' disabled={isSubmitting}>

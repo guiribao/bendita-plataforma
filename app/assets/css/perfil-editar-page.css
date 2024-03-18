@@ -3,8 +3,8 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 40px;
-  padding: 2em 1.5em;
+  gap: 0;
+  padding: 0em 0 2em 1.5em;
   background: #f9f9f9;
 }
 
@@ -53,7 +53,6 @@ main {
 
 .form-perfil .form-field {
   width: 100%;
-  max-width: 300px;
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -61,11 +60,16 @@ main {
 }
 
 .form-perfil .form-field-full {
-  width: calc(100% - 1em);
-  max-width: 1000px;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   gap: 1em;
+}
+
+@media screen and (min-width: 568px) {
+  .form-perfil .form-field {
+    width: 48.699%;
+  }
 }
 
 .form-perfil .form-field-bio {
