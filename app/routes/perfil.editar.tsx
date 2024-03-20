@@ -414,7 +414,7 @@ export default function PerfilEditar() {
               defaultValue={perfil?.celular ?? ''}
               autoComplete='off'
               required
-              mask='\+55 99 \9 9999-9999'
+              mask='\+55 \(99\) 9 9999-9999'
               maskChar={' '}
             />
           </div>
@@ -426,7 +426,7 @@ export default function PerfilEditar() {
               id='telefone_fixo'
               defaultValue={perfil?.telefone_fixo ?? ''}
               autoComplete='off'
-              mask='\+55 99 9999-9999'
+              mask='\+55 \(\5\1\) 9999-9999'
               maskChar={' '}
             />
           </div>
@@ -555,7 +555,7 @@ export default function PerfilEditar() {
               defaultValue={perfil?.telefone_referencia ?? ''}
               autoComplete='off'
               required
-              mask='\+55 99 \9 9999-9999'
+              mask='\+55 \(99\) 9 9999-9999'
               maskChar={' '}
             />
           </div>
