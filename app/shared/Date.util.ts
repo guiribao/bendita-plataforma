@@ -1,3 +1,4 @@
+import { differenceInYears, parse } from 'date-fns';
 import { da } from 'date-fns/locale';
 
 export function addHours(date: Date, hours: number) {
@@ -16,4 +17,8 @@ export function parseTime(date: Date | string) {
 export function parseDateTimeTZ(date, time) {
   let dt = new Date(date + ' ' + time + ' -03');
   return dt;
+}
+
+export function verificarIdade(date) {
+  return differenceInYears(new Date(), date)
 }

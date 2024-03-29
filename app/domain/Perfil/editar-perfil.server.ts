@@ -41,6 +41,10 @@ export default async function editarPerfil(perfil): Promise<Perfil | null> {
         email_referencia: perfil.email_referencia || null,
         endereco_referencia: perfil.endereco_referencia || null,
         parentesco_referencia: perfil.parentesco_referencia || null,
+        medicacao_controlada: perfil.medicacao_controlada || null,
+        nome_medicacao: perfil.nome_medicacao || null,
+        quadro_saude: perfil.quadro_saude || null,
+        primeira_vez: perfil.primeira_vez || null,
       },
       create: {
         nome: perfil.nome,
@@ -75,7 +79,11 @@ export default async function editarPerfil(perfil): Promise<Perfil | null> {
         email_referencia: perfil.email_referencia || null,
         endereco_referencia: perfil.endereco_referencia || null,
         parentesco_referencia: perfil.parentesco_referencia || null,
-        usuarioId: perfil.usuarioId,
+        medicacao_controlada: perfil.medicacao_controlada || null,
+        nome_medicacao: perfil.nome_medicacao || null,
+        quadro_saude: perfil.quadro_saude || null,
+        primeira_vez: perfil.primeira_vez || null,
+        usuarioId: null,
       },
     });
 

@@ -76,12 +76,17 @@ model Perfil {
   profissao    String?
   escolaridade Escolaridade?
 
-  usuario       Usuario?   @relation(fields: [usuarioId], references: [id])
-  usuarioId     Int?       @unique
-  criado_em     DateTime   @default(now()) @db.Timestamptz()
-  atualizado_em DateTime   @updatedAt @db.Timestamptz()
-  Ref_operacao  Operacao[] @relation("Ref_operacao")
-  Operacao      Operacao[] @relation("Operacao")
+  medicacao_controlada Boolean    @default(false)
+  nome_medicacao       String?
+  quadro_saude         String?
+  primeira_vez         Boolean    @default(true)
+  
+  usuario              Usuario?   @relation(fields: [usuarioId], references: [id])
+  usuarioId            Int?       @unique
+  criado_em            DateTime   @default(now()) @db.Timestamptz()
+  atualizado_em        DateTime   @updatedAt @db.Timestamptz()
+  Ref_operacao         Operacao[] @relation("Ref_operacao")
+  Operacao             Operacao[] @relation("Operacao")
 }
 
 model Filhos {

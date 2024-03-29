@@ -7,6 +7,7 @@ export const PaginasAbertas = [
   '/autentica/sair',
   '/perfil',
   '/perfil/editar',
+  '/cadastro'
 ];
 
 export const PaginasPorPapel = {
@@ -19,7 +20,9 @@ export const PaginasPorPapel = {
   '/financeiro': [Papel.ADMIN],
   '/financeiro/novo': [Papel.ADMIN],
   '/financeiro/{id}': [Papel.ADMIN],
-  '/gente': [Papel.USUARIO, Papel.ADMIN],
+  '/gente': [Papel.ADMIN],
+  '/gente/perfil': [Papel.ADMIN],
+  '/gente/perfil/novo': [Papel.ADMIN],
 };
 
 export const FuncionalidadesPorPapel = {

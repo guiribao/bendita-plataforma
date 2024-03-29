@@ -7,6 +7,8 @@ export default async function buscarPerfil(searchString: string) {
         OR: [
           { nome: { contains: searchString, mode: 'insensitive' } },
           { sobrenome: { contains: searchString, mode: 'insensitive' } },
+          { email: { contains: searchString, mode: 'insensitive' } },
+          { cpf: { contains: searchString, mode: 'insensitive' } },
         ],
       },
     });

@@ -11,12 +11,13 @@ export default async function perfilPorEmailCpf(
         OR: [{ email: { equals: email } }, { cpf: { equals: cpf } }],
       },
       include: {
-        usuario: true
-      }
+        usuario: true,
+      },
     });
 
     return perfil;
   } catch (error) {
+    console.log(error)
     return null;
   }
 }

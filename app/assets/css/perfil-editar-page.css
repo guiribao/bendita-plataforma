@@ -11,6 +11,11 @@ main {
 .header {
   text-align: center;
 }
+
+.header.cadastro {
+  margin-top: 1em;
+}
+
 .header img {
   width: 128px;
   border-radius: 50%;
@@ -64,6 +69,15 @@ main {
   display: flex;
   justify-content: space-between;
   gap: 1em;
+}
+
+.form-perfil .form-field-full p {
+  font-weight: 600;
+  font-size: .9em;
+  color: var(--text-dark);
+  background: #efefef;
+  padding: .6em .7em;
+  border-radius: 6px;
 }
 
 @media screen and (min-width: 568px) {
@@ -218,4 +232,30 @@ main {
 
 .form-perfil .form-field button img {
   width: 24px;
+}
+
+.medicacao-controlada {
+  width: 100% !important;
+  background: #efefef;
+  display: flex;
+  flex-direction: column;
+  font-size: 1.1em;
+  font-weight: 800;
+  color: var(--text-gray);
+  background: #efefef;
+  padding: .7em 1em;
+  border-radius: 6px;
+}
+
+.medicacao-controlada a {
+  color: var(--main-color)
+}
+
+.medicacao-controlada .form-field-full .aviso {
+  color: #444;
+}
+
+
+.medicacao-controlada .form-field-membro h3 {
+  font-size: 1em;
 }

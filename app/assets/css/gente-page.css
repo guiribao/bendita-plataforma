@@ -56,7 +56,7 @@ main .gente .sem-dados {
 }
 
 .gente-header-info span {
-  background: var(--green);
+  background: var(--main-color);
   color: white;
   font-size: 0.75em;
   font-weight: 800;
@@ -95,7 +95,7 @@ main .gente .sem-dados {
   text-align: center;
   font-size: 1em;
   background-color: transparent;
-  color: var(--main-color);
+  color: var(--green);
   border: none;
   outline: none;
 }

@@ -296,6 +296,14 @@ export default function PerfilEditar() {
               autoComplete='off'
             />
           </div>
+          <div className='form-field-full'>
+            <p>
+              Seguimos os termos da Resolução nº 05/04, do CONAD, que orienta que o uso da Ayahuasca
+              por menores de 18 (dezoito) anos deve permanecer como objeto de deliberação dos pais
+              ou responsáveis. Desta forma, menores de idade precisam estar acompanhados de um
+              responsável legal e não poderão participar sem o acompanhante.
+            </p>
+          </div>
           <div className='form-field'>
             <label htmlFor='estado_nascimento'>Estado de nascimento</label>
             <select

@@ -13,7 +13,7 @@ import criarNovoUsuario from '~/domain/Usuario/criar-novo-usuario.server';
 import cadastroPageStyle from '~/assets/css/cadastro-page.css';
 import loading from '~/assets/img/loading.gif';
 import InputMask from 'react-input-mask';
-import perfilPorEmailCpf from '~/domain/Perfil/perfil-por-email-cpf.serve';
+import perfilPorEmailCpf from '~/domain/Perfil/perfil-por-email-cpf.server';
 import atualizarUsuarioDoPerfil from '~/domain/Perfil/atualizar-usuario-do-perfil.server';
 
 export const meta: MetaFunction = () => {

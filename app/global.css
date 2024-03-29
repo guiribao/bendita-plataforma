@@ -80,10 +80,17 @@ body {
   padding: 1em 0em 1em 2em;
   color: white;
 }
+
+.sidebar-brand > a {
+  color: white;
+  text-decoration: none;
+  
+}
+
 .sidebar-brand img {
   height: 48px;
 }
-.sidebar-brand h2 {
+.sidebar-brand > a h2 {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -445,7 +452,7 @@ main {
   color: var(--main-dark);
 }
 
-main.nao-autorizado {
+main.nao-autorizado, main.cadastrado-sucesso {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -453,7 +460,7 @@ main.nao-autorizado {
   margin: 24px 0 34px 0;
 }
 
-main.nao-autorizado .header {
+main.nao-autorizado .header, main.cadastrado-sucesso .header {
   text-align: center;
 }
 
@@ -612,7 +619,7 @@ button:disabled {
   width: fit-content;
   background-color: var(--green);
   margin: 0 auto;
-  padding: 0.5em 0;
+  padding: 0.5em 0.6em;
   text-align: center;
   color: #f9f9f9;
   border-radius: 30px;

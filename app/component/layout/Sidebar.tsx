@@ -61,10 +61,12 @@ export default function Sidebar() {
       />
       <div className='sidebar'>
         <div className='sidebar-brand'>
-          <h2>
-            <span className='lab la-mixcloud'></span>
-            <span>ChaveCloud</span>
-          </h2>
+          <Link to={'/'}>
+            <h2>
+              <span className='lab la-mixcloud'></span>
+              <span>ChaveCloud</span>
+            </h2>
+          </Link>
         </div>
 
         {usuario && (
