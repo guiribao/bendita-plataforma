@@ -93,6 +93,7 @@ export default function DashboardIndex() {
                   <td>Descrição</td>
                   <td>Tipo</td>
                   <td>Valor</td>
+                  <td>Data</td>
                 </tr>
               </thead>
               <tbody>
