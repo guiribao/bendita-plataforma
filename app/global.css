@@ -422,6 +422,7 @@ main {
 .view-body table tbody tr:hover td {
   color: var(--color-dark);
 }
+
 .view-body table tbody tr:first-child td {
   padding-top: 1.2em;
 }
@@ -439,6 +440,21 @@ main {
   display: flex;
   justify-content: center;
   gap: 15px;
+}
+
+.view-body table tbody tr td .valor-operacao {
+  width: 100%;
+  padding: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1em;
+  color: #727272;
+  overflow-x: auto;
+}
+
+.view-body table tbody tr:hover td .valor-operacao {
+  color: var(--color-dark);
 }
 
 .view-body table tbody tr td div#actions a {

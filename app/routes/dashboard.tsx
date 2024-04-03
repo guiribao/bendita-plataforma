@@ -5,6 +5,7 @@ import { Link, useLoaderData } from '@remix-run/react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useEffect } from 'react';
+import { CurrencyInput } from 'react-currency-mask';
 import Minicards from '~/component/Minicards';
 import pegarDadosEventosDashboard from '~/domain/Calendario/pegar-dados-eventos-dashboard.server';
 import pegarDadosOperacoesDashboard from '~/domain/Financeiro/pegar-dados-operacoes-dashboard.server';
@@ -109,7 +110,14 @@ export default function DashboardIndex() {
                     <td>{operacao.id}</td>
                     <td>{operacao.descricao}</td>
                     <td>{operacao.tipo}</td>
-                    <td>{operacao.valor}</td>
+                    <td>
+                      <CurrencyInput
+                        name='valor'
+                        defaultValue={operacao.valor * 1}
+                        readOnly
+                        className="valor-operacao"
+                      ></CurrencyInput>
+                    </td>
                     <td
                       title={format(new Date(operacao.criado_em), "dd/MM/yyyy 'às' HH:mm", {
                         locale: ptBR,
@@ -178,7 +186,7 @@ export default function DashboardIndex() {
                   <td>Id</td>
                   <td>Tipo</td>
                   <td>Titulo</td>
-                  <td style={{ minWidth: '180px' }}>Data hora</td>
+                  <td style={{ minWidth: '180px' }}>Data e hora</td>
                 </tr>
               </thead>
               <tbody>
