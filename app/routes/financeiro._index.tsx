@@ -114,16 +114,18 @@ export default function FinanceiroIndex() {
                         locale: ptBR,
                       })}
                     </td>
-                    <td id='actions'>
-                      <Link to={`/financeiro/${operacao.id}`}>
-                        <i className='lar la-eye'></i>
-                      </Link>
-                      <Link to={`/financeiro/${operacao.id}/editar`}>
-                        <i className='las la-pen'></i>
-                      </Link>
-                      <button onClick={() => openDeletingModal(operacao)}>
-                        <i className='las la-trash'></i>
-                      </button>
+                    <td>
+                      <div id='actions'>
+                        <Link to={`/financeiro/${operacao.id}`}>
+                          <i className='lar la-eye'></i>
+                        </Link>
+                        <Link to={`/financeiro/${operacao.id}/editar`}>
+                          <i className='las la-pen'></i>
+                        </Link>
+                        <button onClick={() => openDeletingModal(operacao)}>
+                          <i className='las la-trash'></i>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

@@ -83,7 +83,9 @@ export default function CalendarioIndex() {
         <div className='view'>
           <div className='view-header'>
             <h1> </h1>
-            <Link data-role="CRIAR_EVENTO" to={'/calendario/novo'}>+ Evento</Link>
+            <Link data-role='CRIAR_EVENTO' to={'/calendario/novo'}>
+              + Evento
+            </Link>
           </div>
           <div className='view-body'>
             <table>
@@ -123,16 +125,21 @@ export default function CalendarioIndex() {
                         locale: ptBR,
                       })}
                     </td>
-                    <td id='actions' style={{ textAlign: 'right' }}>
-                      <Link to={`/calendario/${evento.id}`}>
-                        <i className='lar la-eye'></i>
-                      </Link>
-                      <Link data-role="EDITAR_EVENTO" to={`/calendario/${evento.id}/editar`}>
-                        <i className='las la-pen'></i>
-                      </Link>
-                      <button data-role="DELETAR_EVENTO" onClick={() => openDeletingModal(evento)}>
-                        <i className='las la-trash'></i>
-                      </button>
+                    <td style={{ textAlign: 'right' }}>
+                      <div id='actions'>
+                        <Link to={`/calendario/${evento.id}`}>
+                          <i className='lar la-eye'></i>
+                        </Link>
+                        <Link data-role='EDITAR_EVENTO' to={`/calendario/${evento.id}/editar`}>
+                          <i className='las la-pen'></i>
+                        </Link>
+                        <button
+                          data-role='DELETAR_EVENTO'
+                          onClick={() => openDeletingModal(evento)}
+                        >
+                          <i className='las la-trash'></i>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
