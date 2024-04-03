@@ -14,9 +14,10 @@ export default async function pegarPerfis(): Promise<[] | null> {
         profissao: true,
         celular: true,
         usuarioId: true,
+        primeira_vez: true,
         criado_em: true,
       },
-      orderBy: { nome: 'asc' },
+      orderBy: { id: 'asc' },
     });
 
     return perfil;

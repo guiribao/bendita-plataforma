@@ -84,7 +84,6 @@ body {
 .sidebar-brand > a {
   color: white;
   text-decoration: none;
-  
 }
 
 .sidebar-brand img {
@@ -403,6 +402,14 @@ main {
   min-width: 100px;
 }
 
+.view-body table tbody tr td a {
+  color: var(--color-dark);
+}
+
+.view-body table tbody tr:hover td a {
+  color: var(--green);
+}
+
 .view-body table tbody tr td {
   padding: 1em 20px 0.75em 0;
   border-bottom: 2px solid #f9f9f9;
@@ -428,18 +435,18 @@ main {
   padding-right: 1.2em;
 }
 
-.view-body table tbody tr td#actions {
+.view-body table tbody tr td div#actions {
   display: flex;
   justify-content: center;
   gap: 15px;
 }
 
-.view-body table tbody tr td#actions a {
+.view-body table tbody tr td div#actions a {
   font-size: 1.5em;
   color: var(--title-gray);
 }
 
-.view-body table tbody tr td#actions button {
+.view-body table tbody tr td div#actions button {
   font-size: 1.5em;
   color: var(--title-gray);
   border: none;
@@ -448,11 +455,12 @@ main {
   cursor: pointer;
 }
 
-.view-body table tbody tr td#actions a:hover {
+.view-body table tbody tr td div#actions a:hover {
   color: var(--main-dark);
 }
 
-main.nao-autorizado, main.cadastrado-sucesso {
+main.nao-autorizado,
+main.cadastrado-sucesso {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -460,7 +468,8 @@ main.nao-autorizado, main.cadastrado-sucesso {
   margin: 24px 0 34px 0;
 }
 
-main.nao-autorizado .header, main.cadastrado-sucesso .header {
+main.nao-autorizado .header,
+main.cadastrado-sucesso .header {
   text-align: center;
 }
 

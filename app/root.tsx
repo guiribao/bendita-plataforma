@@ -92,7 +92,7 @@ export default function App() {
       handleElements(document, usuario.papel, location.pathname);
     }
   }, [location.key, isAuthorized]);
-
+  
   return (
     <html lang='pt-BR' suppressHydrationWarning={true}>
       <head>
