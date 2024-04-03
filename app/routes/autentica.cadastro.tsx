@@ -19,7 +19,7 @@ import { verificarIdade } from '~/shared/Date.util';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Cadastro - ChaveCloud' },
+    { title: 'Cadastro de usuário - ChaveCloud' },
     { name: 'description', content: 'A Núvem do Chave!' },
   ];
 };

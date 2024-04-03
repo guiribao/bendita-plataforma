@@ -17,12 +17,13 @@ import InputMask from 'react-input-mask';
 import Usuario from '~/model/Usuario.server';
 import novoPerfil from '~/domain/Perfil/novo-perfil.server';
 import successfullyRegistered from '~/assets/img/undraw/successfully-registered.svg';
+import enviarEmailCadastroPerfil from '~/domain/Perfil/enviar-email-cadastro-perfil.server';
 
 export const meta: MetaFunction = () => {
   return [
     {
       charset: 'utf-8',
-      title: 'Cadastro - ChaveCloud',
+      title: 'Cadastro de pessoa - ChaveCloud',
       viewport: 'width=device-width, initial-scale=1',
     },
     {
@@ -99,7 +100,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   let data_hora_nascimento = parseDateTimeTZ(data_nascimento, hora_nascimento);
 
-  await novoPerfil({
+  let perfilCriado = await novoPerfil({
     nome,
     sobrenome,
     data_hora_nascimento,
@@ -137,6 +138,10 @@ export const action: ActionFunction = async ({ request }) => {
     quadro_saude,
     primeira_vez,
   });
+
+  if(perfilCriado) {
+    enviarEmailCadastroPerfil(email, nome)
+  }
 
   return json({ cadastrado: true });
 };

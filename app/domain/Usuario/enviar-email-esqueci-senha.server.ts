@@ -7,15 +7,14 @@ export default async function enviarEmailEsqueciSenha(
   token: string
 ): Promise<Boolean | null | undefined> {
   var options = {
-    from: 'cloud@chave.org.br',
+    from: 'igrejachavedesaopedro@gmail.com',
     to: email,
     subject: 'Esqueci minha senha - ChaveCloud',
-    text: `Olá, ${email} \n
-    \n
-    Você solicitou um link para resetar a sua senha, segue logo abaixo: \n
+    html: `Olá, ${email} <br /><br />
+    Você solicitou um link para resetar a sua senha. <br />
     
-    <a href="${APP_URL}/autentica/senha/${token}">${APP_URL}/autentica/senha/${token}</a> \n
-    \n
+    <a href="${APP_URL}/autentica/senha/${token}">Clique aqui</a> para setar uma nova senha para sua conta.
+    <br />
     Caso você não consiga clicar no link, copie e cole no seu navegador.`,
   };
 
