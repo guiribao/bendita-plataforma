@@ -83,8 +83,8 @@ export default function FinanceiroIndex() {
           <div className='view-header'>
             <h1> </h1>
             <div className='view-header-actions'>
-              <Link to={'/gente/perfil/novo'}>+ Perfil</Link>
-              <Link to={'/gente/usuario/novo'}>+ Usuário</Link>
+              {/* <Link to={'/gente/perfil/novo'}>+ Perfil</Link>
+              <Link to={'/gente/usuario/novo'}>+ Usuário</Link> */}
             </div>
           </div>
           <div className='view-body'>
