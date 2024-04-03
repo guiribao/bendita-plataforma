@@ -11,6 +11,7 @@ export default async function pegarPerfilPeloId(id: number): Promise<Perfil | nu
     
     return perfil;
   } catch (error) {
+    console.log(error)
     return null
   }  
 }

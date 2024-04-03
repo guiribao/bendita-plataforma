@@ -36,6 +36,11 @@ export function specificDynPages(pathname: string, papelUsuario: string) {
     return papeisPermitidos?.includes(papelUsuario);
   }
 
+  if (/\/gente\/[0-9]+/i.test(pathname)) {
+    const papeisPermitidos = PaginasPorPapel['/gente/{id}'];
+    return papeisPermitidos?.includes(papelUsuario);
+  }
+
   return canI;
 }
 

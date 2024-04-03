@@ -15,6 +15,7 @@ import loading from '~/assets/img/loading.gif';
 import InputMask from 'react-input-mask';
 import perfilPorEmailCpf from '~/domain/Perfil/perfil-por-email-cpf.server';
 import atualizarUsuarioDoPerfil from '~/domain/Perfil/atualizar-usuario-do-perfil.server';
+import { verificarIdade } from '~/shared/Date.util';
 
 export const meta: MetaFunction = () => {
   return [
@@ -33,6 +34,7 @@ export const action: ActionFunction = async ({ request }) => {
   const senha: string = form.get('senha') as string;
   const cpf: string = form.get('cpf') as string;
   const senhaRepetida: string = form.get('senha_repetida') as string;
+  const data_nascimento: string = form.get('data_nascimento') as string;
 
   let errors = {
     email: !email,
@@ -61,6 +63,14 @@ export const action: ActionFunction = async ({ request }) => {
     return json({
       errors: {
         data: 'Já existe uma conta associada a este e-mail, solicite recuperação de senha.',
+      },
+    });
+  }
+
+  if (verificarIdade(data_nascimento) < 18) {
+    return json({
+      errors: {
+        data: 'Cadastro permitido apenas para maiores de 18 anos.',
       },
     });
   }
@@ -119,20 +129,9 @@ export default function Cadastro() {
         {actionData?.errors?.senha && (
           <p className='mensagem-erro'>Por favor, preencha o campo senha </p>
         )}
+
         <div className='form-group'>
-          <label htmlFor='email'>Seu e-mail *</label>
-          <input type='email' name='email' id='email' autoComplete='off' />
-        </div>
-        <div className='form-group'>
-          <label htmlFor='senha'>Senha</label>
-          <input type='password' name='senha' id='senha' autoComplete='off' />
-        </div>
-        <div className='form-group'>
-          <label htmlFor='senha_repetida'>Repita a senha</label>
-          <input type='password' name='senha_repetida' id='senha_repetida' autoComplete='off' />
-        </div>
-        <div className='form-group'>
-          <label htmlFor='cpf'>Número CPF *</label>
+          <label htmlFor='cpf'>Seu CPF *</label>
           <InputMask
             type='text'
             name='cpf'
@@ -142,6 +141,30 @@ export default function Cadastro() {
             maskChar={' '}
             required
           />
+        </div>
+        <div className='form-group'>
+          <label htmlFor='email'>Seu melhor e-mail *</label>
+          <input type='email' name='email' id='email' autoComplete='off' />
+        </div>
+        <div className='form-group'>
+          <label htmlFor='valida_data_nascimento'>Data de nascimento</label>
+          <input
+            type='date'
+            name='data_nascimento'
+            id='data_nascimento'
+            defaultValue={''}
+            autoComplete='off'
+            required
+          />
+        </div>
+
+        <div className='form-group'>
+          <label htmlFor='senha'>Senha</label>
+          <input type='password' name='senha' id='senha' autoComplete='off' />
+        </div>
+        <div className='form-group'>
+          <label htmlFor='senha_repetida'>Repita a senha</label>
+          <input type='password' name='senha_repetida' id='senha_repetida' autoComplete='off' />
         </div>
         <div className='form-group form-button'>
           <button type='submit' className='btn-cadastro' disabled={isSubmitting}>

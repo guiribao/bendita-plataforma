@@ -220,6 +220,27 @@ export default function PerfilIndex() {
             <p id='cpf'>{perfil?.cpf}</p>
           </div>
         </div>
+
+        {perfil?.medicacao_controlada && (
+          <div className='group view documentos'>
+            <div className='group-header'>
+              <h1>Medicação</h1>
+            </div>
+            <div className='field'>
+              <label htmlFor='medicacao'>Toma medicação controlada?</label>
+              <p id='medicacao'>{perfil?.medicacao_controlada ? 'Sim' : 'Não'}</p>
+            </div>
+            <div className='field'>
+              <label htmlFor='nome_medicacao'>Nome da medicação</label>
+              <p id='nome_medicacao'>{perfil?.nome_medicacao}</p>
+            </div>
+            <div className='field'>
+              <label htmlFor='quadro_saude'>Quadro de saúde</label>
+              <p id='quadro_saude'>{perfil?.quadro_saude}</p>
+            </div>
+          </div>
+        )}
+
         <div className='group view referencia'>
           <div className='group-header'>
             <h1>Contato referencia</h1>

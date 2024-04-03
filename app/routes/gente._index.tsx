@@ -61,7 +61,7 @@ export default function FinanceiroIndex() {
 
             <div className='lista-gente'>
               {perfis.map((perfil) => (
-                <div className='card-gente' key={perfil.id} onClick={() => linkToPerfil(perfil.id)}>
+                <div className='card-gente' key={perfil.id}>
                   <div className='card-gente-header'>
                     <img src={perfil.foto} />
                     <div className='gente-header-info'>
@@ -70,7 +70,7 @@ export default function FinanceiroIndex() {
                     </div>
                   </div>
                   <div className='card-gente-body'>
-                    <Link to={`/gente/perfil/${perfil.id}`}>
+                    <Link to={`/gente/${perfil.id}`}>
                       <h2>
                         {perfil.nome} {perfil.sobrenome}
                       </h2>

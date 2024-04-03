@@ -83,6 +83,11 @@ export const action: ActionFunction = async ({ request }) => {
   const endereco_referencia: string = form.get('endereco_referencia') as string;
   const parentesco_referencia: string = form.get('parentesco_referencia') as string;
 
+  const medicacao_controlada: boolean = (form.get('medicacao_controlada') as string) === 'true';
+  const nome_medicacao: string = form.get('nome_medicacao') as string;
+  const quadro_saude: string = form.get('quadro_saude') as string;
+  const primeira_vez: boolean = (form.get('primeira_vez') as string) === 'true';
+
   const usuarioId: number = Number(form.get('usuarioId') as string);
   const membro: boolean = (form.get('membro') as string) === 'true';
 
@@ -129,6 +134,10 @@ export const action: ActionFunction = async ({ request }) => {
     email_referencia,
     endereco_referencia,
     parentesco_referencia,
+    medicacao_controlada,
+    nome_medicacao,
+    quadro_saude,
+    primeira_vez,
     usuarioId: Number(usuarioId),
   });
 
@@ -163,6 +172,9 @@ export async function loader({ request }: LoaderArgs) {
 export default function PerfilEditar() {
   const actionData = useActionData();
   let { usuario, perfil, ufs, cidades } = useLoaderData();
+
+  let [medicacaoControlada, setMedicacaoControlada] = useState(perfil?.medicacao_controlada);
+
   let [_email, _setEmail] = useState(perfil?.email || usuario?.email || '');
   let [estadoCivil, setEstadoCivil] = useState(perfil?.estado_civil);
   let [grupo, setGrupo] = useState(perfil?.grupo || Grupo.VISITANTE);
@@ -183,6 +195,11 @@ export default function PerfilEditar() {
 
   function handleEmail(e: ChangeEvent<HTMLInputElement>) {
     _setEmail(e.target.value);
+  }
+
+  function handleMedicacaoControlada(event) {
+    let value = event.target.value === 'true' ? true : false;
+    setMedicacaoControlada(value);
   }
 
   async function carregarCidades(event) {
@@ -527,7 +544,113 @@ export default function PerfilEditar() {
               required
             />
           </div>
+        </div>
 
+        <div className='form-group'>
+          <div className='form-group-header'>
+            <h2>Medicação</h2>
+          </div>
+          <div className='form-field-membro'>
+            {/* usa medicação controlada? sim / não */}
+            <h3>Usa medicação controlada?</h3>
+            <div>
+              <div className='form-field-membro-response'>
+                <input
+                  type='radio'
+                  name='medicacao_controlada'
+                  id='medicacao_controlada-sim'
+                  defaultChecked={medicacaoControlada === true}
+                  value={'true'}
+                  onChange={handleMedicacaoControlada}
+                />
+                <label htmlFor='medicacao_controlada-sim'>Sim</label>
+              </div>
+              <div className='form-field-membro-response'>
+                <input
+                  type='radio'
+                  name='medicacao_controlada'
+                  id='medicacao_controlada-nao'
+                  defaultChecked={medicacaoControlada === false}
+                  value={'false'}
+                  onChange={handleMedicacaoControlada}
+                />
+                <label htmlFor='medicacao_controlada-nao'>Não</label>
+              </div>
+            </div>
+          </div>
+          {/*
+           * qual? resposta aberta
+           * para tratar qual quadro de saúde? resposta aberta
+           * tem autorização do médico para participar? sim /não
+           * */}
+          {medicacaoControlada && (
+            <div className='form-field medicacao-controlada'>
+              <label htmlFor='nome_medicacao'>Nome da medicação</label>
+              <input
+                type='text'
+                name='nome_medicacao'
+                id='nome_medicacao'
+                defaultValue={perfil?.nome_medicacao}
+                autoComplete='off'
+                required={medicacaoControlada}
+              />
+
+              <label htmlFor='quadro_saude'>Para tratar qual quadro de saúde?</label>
+              <input
+                type='text'
+                name='quadro_saude'
+                id='quadro_saude'
+                defaultValue={perfil?.quadro_saude}
+                autoComplete='off'
+                required={medicacaoControlada}
+              />
+
+              <div className='form-field-membro'>
+                <h3>Tem autorização do médico para participar?</h3>
+                <div>
+                  <div className='form-field-membro-response'>
+                    <input
+                      type='radio'
+                      name='autorizacao_medico'
+                      id='autorizacao_medico-sim'
+                      defaultChecked={true}
+                      value='true'
+                    />
+                    <label htmlFor='autorizacao_medico-sim'>Sim</label>
+                  </div>
+                  <div className='form-field-membro-response'>
+                    <input
+                      type='radio'
+                      name='autorizacao_medico'
+                      id='autorizacao_medico-nao'
+                      defaultChecked={false}
+                      value='false'
+                    />
+                    <label htmlFor='autorizacao_medico-nao'>Não</label>
+                  </div>
+                </div>
+              </div>
+              <div className='form-field-full'>
+                <p className='aviso'>
+                  Se você usa alguma medicação controlada é importante também entrar em contato para
+                  realizar uma anamnese, envie um whatsapp para{' '}
+                  <a
+                    href='https://wa.me/5551993589591?text=Ol%C3%A1%2C+estou+me+cadastrando+no+CHAVE+e+gostaria+de+falar+sobre+minha+medica%C3%A7%C3%A3o.'
+                    target='_blank'
+                  >
+                    (51) 99358-9591
+                  </a>
+                  . A medicação não vai lhe impedir de participar das sessões mas nós temos
+                  orientações específicas para lhe passar. Por isso é muito importante entrar em
+                  contato além de preencher o questionário. Não pule este passo pois o contato por
+                  whatsapp neste caso é obrigatório para a participação.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className='form-group'>
           <div className='form-group-header'>
             <h2>Contato de referencia</h2>
           </div>
@@ -690,7 +813,35 @@ export default function PerfilEditar() {
               </div>
             </div>
           </div>
+          {grupo == Grupo.VISITANTE && (
+            <div className='form-field-membro'>
+              <h3>Primeira vez tomando o chá?</h3>
+              <div>
+                <div className='form-field-membro-response'>
+                  <input
+                    type='radio'
+                    name='primeira_vez'
+                    id='primeira_vez-sim'
+                    defaultChecked={true}
+                    value={'true'}
+                  />
+                  <label htmlFor='primeira_vez-sim'>Sim</label>
+                </div>
+                <div className='form-field-membro-response'>
+                  <input
+                    type='radio'
+                    name='primeira_vez'
+                    id='primeira_vez-nao'
+                    defaultChecked={false}
+                    value={'false'}
+                  />
+                  <label htmlFor='primeira_vez-nao'>Não?</label>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
+
         <div className='form-group'>
           <div className='form-group-header'>
             <h2>Bio</h2>

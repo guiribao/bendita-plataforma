@@ -22,7 +22,7 @@ import Sidebar from './component/layout/Sidebar';
 import Layout from './component/layout/Layout';
 import Topbar from './component/layout/Topbar';
 import { authenticator } from './secure/authentication.server';
-import { Perfil, Usuario } from '@prisma/client';
+import { Papel, Perfil, Usuario } from '@prisma/client';
 import pegarPerfilPeloIdUsuario from './domain/Perfil/perfil-pelo-id-usuario.server';
 import { useEffect } from 'react';
 import { createHashHistory } from 'history';
@@ -51,11 +51,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
   let perfil: Perfil | null = null;
 
   if (usuario?.id) {
-    perfil = await pegarPerfilPeloIdUsuario(usuario.id);
-    if (!perfil?.id && !request.url.includes('/perfil/editar')) return redirect('/perfil/editar');
-
     const symbol = Object.getOwnPropertySymbols(request)[1];
     const parsed_url = request[symbol].parsedURL;
+
+    if (usuario?.papel == Papel.USUARIO && parsed_url.pathname != 'em_breve') {
+      return redirect('/em_breve');
+    }
+
+    perfil = await pegarPerfilPeloIdUsuario(usuario.id);
+    if (!perfil?.id && !request.url.includes('/perfil/editar')) return redirect('/perfil/editar');
 
     let canAccessSpecific = specificDynPages(parsed_url.pathname, usuario.papel);
 
@@ -85,9 +89,8 @@ export default function App() {
       if (!perfil && location.pathname !== '/perfil/editar') {
         history.back();
       }
-      handleElements(document, usuario.papel, location.pathname)
+      handleElements(document, usuario.papel, location.pathname);
     }
-
   }, [location.key, isAuthorized]);
 
   return (

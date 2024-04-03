@@ -611,6 +611,9 @@ export default function VisitanteNovo() {
                 required
               />
             </div>
+          </div>
+
+          <div className='form-group'>
             <div className='form-group-header'>
               <h2>Medicação</h2>
             </div>
@@ -642,7 +645,6 @@ export default function VisitanteNovo() {
                 </div>
               </div>
             </div>
-
             {/*
              * qual? resposta aberta
              * para tratar qual quadro de saúde? resposta aberta
@@ -713,7 +715,9 @@ export default function VisitanteNovo() {
                 </div>
               </div>
             )}
+          </div>
 
+          <div className='form-group'>
             <div className='form-group-header'>
               <h2>Contato de referencia</h2>
             </div>

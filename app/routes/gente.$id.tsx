@@ -1,6 +1,6 @@
 //@ts-ignore
-import { LoaderArgs, json, redirect } from '@remix-run/node';
-import type { LinksFunction, V2_MetaFunction } from '@remix-run/node';
+import { json, redirect } from '@remix-run/node';
+import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { Link, useLoaderData, useNavigation } from '@remix-run/react';
 import { authenticator } from '~/secure/authentication.server';
 import perfilPageStyle from '~/assets/css/perfil-page.css';
@@ -10,8 +10,9 @@ import { Escolaridade, Perfil } from '@prisma/client';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { parseTime } from '~/shared/Date.util';
+import pegarPerfilPeloId from '~/domain/Perfil/perfil-pelo-id.server';
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [
     {
       charset: 'utf-8',
@@ -29,21 +30,18 @@ export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: perfilPageStyle }];
 };
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   let usuario = await authenticator.isAuthenticated(request, {
     failureRedirect: '/autentica/entrar',
   });
 
-  if (usuario?.id) {
-    let perfil: Perfil | null = await pegarPerfilPeloIdUsuario(usuario.id);
+  let perfil: Perfil | null = await pegarPerfilPeloId(Number(params.id));
 
-    if (!perfil || perfil.id == null) {
-      return redirect('/perfil/editar');
-    }
+  console.log(params.id);
 
-    return json({ perfil });
-  }
-  return json({});
+  if (!perfil) return redirect('/gente');
+
+  return json({ perfil });
 }
 
 export default function PerfilIndex() {
@@ -68,7 +66,6 @@ export default function PerfilIndex() {
           {perfil?.nome} {perfil?.sobrenome}
         </h1>
 
-        <Link to='/perfil/editar'>Editar perfil</Link>
       </div>
       <div className='meu-perfil cards'>
         <div className='group view basicas'>
@@ -220,6 +217,27 @@ export default function PerfilIndex() {
             <p id='cpf'>{perfil?.cpf}</p>
           </div>
         </div>
+
+        {perfil?.medicacao_controlada && (
+          <div className='group view documentos'>
+            <div className='group-header'>
+              <h1>Medicação</h1>
+            </div>
+            <div className='field'>
+              <label htmlFor='medicacao'>Toma medicação controlada?</label>
+              <p id='medicacao'>{perfil?.medicacao_controlada ? 'Sim' : 'Não'}</p>
+            </div>
+            <div className='field'>
+              <label htmlFor='nome_medicacao'>Nome da medicação</label>
+              <p id='nome_medicacao'>{perfil?.nome_medicacao}</p>
+            </div>
+            <div className='field'>
+              <label htmlFor='quadro_saude'>Quadro de saúde</label>
+              <p id='quadro_saude'>{perfil?.quadro_saude}</p>
+            </div>
+          </div>
+        )}
+
         <div className='group view referencia'>
           <div className='group-header'>
             <h1>Contato referencia</h1>
