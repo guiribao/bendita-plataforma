@@ -1,14 +1,9 @@
 import { TipoOperacao } from '@prisma/client';
-import type {
-  LinksFunction,
-  LoaderFunctionArgs,
-  MetaFunction,
-} from '@remix-run/node';
+import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { Form, Link, json, redirect, useLoaderData, useNavigation } from '@remix-run/react';
 import { useState } from 'react';
 //@ts-ignore
-import {CurrencyInput} from 'react-currency-mask';
-
+import { CurrencyInput } from 'react-currency-mask';
 
 import { authenticator } from '~/secure/authentication.server';
 import pegarOperacaoPorId from '~/domain/Financeiro/pegar-operacao-por-id.server';
@@ -112,7 +107,7 @@ export default function FinanceiroEditarIndex() {
                 <CurrencyInput
                   name='valor'
                   id='valor'
-                  defaultValue={operacao.valor}
+                  defaultValue={operacao.valor * 1}
                   disabled
                 ></CurrencyInput>
               </div>
