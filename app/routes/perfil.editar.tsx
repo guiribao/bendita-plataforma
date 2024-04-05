@@ -8,13 +8,14 @@ import userImage from '~/assets/img/user.png';
 import { Escolaridade, EstadoCivil, Grupo, Perfil as PrismaPerfil } from '@prisma/client';
 import Perfil from '~/model/Perfil.server';
 import Usuario from '~/model/Usuario.server';
-import editarPerfil from '~/domain/Perfil/editar-perfil.server';
+import editarPerfil from '~/domain/Perfil/criar-editar-perfil-usuario.server';
 import pegarPerfilPeloIdUsuario from '~/domain/Perfil/perfil-pelo-id-usuario.server';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { parseDateTimeTZ } from '~/shared/Date.util';
-import { format } from 'date-fns';
+import { addHours, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import InputMask from 'react-input-mask';
+import enviarEmailCadastroPerfil from '~/domain/Perfil/enviar-email-cadastro-perfil.server';
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -86,6 +87,8 @@ export const action: ActionFunction = async ({ request }) => {
   const medicacao_controlada: boolean = (form.get('medicacao_controlada') as string) === 'true';
   const nome_medicacao: string = form.get('nome_medicacao') as string;
   const quadro_saude: string = form.get('quadro_saude') as string;
+  const autorizacao_medico: boolean = (form.get('autorizacao_medico') as string) === 'true';
+  
   const primeira_vez: boolean = (form.get('primeira_vez') as string) === 'true';
 
   const usuarioId: number = Number(form.get('usuarioId') as string);
@@ -98,13 +101,12 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors });
   }
 
-  let data_hora_nascimento = parseDateTimeTZ(data_nascimento, hora_nascimento);
-
-  await editarPerfil({
+  let perfil = await editarPerfil({
     id: Number(perfilId),
     nome,
     sobrenome,
-    data_hora_nascimento,
+    data_nascimento,
+    hora_nascimento,
     cidade_nascimento,
     estado_nascimento,
     registro_geral,
@@ -137,9 +139,14 @@ export const action: ActionFunction = async ({ request }) => {
     medicacao_controlada,
     nome_medicacao,
     quadro_saude,
+    autorizacao_medico,
     primeira_vez,
     usuarioId: Number(usuarioId),
   });
+
+  if (!perfilId && perfil && primeira_vez) {
+    enviarEmailCadastroPerfil(email, nome);
+  }
 
   return redirect('/perfil');
 };
@@ -173,7 +180,7 @@ export default function PerfilEditar() {
   const actionData = useActionData();
   let { usuario, perfil, ufs, cidades } = useLoaderData();
 
-  let [medicacaoControlada, setMedicacaoControlada] = useState(perfil?.medicacao_controlada);
+  let [medicacaoControlada, setMedicacaoControlada] = useState(!!perfil?.medicacao_controlada);
 
   let [_email, _setEmail] = useState(perfil?.email || usuario?.email || '');
   let [estadoCivil, setEstadoCivil] = useState(perfil?.estado_civil);
@@ -291,8 +298,8 @@ export default function PerfilEditar() {
               name='data_nascimento'
               id='data_nascimento'
               defaultValue={
-                perfil?.data_hora_nascimento
-                  ? format(perfil?.data_hora_nascimento, "yyyy'-'MM'-'dd", {
+                perfil?.data_nascimento
+                  ? format(addHours(perfil?.data_nascimento, 3), "yyyy'-'MM'-'dd", {
                       locale: ptBR,
                     })
                   : ''
@@ -308,7 +315,7 @@ export default function PerfilEditar() {
               name='hora_nascimento'
               id='hora_nascimento'
               defaultValue={
-                new Date(perfil?.data_hora_nascimento).toLocaleTimeString().slice(0, 5) ?? ''
+                perfil?.hora_nascimento ?? ''
               }
               autoComplete='off'
             />
@@ -613,7 +620,7 @@ export default function PerfilEditar() {
                       type='radio'
                       name='autorizacao_medico'
                       id='autorizacao_medico-sim'
-                      defaultChecked={true}
+                      defaultChecked={perfil?.autorizacao_medico == true}
                       value='true'
                     />
                     <label htmlFor='autorizacao_medico-sim'>Sim</label>
@@ -623,7 +630,7 @@ export default function PerfilEditar() {
                       type='radio'
                       name='autorizacao_medico'
                       id='autorizacao_medico-nao'
-                      defaultChecked={false}
+                      defaultChecked={!perfil?.autorizacao_medico}
                       value='false'
                     />
                     <label htmlFor='autorizacao_medico-nao'>Não</label>
@@ -807,7 +814,7 @@ export default function PerfilEditar() {
                   name='membro'
                   id='membro_nao'
                   value='false'
-                  defaultChecked={perfil?.membro == false}
+                  defaultChecked={!perfil?.membro}
                 />
                 <label htmlFor='membro_nao'>Não?</label>
               </div>
@@ -822,7 +829,7 @@ export default function PerfilEditar() {
                     type='radio'
                     name='primeira_vez'
                     id='primeira_vez-sim'
-                    defaultChecked={true}
+                    defaultChecked={perfil?.primeira_vez == true}
                     value={'true'}
                   />
                   <label htmlFor='primeira_vez-sim'>Sim</label>
@@ -832,7 +839,7 @@ export default function PerfilEditar() {
                     type='radio'
                     name='primeira_vez'
                     id='primeira_vez-nao'
-                    defaultChecked={false}
+                    defaultChecked={!perfil?.primeira_vez}
                     value={'false'}
                   />
                   <label htmlFor='primeira_vez-nao'>Não?</label>

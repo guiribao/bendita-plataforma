@@ -1,15 +1,17 @@
 import { mailClient } from '~/mailer.server';
+import { logEmailSentOnDb } from '../Logger/log-email-sent-on-db';
 
 const APP_URL = process.env.APP_URL;
 
 export default async function enviarEmailCadastroPerfil(
-  email: string
+  email: string,
+  nome: string
 ): Promise<Boolean | null | undefined> {
   var options = {
     from: 'igrejachavedesaopedro@gmail.com',
     to: email,
     subject: 'Seja Bem-vindo (a) ao CHAVE de São Pedro',
-    html: `SEJA BEM VINDO (A)! <br/><br/>
+    html: `Olá, ${nome}! <br/><br/>
 
     Agora você está cadastrado para visitar o Chave de São Pedro e participar de um trabalho espiritual com o Santo Daime. <br/><br/>
 
@@ -50,6 +52,9 @@ export default async function enviarEmailCadastroPerfil(
             info.response
           }`
         );
+
+        logEmailSentOnDb({ destinatario: email, contexto: 'bem-vindo'})
+
         return true;
       }
     });

@@ -7,7 +7,7 @@ import perfilPageStyle from '~/assets/css/perfil-page.css';
 import userImage from '~/assets/img/user.png';
 import pegarPerfilPeloIdUsuario from '~/domain/Perfil/perfil-pelo-id-usuario.server';
 import { Escolaridade, Perfil } from '@prisma/client';
-import { format } from 'date-fns';
+import { addHours, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { parseTime } from '~/shared/Date.util';
 import pegarPerfilPeloId from '~/domain/Perfil/perfil-pelo-id.server';
@@ -36,9 +36,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   });
 
   let perfil: Perfil | null = await pegarPerfilPeloId(Number(params.id));
-
-  console.log(params.id);
-
+  
   if (!perfil) return redirect('/gente');
 
   return json({ perfil });
@@ -77,19 +75,17 @@ export default function PerfilIndex() {
             <div className='field'>
               <label htmlFor='data_nascimento'>Data de nascimento</label>
               <p id='data_nascimento'>
-                {format(perfil?.data_hora_nascimento, "d 'de' LLLL 'de' yyyy", {
+                {format(addHours(perfil?.data_nascimento, 3), "d 'de' LLLL 'de' yyyy", {
                   locale: ptBR,
                 })}
               </p>
             </div>
 
-            {perfil?.data_hora_nascimento && (
+            {perfil?.hora_nascimento && (
               <div className='field'>
                 <label htmlFor='hora_nascimento'>Hora de nascimento</label>
                 <p id='hora_nascimento'>
-                  {format(perfil?.data_hora_nascimento, 'HH:mm', {
-                    locale: ptBR,
-                  })}
+                  {perfil?.hora_nascimento}
                 </p>
               </div>
             )}

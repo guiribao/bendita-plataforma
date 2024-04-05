@@ -40,25 +40,26 @@ model Perfil {
   id Int @id @default(autoincrement())
 
   // INFORMAÇÕES BASICAS
-  nome                 String
-  sobrenome            String
-  data_hora_nascimento DateTime     @db.Timestamptz()
-  cidade_nascimento    String?
-  estado_nascimento    String?
-  estado_civil         EstadoCivil?
-  nome_conjuge         String?
-  rg                   String?      @db.VarChar(15)
-  cpf                  String?      @db.VarChar(15)
-  email                String?
-  celular              String?
-  telefone_fixo        String?
-  cep                  String?
-  endereco             String?
-  numero               String?
-  complemento          String?
-  bairro               String?
-  cidade               String?
-  estado               String?
+  nome              String
+  sobrenome         String
+  data_nascimento   DateTime?    @db.Date
+  hora_nascimento   String?      @db.VarChar(10)
+  cidade_nascimento String?
+  estado_nascimento String?
+  estado_civil      EstadoCivil?
+  nome_conjuge      String?
+  rg                String?      @db.VarChar(15)
+  cpf               String?      @db.VarChar(15)
+  email             String?
+  celular           String?
+  telefone_fixo     String?
+  cep               String?
+  endereco          String?
+  numero            String?
+  complemento       String?
+  bairro            String?
+  cidade            String?
+  estado            String?
 
   nome_referencia       String?
   email_referencia      String?
@@ -71,22 +72,23 @@ model Perfil {
   data_fardamento  DateTime? @db.Date
   local_fardamento String?
 
-  foto         String?       @db.VarChar(200)
+  foto         String        @default("user.png") @db.VarChar(200)
   bio          String?       @db.Text
   profissao    String?
   escolaridade Escolaridade?
 
-  medicacao_controlada Boolean    @default(false)
+  medicacao_controlada Boolean  @default(false)
   nome_medicacao       String?
   quadro_saude         String?
-  primeira_vez         Boolean    @default(true)
-  
-  usuario              Usuario?   @relation(fields: [usuarioId], references: [id])
-  usuarioId            Int?       @unique
-  criado_em            DateTime   @default(now()) @db.Timestamptz()
-  atualizado_em        DateTime   @updatedAt @db.Timestamptz()
-  Ref_operacao         Operacao[] @relation("Ref_operacao")
-  Operacao             Operacao[] @relation("Operacao")
+  autorizacao_medico   Boolean?
+  primeira_vez         Boolean  @default(true)
+
+  usuario       Usuario?   @relation(fields: [usuarioId], references: [id])
+  usuarioId     Int?       @unique
+  criado_em     DateTime   @default(now()) @db.Timestamptz()
+  atualizado_em DateTime   @updatedAt @db.Timestamptz()
+  Ref_operacao  Operacao[] @relation("Ref_operacao")
+  Operacao      Operacao[] @relation("Operacao")
 }
 
 model Filhos {
@@ -144,12 +146,23 @@ model Questionario_Perguntas {
   @@index([questionarioId])
 }
 
+model Logger {
+  id        Int        @id @default(autoincrement())
+  tipo_log  TipoLogger
+  log       Json?
+  criado_em DateTime   @default(now()) @db.Timestamptz()
+}
+
 // model Questionario_Respostas_Usuario {
 //   id             Int @id @default(autoincrement())
 //   respostas
 //   questionarioId
 //   perfilId
 // }
+
+enum TipoLogger {
+  EMAIL
+}
 
 enum Grupo {
   FARDADO

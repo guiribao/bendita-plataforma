@@ -15,7 +15,14 @@ export function parseTime(date: Date | string) {
 }
 
 export function parseDateTimeTZ(date, time) {
-  let dt = new Date(date + ' ' + time + ' -03');
+  let dt;
+  
+  if(!time) {
+    dt = new Date(date + ' 00:00:00 -03');
+  } else {
+    dt = new Date(date + ' ' + time + ' -03');
+  }
+  
   return dt;
 }
 

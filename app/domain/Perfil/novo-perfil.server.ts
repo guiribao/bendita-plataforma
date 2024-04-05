@@ -8,7 +8,8 @@ export default async function novoPerfil(perfil): Promise<Perfil | null> {
       data: {
         nome: perfil.nome,
         sobrenome: perfil.sobrenome,
-        data_hora_nascimento: perfil.data_hora_nascimento,
+        data_nascimento: new Date(perfil.data_nascimento).toISOString(),
+        hora_nascimento: perfil.hora_nascimento || null,
         cidade_nascimento: perfil.cidade_nascimento || null,
         estado_nascimento: perfil.estado_nascimento || null,
         rg: perfil.registro_geral || null,
@@ -41,6 +42,7 @@ export default async function novoPerfil(perfil): Promise<Perfil | null> {
         medicacao_controlada: perfil.medicacao_controlada,
         nome_medicacao: perfil.nome_medicacao || null,
         quadro_saude: perfil.quadro_saude || null,
+        autorizacao_medico: perfil.autorizacao_medico,
         primeira_vez: perfil.primeira_vez,
         usuarioId: null,
       },

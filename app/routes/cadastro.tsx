@@ -89,6 +89,7 @@ export const action: ActionFunction = async ({ request }) => {
   const medicacao_controlada: boolean = (form.get('medicacao_controlada') as string) === 'true';
   const nome_medicacao: string = form.get('nome_medicacao') as string;
   const quadro_saude: string = form.get('quadro_saude') as string;
+  const autorizacao_medico: boolean = (form.get('autorizacao_medico') as string) === 'true';
   const primeira_vez: boolean = (form.get('primeira_vez') as string) === 'true';
 
   let errors = {};
@@ -98,17 +99,16 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors });
   }
 
-  let data_hora_nascimento = parseDateTimeTZ(data_nascimento, hora_nascimento);
-
   let perfilCriado = await novoPerfil({
     nome,
     sobrenome,
-    data_hora_nascimento,
+    data_nascimento,
+    hora_nascimento,
     cidade_nascimento,
     estado_nascimento,
     registro_geral,
     cpf,
-    foto: 'http://localhost:3000/user.png',
+    foto: 'user.png',
     grupo,
     email,
     telefone_fixo: telefone_fixo.replaceAll(' ', ''),
@@ -136,11 +136,12 @@ export const action: ActionFunction = async ({ request }) => {
     medicacao_controlada,
     nome_medicacao,
     quadro_saude,
+    autorizacao_medico,
     primeira_vez,
   });
 
-  if(perfilCriado) {
-    enviarEmailCadastroPerfil(email, nome)
+  if (perfilCriado) {
+    enviarEmailCadastroPerfil(email, nome);
   }
 
   return json({ cadastrado: true });
