@@ -83,12 +83,13 @@ model Perfil {
   autorizacao_medico   Boolean?
   primeira_vez         Boolean  @default(true)
 
-  usuario       Usuario?   @relation(fields: [usuarioId], references: [id])
-  usuarioId     Int?       @unique
-  criado_em     DateTime   @default(now()) @db.Timestamptz()
-  atualizado_em DateTime   @updatedAt @db.Timestamptz()
-  Ref_operacao  Operacao[] @relation("Ref_operacao")
-  Operacao      Operacao[] @relation("Operacao")
+  usuario         Usuario?          @relation(fields: [usuarioId], references: [id])
+  usuarioId       Int?              @unique
+  criado_em       DateTime          @default(now()) @db.Timestamptz()
+  atualizado_em   DateTime          @updatedAt @db.Timestamptz()
+  Ref_operacao    Operacao[]        @relation("Ref_operacao")
+  Operacao        Operacao[]        @relation("Operacao")
+  Evento_Feirante Evento_Feirante[]
 }
 
 model Filhos {
@@ -113,38 +114,52 @@ model Operacao {
 }
 
 model Eventos {
-  id               Int        @id @default(autoincrement())
-  titulo           String     @db.VarChar(200)
+  id               Int               @id @default(autoincrement())
+  titulo           String            @db.VarChar(200)
   descricao        String?
   tipo             TipoEvento
   vestimenta       TipoFarda
-  trabalho_terco   Boolean    @default(false)
-  trabalho_missa   Boolean    @default(false)
-  trabalho_fechado Boolean    @default(false)
-  data_hora        DateTime   @default(now()) @db.Timestamptz()
-  criado_em        DateTime   @default(now()) @db.Timestamptz()
-  atualizado_em    DateTime   @updatedAt @db.Timestamptz()
+  trabalho_terco   Boolean           @default(false)
+  trabalho_missa   Boolean           @default(false)
+  trabalho_fechado Boolean           @default(false)
+  data_hora        DateTime          @default(now()) @db.Timestamptz()
+  criado_em        DateTime          @default(now()) @db.Timestamptz()
+  atualizado_em    DateTime          @updatedAt @db.Timestamptz()
+  Feirantes        Evento_Feirante[]
+}
+
+model Evento_Feirante {
+  id           Int     @id @default(autoincrement())
+  evento       Eventos @relation(fields: [eventoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  eventoId     Int
+  perfil       Perfil  @relation(fields: [perfilId], references: [id])
+  perfilId     Int
+  nome_barraca String? @db.VarChar(200)
+  logo_barraca String? @db.VarChar(200)
+
+  @@unique([eventoId, perfilId])
+  @@index([eventoId])
+  @@index([perfilId])
 }
 
 // TO-DO: Entender questionarios (Anamnese e COVID)
-model Questionario {
-  id        Int                      @id @default(autoincrement())
-  nome      String                   @db.VarChar(200)
-  descricao String
-  criado_em DateTime                 @default(now()) @db.Timestamptz()
-  perguntas Questionario_Perguntas[]
-}
+// model Questionario {
+//   id        Int                      @id @default(autoincrement())
+//   nome      String                   @db.VarChar(200)
+//   descricao String
+//   criado_em DateTime                 @default(now()) @db.Timestamptz()
+//   perguntas Questionario_Perguntas[]
+// }
+// model Questionario_Perguntas {
+//   id             Int          @id @default(autoincrement())
+//   pergunta       String       @db.VarChar(200)
+//   criado_em      DateTime     @default(now()) @db.Timestamptz()
+//   atualizado_em  DateTime     @updatedAt @db.Timestamptz()
+//   questionario   Questionario @relation(fields: [questionarioId], references: [id])
+//   questionarioId Int
 
-model Questionario_Perguntas {
-  id             Int          @id @default(autoincrement())
-  pergunta       String       @db.VarChar(200)
-  criado_em      DateTime     @default(now()) @db.Timestamptz()
-  atualizado_em  DateTime     @updatedAt @db.Timestamptz()
-  questionario   Questionario @relation(fields: [questionarioId], references: [id])
-  questionarioId Int
-
-  @@index([questionarioId])
-}
+//   @@index([questionarioId])
+// }
 
 model Logger {
   id        Int        @id @default(autoincrement())
@@ -193,7 +208,7 @@ enum TipoOperacao {
 
 enum TipoEvento {
   EVENTO
-  FEIRINHA
+  FEIRA
   TRABALHO
   TREINAMENTO
 }

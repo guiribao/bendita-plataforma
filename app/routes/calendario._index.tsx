@@ -1,3 +1,4 @@
+import { TipoEvento } from '@prisma/client';
 import { json } from '@remix-run/node';
 import type { ActionFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
@@ -127,9 +128,18 @@ export default function CalendarioIndex() {
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       <div id='actions'>
-                        <Link to={`/calendario/${evento.id}`}>
-                          <i className='lar la-eye'></i>
-                        </Link>
+                        {evento.tipo === TipoEvento.FEIRA && (
+                          <Link to={`/calendario/feira/${evento.id}`}>
+                            <i className='lar la-eye'></i>
+                          </Link>
+                        )}
+
+                        {evento.tipo !== TipoEvento.FEIRA && (
+                          <Link to={`/calendario/${evento.id}`}>
+                            <i className='lar la-eye'></i>
+                          </Link>
+                        )}
+
                         <Link data-role='EDITAR_EVENTO' to={`/calendario/${evento.id}/editar`}>
                           <i className='las la-pen'></i>
                         </Link>

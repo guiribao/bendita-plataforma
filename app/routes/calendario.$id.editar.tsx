@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { TipoEvento, TipoFarda } from '@prisma/client';
 import type {
   ActionFunctionArgs,
@@ -16,7 +17,7 @@ import {
 } from '@remix-run/react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import novoEventoPageStyle from '~/assets/css/novo-evento-page.css';
 import loading from '~/assets/img/loading.gif';
@@ -49,7 +50,9 @@ export async function action({ request }: ActionFunctionArgs) {
   let errors = {};
 
   let form = await request.formData();
-
+  
+  let feirantes = form.get('feirantes') as string;
+  console.log(feirantes)
   let tipoEvento = form.get('tipo') as string;
   let titulo = form.get('titulo') as string;
   let descricao = form.get('descricao') as string;
@@ -65,17 +68,19 @@ export async function action({ request }: ActionFunctionArgs) {
     return json({ errors });
   }
 
-  await editarEvento(
+  await editarEvento({
     tipoEvento,
     titulo,
     descricao,
     vestimenta,
     dataHora,
-    !!trabalho_terco,
-    !!trabalho_missa,
-    !!trabalho_fechado,
-    Number(eventoId)
-  );
+    trabalho_terco: !!trabalho_terco,
+    trabalho_missa: !!trabalho_missa,
+    trabalho_fechado: !!trabalho_fechado,
+    Feirantes: feirantes.split(','),
+    eventoId: Number(eventoId),
+    feirantesIds: feirantes?.split(',').map(id => Number(id)) || []
+  });
 
   return redirect('/calendario');
 }
@@ -85,22 +90,59 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     failureRedirect: '/autentica/entrar',
   });
 
+  let APP_URL = process.env.APP_URL;
   let evento = await pegarEventoPorId(params.id);
-
-  return json({ evento });
+  return json({ evento, APP_URL });
 }
 
-export default function CalendarioNovoIndex() {
-  const { evento } = useLoaderData();
+export default function CalendarioEditarIndex() {
+  const { evento, APP_URL } = useLoaderData();
   const actionData = useActionData();
 
   const navigation = useNavigation();
   const isSubmitting = ['submitting', 'loading'].includes(navigation.state);
   const [tipoEvento, setTipoEvento] = useState(evento?.tipo);
 
+  let [perfis, setPerfis] = useState([]);
+  let [feirantes, setFeirantes] = useState(evento.Feirantes.map(f => f.perfil));
+
+  let searchInput = useRef(null);
+
   function setarTipoEvento(event) {
     let value = event.target.value;
     if (value != tipoEvento) setTipoEvento(value);
+  }
+
+  async function buscarPerfil(e) {
+    let valorBusca = e.target.value;
+
+    if (valorBusca.length == 0) {
+      setPerfis([]);
+    }
+
+    if (valorBusca.length < 3) return;
+
+    let response = await fetch(`/buscar/perfil/${valorBusca}`, { method: 'get' }).then((res) =>
+      res.json()
+    );
+
+    // Todos perfis que não estão em feirantes
+    setPerfis([
+      ...response?.perfis.filter(
+        (perfil) => !feirantes.find((feirantes) => feirantes.id == perfil.id)
+      ),
+    ]);
+  }
+
+  function adicionarFeirante(perfil) {
+    setFeirantes([...feirantes, perfil]);
+    setPerfis(perfis.filter((p) => p.id != perfil.id));
+  }
+
+  function removerFeirante(perfil) {
+    let nome = `${perfil.nome} ${perfil.sobrenome}`;
+    if (nome.includes(searchInput.current.value)) setPerfis([...perfis, perfil]);
+    setFeirantes(feirantes.filter((p) => p.id != perfil.id));
   }
 
   // Dados para modal deletar item
@@ -164,11 +206,11 @@ export default function CalendarioNovoIndex() {
                     type='radio'
                     id='tipo_evento_feirinha'
                     name='tipo'
-                    value={TipoEvento.FEIRINHA}
-                    defaultChecked={evento.tipo == TipoEvento.FEIRINHA}
+                    value={TipoEvento.FEIRA}
+                    defaultChecked={evento.tipo == TipoEvento.FEIRA}
                     onChange={setarTipoEvento}
                   />
-                  <label htmlFor='tipo_evento_feirinha'>Feirinha</label>
+                  <label htmlFor='tipo_evento_feirinha'>Feira</label>
                 </div>
 
                 <div className='form-group evento'>
@@ -315,6 +357,82 @@ export default function CalendarioNovoIndex() {
                       />
                       <label htmlFor='nao_aplica'>Não aplicável</label>
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {/* SELECIONAR FEIRANTES */}
+              {tipoEvento == TipoEvento.FEIRA && (
+                <div className='detalhes-feira'>
+                  <div>
+                    <h2>Adicionar feirantes</h2>
+                    <div className='form-group'>
+                      <input
+                        type='text'
+                        id='vincular-perfil-input'
+                        placeholder='Digite para buscar'
+                        defaultValue={''}
+                        onChange={buscarPerfil}
+                        ref={searchInput}
+                      />
+                    </div>
+                    <ul className='busca-feirantes'>
+                      {perfis.map((perfil) => (
+                        <li
+                          key={perfil.id}
+                          onClick={() => adicionarFeirante(perfil)}
+                          className='badge'
+                        >
+                          <img
+                            src={`${APP_URL}/${perfil.foto}`}
+                            alt={`Foto do feirante - ${perfil.nome} ${perfil.sobrenome}`}
+                            width={32}
+                          />
+                          {perfil.nome} {perfil.sobrenome}
+                          <svg
+                            xmlns='http://www.w3.org/2000/svg'
+                            width='24'
+                            height='24'
+                            viewBox='0 0 24 24'
+                          >
+                            <path d='M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z' />
+                          </svg>
+                        </li>
+                      ))}
+
+                      {perfis.length === 0 && searchInput.value && <p>Nada encontrado</p>}
+                    </ul>
+                  </div>
+                  <div>
+                    <h2>Feirantes</h2>
+                    <ul className='lista-feirantes'>
+                      <input
+                        type='hidden'
+                        defaultValue={feirantes.map((f) => f.id)}
+                        name='feirantes'
+                      />
+                      {feirantes.map((feirante) => (
+                        <li key={feirante.id} className='badge'>
+                          <img
+                            src={`${APP_URL}/${feirante.foto}`}
+                            alt={`Foto do feirante - ${feirante.nome} ${feirante.sobrenome}`}
+                            width={32}
+                          />
+                          {feirante.nome} {feirante.sobrenome}
+                          <svg
+                            xmlns='http://www.w3.org/2000/svg'
+                            width='24'
+                            height='24'
+                            viewBox='0 0 24 24'
+                            onClick={() => removerFeirante(feirante)}
+                          >
+                            <path d='M23 20.168l-8.185-8.187 8.185-8.174-2.832-2.807-8.182 8.179-8.176-8.179-2.81 2.81 8.186 8.196-8.186 8.184 2.81 2.81 8.203-8.192 8.18 8.192z' />
+                          </svg>
+                        </li>
+                      ))}
+
+                      {feirantes.length === 0 && <p>Nenhum feirante adicionado</p>}
+                    </ul>
                   </div>
                 </div>
               )}

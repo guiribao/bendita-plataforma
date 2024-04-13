@@ -1,6 +1,6 @@
 import { prisma } from '~/secure/db.server';
 
-export default async function buscarPerfil(searchString: string) {
+export default async function buscarPerfil(searchString: string, opts) {
   try {
     let perfis = await prisma.perfil.findMany({
       where: {
@@ -9,7 +9,9 @@ export default async function buscarPerfil(searchString: string) {
           { sobrenome: { contains: searchString, mode: 'insensitive' } },
           { email: { contains: searchString, mode: 'insensitive' } },
           { cpf: { contains: searchString, mode: 'insensitive' } },
+          
         ],
+        ...(opts.onlyUsers ? { NOT: [{usuarioId: null}]  } : {})
       },
     });
 

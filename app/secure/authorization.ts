@@ -4,6 +4,7 @@ import { FuncionalidadesPorPapel, PaginasAbertas, PaginasPorPapel } from './perm
 
 export function canView(pathname: string, papelUsuario: string) {
   const papeisPermitidos = PaginasPorPapel[pathname];
+
   return (
     papeisPermitidos?.includes(papelUsuario) ||
     PaginasAbertas.find((e) => {
@@ -35,6 +36,12 @@ export function specificDynPages(pathname: string, papelUsuario: string) {
     const papeisPermitidos = PaginasPorPapel['/calendario/{id}'];
     return papeisPermitidos?.includes(papelUsuario);
   }
+
+  if (/\/calendario\/feira\/[0-9]/i.test(pathname)) {
+    const papeisPermitidos = PaginasPorPapel['/calendario/feira/{id}'];
+    return papeisPermitidos?.includes(papelUsuario);
+  }
+
 
   if (/\/gente\/[0-9]+/i.test(pathname)) {
     const papeisPermitidos = PaginasPorPapel['/gente/{id}'];

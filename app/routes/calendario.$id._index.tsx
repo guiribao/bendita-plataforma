@@ -80,6 +80,7 @@ export default function CalendarioNovoIndex() {
                     name='tipo'
                     value={TipoEvento.EVENTO}
                     checked={evento.tipo == TipoEvento.EVENTO}
+                    readOnly
                   />
                   <label htmlFor='tipo_evento_evento'>Evento</label>
                 </div>
@@ -91,6 +92,7 @@ export default function CalendarioNovoIndex() {
                     name='tipo'
                     value={TipoEvento.FEIRINHA}
                     checked={evento.tipo == TipoEvento.FEIRINHA}
+                    readOnly
                   />
                   <label htmlFor='tipo_evento_feirinha'>Feirinha</label>
                 </div>
@@ -102,6 +104,7 @@ export default function CalendarioNovoIndex() {
                     name='tipo'
                     value={TipoEvento.TRABALHO}
                     checked={evento.tipo == TipoEvento.TRABALHO}
+                    readOnly
                   />
                   <label htmlFor='tipo_evento_trabalho'>Trabalho</label>
                 </div>
@@ -113,7 +116,7 @@ export default function CalendarioNovoIndex() {
                     name='tipo'
                     value={TipoEvento.TREINAMENTO}
                     checked={evento.tipo == TipoEvento.TREINAMENTO}
-                    
+                    readOnly
                   />
                   <label htmlFor='tipo_evento_treinamento'>Treinamento</label>
                 </div>
@@ -172,7 +175,8 @@ export default function CalendarioNovoIndex() {
                         type='checkbox'
                         id='trabalho_terco'
                         name='trabalho_terco'
-                        checked={evento?.trabalho_terco}
+                        defaultChecked={evento?.trabalho_terco}
+                        readOnly
                       />
                       <label htmlFor='trabalho_terco'>Tem terço</label>
                     </div>
@@ -181,7 +185,8 @@ export default function CalendarioNovoIndex() {
                         type='checkbox'
                         id='trabalho_missa'
                         name='trabalho_missa'
-                        checked={evento?.trabalho_missa}
+                        defaultChecked={evento?.trabalho_missa}
+                        readOnly
                       />
                       <label htmlFor='trabalho_missa'>Tem missa</label>
                     </div>
@@ -190,8 +195,8 @@ export default function CalendarioNovoIndex() {
                         type='checkbox'
                         id='trabalho_fechado'
                         name='trabalho_fechado'
-                        checked={evento?.trabalho_fechado}
-                        
+                        defaultChecked={evento?.trabalho_fechado}
+                        readOnly
                       />
                       <label htmlFor='trabalho_fechado'>Trabalho fechado</label>
                     </div>
@@ -205,6 +210,7 @@ export default function CalendarioNovoIndex() {
                         name='vestimenta'
                         value={TipoFarda.FARDA_AZUL}
                         checked={evento?.vestimenta == TipoFarda.FARDA_AZUL}
+                        readOnly
                       />
                       <label htmlFor='farda_azul'>Farda azul</label>
                     </div>
@@ -216,6 +222,7 @@ export default function CalendarioNovoIndex() {
                         name='vestimenta'
                         value={TipoFarda.FARDA_BRANCA}
                         checked={evento?.vestimenta == TipoFarda.FARDA_BRANCA}
+                        readOnly
                       />
                       <label htmlFor='farda_branca'>Farda branca</label>
                     </div>
@@ -227,6 +234,7 @@ export default function CalendarioNovoIndex() {
                         name='vestimenta'
                         value={TipoFarda.ROUPA_BRANCA}
                         checked={evento?.vestimenta == TipoFarda.ROUPA_BRANCA}
+                        readOnly
                       />
                       <label htmlFor='roupa_branca'>Roupa branca</label>
                     </div>
@@ -238,6 +246,7 @@ export default function CalendarioNovoIndex() {
                         name='vestimenta'
                         value={TipoFarda.NAO_APLICA}
                         checked={evento?.vestimenta == TipoFarda.NAO_APLICA}
+                        readOnly
                       />
                       <label htmlFor='nao_aplica'>Não aplicável</label>
                     </div>

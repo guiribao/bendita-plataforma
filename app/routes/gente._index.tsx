@@ -58,8 +58,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function FinanceiroIndex() {
   const { perfis, APP_URL } = useLoaderData();
 
-  console.log(perfis);
-
   // Dados para modal deletar item
   let [deleting, setDeleting] = useState(false);
   let [deletingItem, setDeletingItem] = useState({});

@@ -1,11 +1,24 @@
+//@ts-nocheck
 import { TipoEvento, TipoFarda } from '@prisma/client';
-import type { ActionFunctionArgs, LinksFunction, MetaFunction } from '@remix-run/node';
-import { Form, Link, json, redirect, useActionData, useNavigation } from '@remix-run/react';
-import { useState } from 'react';
+import type {
+  ActionFunctionArgs,
+  LinksFunction,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from '@remix-run/node';
+import {
+  Form,
+  Link,
+  json,
+  redirect,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from '@remix-run/react';
+import { useRef, useState } from 'react';
 
 import novoEventoPageStyle from '~/assets/css/novo-evento-page.css';
-import loading from '~/assets/img/loading.gif';
-import editarEvento from '~/domain/Calendario/editar-evento.server';
+import novoEvento from '~/domain/Calendario/novo-evento.server';
 import { authenticator } from '~/secure/authentication.server';
 
 export const meta: MetaFunction = () => {
@@ -33,6 +46,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   let form = await request.formData();
 
+  let feirantes = form.get('feirantes') as string;
   let tipoEvento = form.get('tipo') as string;
   let titulo = form.get('titulo') as string;
   let descricao = form.get('descricao') as string;
@@ -42,36 +56,75 @@ export async function action({ request }: ActionFunctionArgs) {
   let trabalho_missa = form.get('trabalho_missa');
   let trabalho_fechado = form.get('trabalho_fechado');
 
-
   if ([!dataHora, !titulo, !descricao].some(Boolean)) {
     errors = Object.assign(errors, { data: 'Preencha todos os campos obrigatórios' });
     return json({ errors });
   }
 
-  await editarEvento(
+  await novoEvento({
     tipoEvento,
     titulo,
     descricao,
     vestimenta,
     dataHora,
-    !!trabalho_terco,
-    !!trabalho_missa,
-    !!trabalho_fechado,
-    0
-  );
+    trabalho_terco: !!trabalho_terco,
+    trabalho_missa: !!trabalho_missa,
+    trabalho_fechado: !!trabalho_fechado,
+    feirantesIds: feirantes?.split(',').map(id => Number(id)) || []
+  });
 
   return redirect('/calendario');
 }
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  let APP_URL = process.env.APP_URL;
+
+  return json({ APP_URL });
+}
+
 export default function CalendarioNovoIndex() {
   const actionData = useActionData();
+  const { APP_URL } = useLoaderData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
   const [tipoEvento, setTipoEvento] = useState(TipoEvento.EVENTO);
 
+  let [perfis, setPerfis] = useState([]);
+  let [feirantes, setFeirantes] = useState([]);
+
+  let searchInput = useRef(null);
+
   function setarTipoEvento(event) {
     let value = event.target.value;
     if (value != tipoEvento) setTipoEvento(value);
+  }
+
+  async function buscarUsuarioPerfil(e) {
+    let valorBusca = e.target.value;
+
+    if (valorBusca.length == 0) {
+      setPerfis([]);
+    }
+
+    if (valorBusca.length < 3) return;
+
+    let response = await fetch(`/buscar/perfil/${valorBusca}?onlyUsers`, { method: 'get' }).then((res) =>
+      res.json()
+    );
+
+    // Todos perfis que não estão em feirantes
+    setPerfis([ ...response?.perfis.filter((perfil) => !feirantes.find(feirantes => feirantes.id == perfil.id)) ]);
+  }
+
+  function adicionarFeirante(perfil) {
+    setFeirantes([...feirantes, perfil]);
+    setPerfis(perfis.filter((p) => p.id != perfil.id));
+  }
+
+  function removerFeirante(perfil) {
+    let nome = `${perfil.nome} ${perfil.sobrenome}`
+    if(nome.includes(searchInput.current.value)) setPerfis([...perfis, perfil]);
+    setFeirantes(feirantes.filter((p) => p.id != perfil.id));
   }
 
   return (
@@ -107,10 +160,10 @@ export default function CalendarioNovoIndex() {
                     type='radio'
                     id='tipo_evento_feirinha'
                     name='tipo'
-                    value={TipoEvento.FEIRINHA}
+                    value={TipoEvento.FEIRA}
                     onChange={setarTipoEvento}
                   />
-                  <label htmlFor='tipo_evento_feirinha'>Feirinha</label>
+                  <label htmlFor='tipo_evento_feirinha'>Feira</label>
                 </div>
 
                 <div className='form-group evento'>
@@ -138,7 +191,7 @@ export default function CalendarioNovoIndex() {
 
               {/* Titulo */}
               <div className='form-group titulo'>
-                <label htmlFor='titulo'>Título</label>
+                <label htmlFor='titulo'>Nome</label>
                 <input
                   type='text'
                   id='titulo'
@@ -151,7 +204,7 @@ export default function CalendarioNovoIndex() {
 
               {/* Descrição */}
               <div className='form-group descricao'>
-                <label htmlFor='descricao'>Descrição ou hinário</label>
+                <label htmlFor='descricao'>Descrição</label>
                 <input
                   type='text'
                   id='descricao'
@@ -164,7 +217,7 @@ export default function CalendarioNovoIndex() {
 
               {/* Data e hora */}
               <div className='form-group descricao'>
-                <label htmlFor='data'>Data hora</label>
+                <label htmlFor='data'>Data e hora</label>
                 <input type='datetime-local' id='data' name='data_hora' defaultValue={''} />
               </div>
 
@@ -230,6 +283,84 @@ export default function CalendarioNovoIndex() {
                       />
                       <label htmlFor='nao_aplica'>Não aplicável</label>
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {/* SELECIONAR FEIRANTES */}
+              {tipoEvento == TipoEvento.FEIRA && (
+                <div className='detalhes-feira'>
+                  <div>
+                    <h2>Adicionar feirantes</h2>
+                    <div className='form-group'>
+                      <input
+                        type='text'
+                        id='vincular-perfil-input'
+                        placeholder='Digite para buscar'
+                        defaultValue={''}
+                        onChange={buscarUsuarioPerfil}
+                        ref={searchInput}
+                        autoComplete='off'
+                      />
+                    </div>
+                    <ul className='busca-feirantes'>
+                      
+                      {perfis.map((perfil) => (
+                        <li
+                          key={perfil.id}
+                          onClick={() => adicionarFeirante(perfil)}
+                          className='badge'
+                        >
+                          <img
+                            src={`${APP_URL}/${perfil.foto}`}
+                            alt={`Foto do feirante - ${perfil.nome} ${perfil.sobrenome}`}
+                            width={32}
+                          />
+                          {perfil.nome} {perfil.sobrenome}
+                          <svg
+                            xmlns='http://www.w3.org/2000/svg'
+                            width='24'
+                            height='24'
+                            viewBox='0 0 24 24'
+                          >
+                            <path d='M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z' />
+                          </svg>
+                        </li>
+                      ))}
+
+                      {perfis.length === 0 && searchInput.value && <p>Nada encontrado</p>}
+                    </ul>
+                  </div>
+                  <div>
+                    <h2>Feirantes</h2>
+                    <ul className='lista-feirantes'>
+                      <input
+                        type='hidden'
+                        defaultValue={feirantes.map((f) => f.id)}
+                        name='feirantes'
+                      />
+                      {feirantes.map((feirante) => (
+                        <li key={feirante.id} className='badge'>
+                          <img
+                            src={`${APP_URL}/${feirante.foto}`}
+                            alt={`Foto do feirante - ${feirante.nome} ${feirante.sobrenome}`}
+                            width={32}
+                          />
+                          {feirante.nome} {feirante.sobrenome}
+                          <svg
+                            xmlns='http://www.w3.org/2000/svg'
+                            width='24'
+                            height='24'
+                            viewBox='0 0 24 24'
+                            onClick={() => removerFeirante(feirante)}
+                          >
+                            <path d='M23 20.168l-8.185-8.187 8.185-8.174-2.832-2.807-8.182 8.179-8.176-8.179-2.81 2.81 8.186 8.196-8.186 8.184 2.81 2.81 8.203-8.192 8.18 8.192z' />
+                          </svg>
+                        </li>
+                      ))}
+
+                      {feirantes.length === 0 && <p>Nenhum feirante adicionado</p>}
+                    </ul>
                   </div>
                 </div>
               )}

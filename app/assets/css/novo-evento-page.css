@@ -57,7 +57,6 @@
 }
 
 .detalhes-trabalho h2 {
-  color: var(--text-gray);
   margin: 0.3em 0 0.7em 0;
 }
 
@@ -77,6 +76,60 @@
   font-weight: 700;
   line-height: 1.2em;
   color: var(--text-gray);
+}
+
+.detalhes-feira {
+  background: #ededed;
+  padding: 1em 1.3em;
+  border-radius: 0.3em;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.detalhes-feira div {
+  width: 45%;
+  min-width: 300px;
+}
+
+.detalhes-feira div ul.busca-feirantes {
+  display: flex;
+  flex-direction: row;
+  gap: .5em;
+  flex-wrap: wrap;
+  padding: .5em 0;
+}
+
+.detalhes-feira div ul.lista-feirantes {
+  display: flex;
+  flex-direction: row;
+  gap: .5em;
+  flex-wrap: wrap;
+}
+
+.detalhes-feira div ul li.badge {
+  background-color: var(--main-color);
+  max-width: 100%;
+  padding: .15em .7em .15em .35em;
+  border-radius: 30px;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: .5em;
+}
+
+.detalhes-feira div ul li.badge img {
+  border-radius: 30px;
+}
+
+.detalhes-feira div ul li.badge svg {
+  width: 20px;
+  fill: #f9f9f9;
+  cursor: pointer;
 }
 
 @media screen and (min-width: 768px) {

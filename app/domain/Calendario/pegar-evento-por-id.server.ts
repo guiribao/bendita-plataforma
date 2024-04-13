@@ -5,7 +5,10 @@ export default async function pegarEventoPorId(eventoId: string): Promise<Evento
   try {
     const evento = await prisma.eventos.findFirst({
       where: {
-        id: Number(eventoId)
+        id: Number(eventoId),
+      },
+      include: {
+        Feirantes: { include: { perfil: true } },
       },
     });
 

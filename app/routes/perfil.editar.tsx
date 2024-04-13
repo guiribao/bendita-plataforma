@@ -111,7 +111,7 @@ export const action: ActionFunction = async ({ request }) => {
     estado_nascimento,
     registro_geral,
     cpf,
-    foto: 'http://localhost:3000/user.png',
+    foto: 'user.png',
     grupo,
     email,
     telefone_fixo: telefone_fixo.replaceAll(' ', ''),
