@@ -8,8 +8,10 @@ export const PaginasAbertas = [
   '/perfil',
   '/perfil/editar',
   '/cadastro',
-  '/em_breve'
+  '/em_breve',
 ];
+
+export const PaginaComPapelAdicional = ['/calendario/feira'];
 
 export const PaginasPorPapel = {
   '/autorizacao': [Papel.USUARIO, Papel.ADMIN],
@@ -37,6 +39,7 @@ export const FuncionalidadesPorPapel = {
     CRIAR_EVENTO: [Papel.ADMIN],
     DELETAR_EVENTO: [Papel.ADMIN],
     EDITAR_EVENTO: [Papel.ADMIN],
+    CARDS_FEIRANTE: [Papel.FEIRANTE],
   },
   '/financeiro': {
     CARDS_FINANCEIRO_MES: [Papel.ADMIN],

@@ -26,7 +26,7 @@ import { Papel, Perfil, Usuario } from '@prisma/client';
 import pegarPerfilPeloIdUsuario from './domain/Perfil/perfil-pelo-id-usuario.server';
 import { useEffect } from 'react';
 import { createHashHistory } from 'history';
-import { canAccess, canView, handleElements, specificDynPages } from './secure/authorization';
+import { canAccess, canView, handleElements, loadAditionalRoles, specificDynPages } from './secure/authorization';
 import NotAuthorized from './routes/autorizacao';
 import { getEnv } from './env.server';
 
@@ -89,7 +89,9 @@ export default function App() {
       if (!perfil && location.pathname !== '/perfil/editar') {
         history.back();
       }
-      handleElements(document, usuario.papel, location.pathname);
+      
+      usuario.papelAdicional = async () => await loadAditionalRoles(location.pathname, usuario, perfil);
+      handleElements(document, usuario.papel, usuario.papelAdicional, location.pathname);
     }
   }, [location.key, isAuthorized]);
   

@@ -198,6 +198,7 @@ export default function CalendarioNovoIndex() {
                   placeholder='ex: Concentração'
                   name='titulo'
                   defaultValue={''}
+                  autoComplete='off'
                   required
                 />
               </div>
@@ -211,6 +212,7 @@ export default function CalendarioNovoIndex() {
                   placeholder='ex: Caderno de hinos e orações'
                   name='descricao'
                   defaultValue={''}
+                  autoComplete='off'
                   required
                 />
               </div>

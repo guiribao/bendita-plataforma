@@ -1,18 +1,15 @@
 //@ts-nocheck
-import { LoaderArgs, json } from '@remix-run/node';
-import type { LoaderFunctionArgs, MetaFunctiond } from '@remix-run/node';
+import { json } from '@remix-run/node';
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { useEffect } from 'react';
 import { CurrencyInput } from 'react-currency-mask';
 import Minicards from '~/component/Minicards';
 import pegarDadosEventosDashboard from '~/domain/Calendario/pegar-dados-eventos-dashboard.server';
 import pegarDadosOperacoesDashboard from '~/domain/Financeiro/pegar-dados-operacoes-dashboard.server';
 import pegarDadosPerfisDashboard from '~/domain/Perfil/pegar-dados-perfis-dashboard.server';
 import { authenticator } from '~/secure/authentication.server';
-import { handleElements } from '~/secure/authorization';
-import { FuncionalidadesPorPapel } from '~/secure/permissions';
 
 export const meta: MetaFunction = () => {
   return [

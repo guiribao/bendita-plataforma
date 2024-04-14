@@ -1,5 +1,6 @@
 //@ts-nocheck
-import { TipoEvento, TipoFarda } from '@prisma/client';
+import { json } from '@remix-run/node';
+
 import type {
   ActionFunctionArgs,
   LinksFunction,
@@ -9,7 +10,6 @@ import type {
 import {
   Form,
   Link,
-  json,
   redirect,
   useActionData,
   useLoaderData,
@@ -45,7 +45,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   let APP_URL = process.env.APP_URL;
-
+  
   return json({ APP_URL });
 }
 
@@ -63,7 +63,7 @@ export default function FeiraIndex() {
             <Link to={'/calendario'}>Voltar</Link>
           </div>
           <div className='view-body'>
-            
+            <div data-role='CARDS_FEIRANTE'>Apenas feirantes verão isso!</div>
           </div>
           <div className='view-footer'></div>
         </div>

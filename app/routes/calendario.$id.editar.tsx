@@ -240,26 +240,28 @@ export default function CalendarioEditarIndex() {
 
               {/* Titulo */}
               <div className='form-group titulo'>
-                <label htmlFor='titulo'>Título</label>
+                <label htmlFor='titulo'>Nome</label>
                 <input
                   type='text'
                   id='titulo'
                   placeholder='ex: Concentração'
                   name='titulo'
                   defaultValue={evento?.titulo}
+                  autoComplete='off'
                   required
                 />
               </div>
 
               {/* Descrição */}
               <div className='form-group descricao'>
-                <label htmlFor='descricao'>Descrição ou hinário</label>
+                <label htmlFor='descricao'>Descrição</label>
                 <input
                   type='text'
                   id='descricao'
                   placeholder='ex: Caderno de hinos e orações'
                   name='descricao'
                   defaultValue={evento?.descricao}
+                  autoComplete='off'
                   required
                 />
               </div>
@@ -374,6 +376,7 @@ export default function CalendarioEditarIndex() {
                         defaultValue={''}
                         onChange={buscarPerfil}
                         ref={searchInput}
+                        autoComplete='off'
                       />
                     </div>
                     <ul className='busca-feirantes'>

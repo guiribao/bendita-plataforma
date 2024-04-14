@@ -1,6 +1,11 @@
 //@ts-nocheck
 import { Papel } from '@prisma/client';
-import { FuncionalidadesPorPapel, PaginasAbertas, PaginasPorPapel } from './permissions';
+import {
+  FuncionalidadesPorPapel,
+  PaginaComPapelAdicional,
+  PaginasAbertas,
+  PaginasPorPapel,
+} from './permissions';
 
 export function canView(pathname: string, papelUsuario: string) {
   const papeisPermitidos = PaginasPorPapel[pathname];
@@ -42,7 +47,6 @@ export function specificDynPages(pathname: string, papelUsuario: string) {
     return papeisPermitidos?.includes(papelUsuario);
   }
 
-
   if (/\/gente\/[0-9]+/i.test(pathname)) {
     const papeisPermitidos = PaginasPorPapel['/gente/{id}'];
     return papeisPermitidos?.includes(papelUsuario);
@@ -51,16 +55,33 @@ export function specificDynPages(pathname: string, papelUsuario: string) {
   return canI;
 }
 
-export function handleElements(document, papel, path) {
-  let saned = '/' + path.split('/')[1];
+export async function loadAditionalRoles(pathname: string, usuario, perfil) {
+  let should = !!PaginaComPapelAdicional.find((str) => pathname.includes(str));
+
+  if (should === false) return [];
+
+  let response = await fetch('/autentica/roles/', {
+    method: 'post',
+    body: JSON.stringify({ path: pathname, perfilId: perfil.id }),
+  }).then((res) => res.json());
+
+  return response.roles;
+}
+
+export async function handleElements(document, papel, papelAdicional, path) {
+  let module = '/' + path.split('/')[1];
   let elements = document.querySelectorAll('[data-role]');
-  if (!FuncionalidadesPorPapel[saned]) return;
-  let funcionalidades = FuncionalidadesPorPapel[saned];
-  
+
+  let aditionalRole = await papelAdicional();
+
+  if (!FuncionalidadesPorPapel[module]) return;
+  let funcionalidades = FuncionalidadesPorPapel[module];
+
   for (let element of elements) {
     if (
       !funcionalidades[element.dataset.role] ||
-      !funcionalidades[element.dataset.role].includes(papel)
+      (!funcionalidades[element.dataset.role].includes(papel) &&
+        !aditionalRole.find((str) => funcionalidades[element.dataset.role] == str))
     ) {
       element.parentNode?.removeChild(element);
     }
