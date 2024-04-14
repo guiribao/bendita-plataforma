@@ -122,7 +122,7 @@ export default function CalendarioEditarIndex() {
 
     if (valorBusca.length < 3) return;
 
-    let response = await fetch(`/buscar/perfil/${valorBusca}`, { method: 'get' }).then((res) =>
+    let response = await fetch(`/buscar/perfil/${valorBusca}?onlyUsers`, { method: 'get' }).then((res) =>
       res.json()
     );
 
