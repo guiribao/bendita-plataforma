@@ -77,7 +77,6 @@ export async function action({ request }: ActionFunctionArgs) {
     trabalho_terco: !!trabalho_terco,
     trabalho_missa: !!trabalho_missa,
     trabalho_fechado: !!trabalho_fechado,
-    Feirantes: feirantes.split(','),
     eventoId: Number(eventoId),
     feirantesIds: feirantes?.split(',').map(id => Number(id)) || []
   });
