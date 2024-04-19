@@ -17,9 +17,9 @@ export default function Minicards({ cards, role }: MinicardsProps) {
   return (
     <div className='minicards' data-role={role}>
       {cards.map((card) => (
-        <div className='card-single' key={card.label}>
+        <div className={`card-single ${card.classes}`} key={card.label} onClick={card.callback}>
           <div>
-            <h1>{card.quantidade||0}</h1>
+            <h1>{card.quantidade || 0}</h1>
             <span>{card.label}</span>
           </div>
           <div>

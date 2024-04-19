@@ -24,9 +24,15 @@ import Topbar from './component/layout/Topbar';
 import { authenticator } from './secure/authentication.server';
 import { Papel, Perfil, Usuario } from '@prisma/client';
 import pegarPerfilPeloIdUsuario from './domain/Perfil/perfil-pelo-id-usuario.server';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createHashHistory } from 'history';
-import { canAccess, canView, handleElements, loadAditionalRoles, specificDynPages } from './secure/authorization';
+import {
+  canAccess,
+  canView,
+  handleElements,
+  loadAditionalRoles,
+  specificDynPages,
+} from './secure/authorization';
 import NotAuthorized from './routes/autorizacao';
 import { getEnv } from './env.server';
 
@@ -78,6 +84,7 @@ export default function App() {
   let location = useLocation();
   let { ENV, usuario, perfil } = useLoaderData();
   let isAuthorized = canView(location.pathname, usuario?.papel);
+  let [loading, setLoading] = useState(true);
 
   // Redireciona pro preenchimento do perfil quando ainda estiver incompleto
   useEffect(() => {
@@ -89,12 +96,15 @@ export default function App() {
       if (!perfil && location.pathname !== '/perfil/editar') {
         history.back();
       }
-      
-      usuario.papelAdicional = async () => await loadAditionalRoles(location.pathname, usuario, perfil);
+
+      usuario.papelAdicional = async () =>
+        await loadAditionalRoles(location.pathname, perfil.id);
       handleElements(document, usuario.papel, usuario.papelAdicional, location.pathname);
     }
+
+    setLoading(false);
   }, [location.key, isAuthorized]);
-  
+
   return (
     <html lang='pt-BR' suppressHydrationWarning={true}>
       <head>
@@ -108,6 +118,7 @@ export default function App() {
           <Sidebar />
           <div className='content'>
             <Topbar />
+
             {isAuthorized ? <Outlet /> : <NotAuthorized />}
           </div>
         </Layout>

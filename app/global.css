@@ -296,6 +296,10 @@ main {
   color: white;
 }
 
+.card-clicavel {
+  cursor: pointer;
+}
+
 .view_container {
   width: 100%;
   margin: 0 auto;
@@ -551,6 +555,17 @@ button:disabled {
 
 .form-group input:focus {
   border: 1px solid var(--main-color);
+}
+
+.form-group select {
+  width: 100%;
+  font-size: 1.35em;
+  padding: 5px 10px;
+  border: 1px solid var(--text-gray);
+  border-radius: 30px;
+  background: #f9f9f9;
+  outline: none;
+  margin: 0 auto;
 }
 
 @media screen and (min-width: 768px) {

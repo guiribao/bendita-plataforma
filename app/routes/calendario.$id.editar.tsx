@@ -52,7 +52,6 @@ export async function action({ request }: ActionFunctionArgs) {
   let form = await request.formData();
   
   let feirantes = form.get('feirantes') as string;
-  console.log(feirantes)
   let tipoEvento = form.get('tipo') as string;
   let titulo = form.get('titulo') as string;
   let descricao = form.get('descricao') as string;

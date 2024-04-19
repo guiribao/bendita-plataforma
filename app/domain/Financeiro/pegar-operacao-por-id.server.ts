@@ -3,7 +3,7 @@ import { Operacao } from '@prisma/client';
 
 export default async function pegarOperacaoPorId(operacaoId: string): Promise<Operacao | null> {
   try {
-    const curso = await prisma.operacao.findFirst({
+    const operacao = await prisma.operacao.findFirst({
       where: {
         id: Number(operacaoId)
       },
@@ -12,7 +12,7 @@ export default async function pegarOperacaoPorId(operacaoId: string): Promise<Op
       }
     });
 
-    return curso;
+    return operacao;
   } catch (error) {
     return null;
   }

@@ -243,7 +243,6 @@ export default function VisitanteNovo() {
     perfil_cpf = await fetch(`/buscar/perfil/${_cpf}`).then((response) => response.json());
 
     if (perfil_cpf.perfis.length) {
-      console.log(perfil_cpf);
       setValidacao({ mensagem: 'Já existe um cadastro com este CPF.', estilo: 'mensagem-erro' });
       return;
     }

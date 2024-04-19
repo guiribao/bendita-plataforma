@@ -1,0 +1,85 @@
+.feira {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.feira .feirante {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.feira .feirante .minicards {
+  display: flex;
+}
+.feira .feirante .minicards .card-single {
+  width: 100% !important;
+}
+
+.feira .informacoes {
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+}
+
+.feira .informacoes .detalhes-feira {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.feira .detalhes-feirantes {
+
+}
+
+.feira .detalhes-feirantes ul {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1.5em;
+  margin-top: 1em;
+}
+
+.feira .detalhes-feirantes ul li {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: .3em;
+  padding: 0 .2em;
+  font-size: 1.2em;
+  font-weight: 600;
+  color: var(--color-dark);
+  border-bottom: 6px solid var(--main-color);
+  
+}
+
+.venda {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  background: #f9f9f9;
+  padding: 1.5em 1.3em;
+  margin: 0 0 2em 0;
+  border-radius: 13px;
+}
+
+.venda h1 {
+  display: flex;
+  justify-content: space-between;
+}
+
+.venda .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group input {
+  border-radius: 6px;
+}
+
+.form-group select {
+  border-radius: 6px;
+}

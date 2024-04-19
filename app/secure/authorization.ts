@@ -55,14 +55,14 @@ export function specificDynPages(pathname: string, papelUsuario: string) {
   return canI;
 }
 
-export async function loadAditionalRoles(pathname: string, usuario, perfil) {
+export async function loadAditionalRoles(pathname: string, perfilId) {
   let should = !!PaginaComPapelAdicional.find((str) => pathname.includes(str));
 
   if (should === false) return [];
 
   let response = await fetch('/autentica/roles/', {
     method: 'post',
-    body: JSON.stringify({ path: pathname, perfilId: perfil.id }),
+    body: JSON.stringify({ path: pathname, perfilId}),
   }).then((res) => res.json());
 
   return response.roles;
