@@ -70,7 +70,7 @@ export async function action({ request }: ActionFunctionArgs) {
     trabalho_terco: !!trabalho_terco,
     trabalho_missa: !!trabalho_missa,
     trabalho_fechado: !!trabalho_fechado,
-    feirantesIds: feirantes?.split(',').map(id => Number(id)) || []
+    feirantesIds: feirantes ? feirantes?.split(',').map(id => Number(id)) : []
   });
 
   return redirect('/calendario');
