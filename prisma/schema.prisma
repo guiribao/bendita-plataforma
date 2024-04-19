@@ -101,20 +101,20 @@ model Operacao {
   forma_pagamento   FormaPagamento     @default(NAO_ESPECIFICADO)
   valor             Decimal            @db.Money
   criado_em         DateTime           @default(now()) @db.Timestamptz()
-  criado_por_perfil Perfil             @relation("Operacao", fields: [criado_por], references: [id])
+  criado_por_perfil Perfil             @relation("Operacao", fields: [criado_por], references: [id], onDelete: Restrict)
   criado_por        Int
-  evento            Eventos?           @relation(fields: [eventoId], references: [id])
+  evento            Eventos?           @relation(fields: [eventoId], references: [id], onDelete: SetNull)
   eventoId          Int?
   // Operação
   descricao         String?            @db.VarChar(200)
-  perfil            Perfil?            @relation("Ref_operacao", fields: [perfilId], references: [id])
+  perfil            Perfil?            @relation("Ref_operacao", fields: [perfilId], references: [id], onDelete: SetNull)
   perfilId          Int?
   // Operação feira
-  feirante          Evento_Feirante?   @relation(fields: [feiranteId], references: [id])
+  feirante          Evento_Feirante?   @relation(fields: [feiranteId], references: [id], onDelete: Cascade)
   feiranteId        Int?
   produto           String?
   nome_cliente      String?
-  observacao         String?
+  observacao        String?
 
   @@index([perfilId])
   @@index([eventoId])
@@ -140,9 +140,9 @@ model Eventos {
 
 model Evento_Feirante {
   id           Int        @id @default(autoincrement())
-  evento       Eventos    @relation(fields: [eventoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  evento       Eventos    @relation(fields: [eventoId], references: [id], onDelete: Cascade)
   eventoId     Int
-  perfil       Perfil     @relation(fields: [perfilId], references: [id])
+  perfil       Perfil     @relation(fields: [perfilId], references: [id], onDelete: Cascade)
   perfilId     Int
   nome_barraca String?    @db.VarChar(200)
   logo_barraca String?    @db.VarChar(200)

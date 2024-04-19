@@ -20,12 +20,12 @@ export default async function editarEvento(eventoObj) {
           createMany: {
             skipDuplicates: true,
             data: [
-              ...eventoObj.feirantesIds.map((f) => ({
-                perfilId: f,
+              ...eventoObj.feirantesIds.map((id) => ({
+                perfilId: id,
               })),
             ],
           },
-          deleteMany: [{ NOT: { perfilId: { in: eventoObj.feirantesIds } } }],
+          deleteMany: [{ perfilId: { notIn: eventoObj.feirantesIds } }],
         },
       },
       select: {

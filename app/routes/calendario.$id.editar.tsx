@@ -77,7 +77,7 @@ export async function action({ request }: ActionFunctionArgs) {
     trabalho_missa: !!trabalho_missa,
     trabalho_fechado: !!trabalho_fechado,
     eventoId: Number(eventoId),
-    feirantesIds: feirantes?.split(',').map(id => Number(id)) || []
+    feirantesIds: feirantes ? feirantes?.split(',').map(id => Number(id)) : []
   });
 
   return redirect('/calendario');

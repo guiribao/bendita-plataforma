@@ -92,10 +92,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   let { id } = params;
 
   let feira = await pegarEventoFeiraPorId(id);
-  feira.eventoFeirante = feira.Feirantes.find((feirante) => feirante.perfilId == perfil.id);
+  feira.eventoFeirante = feira.Feirantes.find((feirante) => feirante.perfilId == perfil.id)
 
-  if (feira.eventoFeirante)
-    feira.operacoes = await pegarOperacoesPorFeirante(feira?.eventoFeirante.id);
+  if (feira.eventoFeirante) feira.operacoes = await pegarOperacoesPorFeirante(feira?.eventoFeirante?.id);
 
   return json({ feira, APP_URL });
 }
