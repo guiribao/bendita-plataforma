@@ -1,3 +1,4 @@
+import { FinalidadeOperacao } from '@prisma/client';
 import { json } from '@remix-run/node';
 import type { ActionFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
@@ -41,6 +42,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   operacoes = operacoes.map((operacao) => {
     let valor = parseFloat(operacao.valor).toLocaleString('pt-br', {
       minimumFractionDigits: 2,
+      style: 'currency',
+      currency: 'BRL',
     });
 
     operacao.valor = valor;
@@ -67,6 +70,13 @@ export default function FinanceiroIndex() {
     setDeletingItem({});
   }
 
+  function gerarDescricaoOperacaoFeira(operacao) {
+    let nomeBarraca = operacao.feirante.nome_barraca || `${operacao.feirante.perfil.nome} ${operacao.feirante.perfil.sobrenome}`
+    return `${operacao.evento.titulo} - venda de ${nomeBarraca}`
+  }
+
+  console.log(operacoes);
+
   return (
     <main>
       {deleting && (
@@ -83,7 +93,7 @@ export default function FinanceiroIndex() {
             <table>
               <thead>
                 <tr>
-                  <td>Id</td>
+                  <td>Finalidade</td>
                   <td>Descrição</td>
                   <td>Tipo</td>
                   <td>Valor R$</td>
@@ -99,36 +109,42 @@ export default function FinanceiroIndex() {
                     </td>
                   </tr>
                 )}
-                {operacoes.map((operacao) => (
-                  <tr key={operacao.id}>
-                    <td>{operacao.id}</td>
-                    <td>{operacao.descricao}</td>
-                    <td>{operacao.tipo}</td>
-                    <td>{operacao.valor}</td>
-                    <td
-                      title={format(new Date(operacao.criado_em), "dd/MM/yyyy 'às' HH:mm", {
-                        locale: ptBR,
-                      })}
-                    >
-                      {format(new Date(operacao.criado_em), "d 'de' LLLL 'de' yyyy", {
-                        locale: ptBR,
-                      })}
-                    </td>
-                    <td>
-                      <div id='actions'>
-                        <Link to={`/financeiro/${operacao.id}`}>
-                          <i className='lar la-eye'></i>
-                        </Link>
-                        <Link to={`/financeiro/${operacao.id}/editar`}>
-                          <i className='las la-pen'></i>
-                        </Link>
-                        <button onClick={() => openDeletingModal(operacao)}>
-                          <i className='las la-trash'></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                {operacoes.map((operacao) => {
+                  if (operacao.finalidade == FinalidadeOperacao.FEIRA)
+                    operacao.descricao = gerarDescricaoOperacaoFeira(operacao)
+                      
+
+                  return (
+                    <tr key={operacao.id}>
+                      <td>{operacao.finalidade}</td>
+                      <td>{operacao.descricao}</td>
+                      <td>{operacao.tipo}</td>
+                      <td>{operacao.valor}</td>
+                      <td
+                        title={format(new Date(operacao.criado_em), "dd/MM/yyyy 'às' HH:mm", {
+                          locale: ptBR,
+                        })}
+                      >
+                        {format(new Date(operacao.criado_em), "d 'de' LLLL 'de' yyyy", {
+                          locale: ptBR,
+                        })}
+                      </td>
+                      <td>
+                        <div id='actions'>
+                          <Link to={`/financeiro/${operacao.id}`}>
+                            <i className='lar la-eye'></i>
+                          </Link>
+                          <Link to={`/financeiro/${operacao.id}/editar`}>
+                            <i className='las la-pen'></i>
+                          </Link>
+                          <button onClick={() => openDeletingModal(operacao)}>
+                            <i className='las la-trash'></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -5,11 +5,15 @@ export default async function pegarOperacaoPorId(operacaoId: string): Promise<Op
   try {
     const operacao = await prisma.operacao.findFirst({
       where: {
-        id: Number(operacaoId)
+        id: Number(operacaoId),
       },
       include: {
-        perfil: true
-      }
+        perfil: true,
+        feirante: {
+          include: { perfil: { select: { nome: true, sobrenome: true } } },
+        },
+        evento: true,
+      },
     });
 
     return operacao;

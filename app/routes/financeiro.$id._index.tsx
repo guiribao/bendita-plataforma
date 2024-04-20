@@ -1,4 +1,4 @@
-import { TipoOperacao } from '@prisma/client';
+import { FinalidadeOperacao, TipoOperacao } from '@prisma/client';
 import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { Form, Link, json, redirect, useLoaderData, useNavigation } from '@remix-run/react';
 import { useState } from 'react';
@@ -43,6 +43,12 @@ export default function FinanceiroEditarIndex() {
 
   let [referencia, setReferencia] = useState(operacao.perfil);
 
+  function gerarDescricaoOperacaoFeira(operacao) {
+    let nomeBarraca = operacao.feirante?.nome_barraca || `${operacao.feirante.perfil.nome} ${operacao.feirante.perfil.sobrenome}`
+    return `${operacao.evento.titulo} - venda de ${nomeBarraca}`
+  }
+
+  if(operacao.finalidade == FinalidadeOperacao.FEIRA) operacao.descricao = gerarDescricaoOperacaoFeira(operacao)
   return (
     <main>
       <div className='view_container'>
@@ -91,7 +97,7 @@ export default function FinanceiroEditarIndex() {
 
               {/* Descrição */}
               <div className='form-group descricao'>
-                <label htmlFor='descricao'>Descrição ou título</label>
+                <label htmlFor='descricao'>Descrição</label>
                 <input
                   type='text'
                   id='descricao'
