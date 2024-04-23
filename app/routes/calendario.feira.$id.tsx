@@ -92,9 +92,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   let { id } = params;
 
   let feira = await pegarEventoFeiraPorId(id);
-  feira.eventoFeirante = feira.Feirantes.find((feirante) => feirante.perfilId == perfil.id)
+  feira.eventoFeirante = feira.Feirantes.find((feirante) => feirante.perfilId == perfil.id);
 
-  if (feira.eventoFeirante) feira.operacoes = await pegarOperacoesPorFeirante(feira?.eventoFeirante?.id);
+  if (feira.eventoFeirante)
+    feira.operacoes = await pegarOperacoesPorFeirante(feira?.eventoFeirante?.id);
 
   return json({ feira, APP_URL });
 }
@@ -107,6 +108,8 @@ export default function FeiraIndex() {
 
   let [vendendo, setVendendo] = useState(false);
   let [valorReal, setValorReal] = useState(0);
+
+  let [configurando, setConfigurando] = useState(false);
 
   let somaValorOperacoes = 0;
   if (feira.operacoes)
@@ -124,6 +127,7 @@ export default function FeiraIndex() {
       label: 'Total vendido',
       icon: 'las la-hand-holding-usd',
     },
+
     {
       quantidade: '+venda',
       label: 'Cadastrar uma nova venda',
@@ -131,10 +135,24 @@ export default function FeiraIndex() {
       callback: handleVendendo,
       classes: 'card-clicavel',
     },
+    {
+      quantidade: 'configurar',
+      label: 'Editar informações da banca',
+      icon: 'las la-pen',
+      callback: handleConfigurando,
+      classes: 'card-clicavel',
+    },
   ];
 
   function handleVendendo() {
+    if(configurando) setConfigurando(!configurando)
+
     setVendendo(!vendendo);
+  }
+
+  function handleConfigurando() {
+    if(vendendo) setVendendo(!vendendo)
+    setConfigurando(!configurando);
   }
 
   useEffect(() => {
@@ -150,113 +168,139 @@ export default function FeiraIndex() {
             <Link to={'/calendario'}>Voltar</Link>
           </div>
           <div className='view-body'>
-            {vendendo && (
-              <Form method='post' className='venda' data-role='FEIRANTE_VENDA'>
-                <input type='hidden' name='_action' value='nova_venda' />
-                <input type='hidden' name='eventoId' value={feira.id} />
-                <input type='hidden' name='feiraId' value={feira?.eventoFeirante?.id} />
-                <h1>
-                  Nova venda{' '}
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    width='24'
-                    height='24'
-                    viewBox='0 0 24 24'
-                    onClick={handleVendendo}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <path d='M23 20.168l-8.185-8.187 8.185-8.174-2.832-2.807-8.182 8.179-8.176-8.179-2.81 2.81 8.186 8.196-8.186 8.184 2.81 2.81 8.203-8.192 8.18 8.192z' />
-                  </svg>
-                </h1>
-                <div className='form-group'>
-                  <label htmlFor='produto'>Produto</label>
-                  <input
-                    type='text'
-                    id='produto'
-                    placeholder='Um ou mais produtos'
-                    name='produto'
-                    defaultValue={''}
-                    autoComplete='off'
-                    required
-                  />
-                </div>
-                <div className='form-group'>
-                  <label htmlFor='cliente'>Nome cliente</label>
-                  <input
-                    type='text'
-                    id='cliente'
-                    name='cliente'
-                    defaultValue={''}
-                    autoComplete='off'
-                    required
-                  />
-                </div>
-                <div className='form-group'>
-                  <label htmlFor='forma_pagamento'>Forma de pagamento *</label>
-                  <select name='forma_pagamento' id='forma_pagamento' defaultValue={''} required>
-                    <option value={FormaPagamento.PIX}>Pix</option>
-                    <option value={FormaPagamento.DINHEIRO}>Dinheiro</option>
-                    <option value={FormaPagamento.CREDITO_AVISTA}>Crédito a vista</option>
-                    <option value={FormaPagamento.CREDITO_PARCELADO}>Crédito Parcelado</option>
-                    <option value={FormaPagamento.NEGOCIACAO}>Negociação</option>
-                  </select>
-                </div>
-                <div className='form-group valor'>
-                  <label htmlFor='valor'>Valor da venda</label>
-                  <input type='hidden' name='valor_real' defaultValue={valorReal} />
-                  <CurrencyInput
-                    name='valor'
-                    id='valor'
-                    onChangeValue={(event, original, masked) => {
-                      setValorReal(Number(original));
-                    }}
-                  ></CurrencyInput>
-                </div>
-                <div className='form-group'>
-                  <label htmlFor='observacao'>Observação</label>
-                  <input
-                    type='text'
-                    id='observacao'
-                    name='observacao'
-                    defaultValue={''}
-                    autoComplete='off'
-                  />
-                </div>
-
-                <div className='form-group'>
-                  <button type='submit' className='btn-cadastro' disabled={isSubmitting}>
-                    {!isSubmitting && 'Cadastrar'}
-                    {isSubmitting && 'Cadastrando'}
-                  </button>
-                </div>
-              </Form>
-            )}
-
             <div className='feira'>
               <div className='feirante' data-role='CARDS_FEIRANTE'>
                 <Minicards cards={minicardsData} />
               </div>
-
-              <div className='informacoes'>
-                <div className='detalhes-feira'>
-                  <div className='descricao'>
-                    <h1>{feira?.titulo}</h1>
-                    <p>{feira.descricao}</p>
+              {vendendo && (
+                <Form method='post' className='group view venda' data-role='FEIRANTE_VENDA'>
+                  <input type='hidden' name='_action' value='nova_venda' />
+                  <input type='hidden' name='eventoId' value={feira.id} />
+                  <input type='hidden' name='feiraId' value={feira?.eventoFeirante?.id} />
+                  <h1>
+                    Nova venda{' '}
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      width='24'
+                      height='24'
+                      viewBox='0 0 24 24'
+                      onClick={handleVendendo}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <path d='M23 20.168l-8.185-8.187 8.185-8.174-2.832-2.807-8.182 8.179-8.176-8.179-2.81 2.81 8.186 8.196-8.186 8.184 2.81 2.81 8.203-8.192 8.18 8.192z' />
+                    </svg>
+                  </h1>
+                  <div className='form-group'>
+                    <label htmlFor='produto'>Produto</label>
+                    <input
+                      type='text'
+                      id='produto'
+                      placeholder='Um ou mais produtos'
+                      name='produto'
+                      defaultValue={''}
+                      autoComplete='off'
+                      required
+                    />
                   </div>
-                  <div className='data'>
-                    <h2>Data</h2>
-                    <p>
+                  <div className='form-group'>
+                    <label htmlFor='cliente'>Nome cliente</label>
+                    <input
+                      type='text'
+                      id='cliente'
+                      name='cliente'
+                      defaultValue={''}
+                      autoComplete='off'
+                      required
+                    />
+                  </div>
+                  <div className='form-group'>
+                    <label htmlFor='forma_pagamento'>Forma de pagamento *</label>
+                    <select name='forma_pagamento' id='forma_pagamento' defaultValue={''} required>
+                      <option value={FormaPagamento.PIX}>Pix</option>
+                      <option value={FormaPagamento.DINHEIRO}>Dinheiro</option>
+                      <option value={FormaPagamento.CREDITO_AVISTA}>Crédito a vista</option>
+                      <option value={FormaPagamento.CREDITO_PARCELADO}>Crédito Parcelado</option>
+                      <option value={FormaPagamento.NEGOCIACAO}>Negociação</option>
+                    </select>
+                  </div>
+                  <div className='form-group valor'>
+                    <label htmlFor='valor'>Valor da venda</label>
+                    <input type='hidden' name='valor_real' defaultValue={valorReal} />
+                    <CurrencyInput
+                      name='valor'
+                      id='valor'
+                      onChangeValue={(event, original, masked) => {
+                        setValorReal(Number(original));
+                      }}
+                    ></CurrencyInput>
+                  </div>
+                  <div className='form-group'>
+                    <label htmlFor='observacao'>Observação</label>
+                    <input
+                      type='text'
+                      id='observacao'
+                      name='observacao'
+                      defaultValue={''}
+                      autoComplete='off'
+                    />
+                  </div>
+
+                  <div className='form-group'>
+                    <button type='submit' className='btn-cadastro' disabled={isSubmitting}>
+                      {!isSubmitting && 'Cadastrar'}
+                      {isSubmitting && 'Cadastrando'}
+                    </button>
+                  </div>
+                </Form>
+              )}
+
+              {configurando && (
+                <Form method='post' className='group view configuracao' data-role='FEIRANTE_CONFIGURACAO'>
+                  <input type='hidden' name='_action' value='nova_venda' />
+                  <p>Campo para nome da banca</p>
+                  <p>Campo para subir logo da banca</p>
+                  <div className='form-group'>
+                    <button type='submit' className='btn-cadastro' disabled={isSubmitting}>
+                      {!isSubmitting && 'Salvar'}
+                      {isSubmitting && 'Salvando'}
+                    </button>
+                  </div>
+                </Form>
+              )}
+
+              <div className='group view basicas'>
+                <div className='group-header'>
+                  <h1>Informações básicas</h1>
+                </div>
+
+                <div className='field-group'>
+                  <div className='field'>
+                    <h3 htmlFor='descricao'>{feira?.titulo}</h3>
+                    <p id='descricao'>{feira.descricao}</p>
+                  </div>
+                </div>
+
+                <div className='field-group'>
+                  <div className='field'>
+                    <h3 htmlFor='descricao'>Data e hora</h3>
+                    <p id='descricao'>
                       {format(new Date(feira.data_hora), "d 'de' LLLL 'de' yyyy', 'HH:mm'h'", {
                         locale: ptBR,
                       })}
                     </p>
                   </div>
                 </div>
-                <div className='detalhes-feirantes'>
+              </div>
+
+              <div className='group view informacoes'>
+                <div className='group-header'>
                   <h1>Feirantes</h1>
+                </div>
+
+                <div className='field-group detalhes-feirantes'>
                   <ul>
                     {feira.Feirantes.map((feirante) => (
-                      <li key={feirante.id}>
+                      <li className='field' key={feirante.id}>
                         <img
                           src={`http://localhost:3000/user.png`}
                           alt={`Logo da barraca do feirante - ${feirante.perfil.nome} ${feirante.perfil.sobrenome}`}

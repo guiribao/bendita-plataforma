@@ -41,6 +41,7 @@ export const FuncionalidadesPorPapel = {
     EDITAR_EVENTO: [Papel.ADMIN],
     CARDS_FEIRANTE: [Papel.FEIRANTE],
     FEIRANTE_VENDA: [Papel.FEIRANTE],
+    FEIRANTE_CONFIGURACAO: [Papel.FEIRANTE],
   },
   '/financeiro': {
     CARDS_FINANCEIRO_MES: [Papel.ADMIN],

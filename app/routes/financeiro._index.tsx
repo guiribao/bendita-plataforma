@@ -1,7 +1,7 @@
 import { FinalidadeOperacao } from '@prisma/client';
-import { json } from '@remix-run/node';
+import { json, redirect } from '@remix-run/node';
 import type { ActionFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Link, useLoaderData } from '@remix-run/react';
+import { Link, useLoaderData, useNavigate } from '@remix-run/react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useState } from 'react';
@@ -55,6 +55,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function FinanceiroIndex() {
   const { operacoes } = useLoaderData();
+  const navigate = useNavigate();
 
   // Dados para modal deletar item
   let [deleting, setDeleting] = useState(false);
@@ -71,11 +72,15 @@ export default function FinanceiroIndex() {
   }
 
   function gerarDescricaoOperacaoFeira(operacao) {
-    let nomeBarraca = operacao.feirante.nome_barraca || `${operacao.feirante.perfil.nome} ${operacao.feirante.perfil.sobrenome}`
-    return `${operacao.evento.titulo} - venda de ${nomeBarraca}`
+    let nomeBarraca =
+      operacao.feirante.nome_barraca ||
+      `${operacao.feirante.perfil.nome} ${operacao.feirante.perfil.sobrenome}`;
+    return `${operacao.evento.titulo} - venda de ${nomeBarraca}`;
   }
 
-  console.log(operacoes);
+  function verOperacao(operacaoId) {
+    navigate(`/financeiro/${operacaoId}`);
+  }
 
   return (
     <main>
@@ -93,10 +98,11 @@ export default function FinanceiroIndex() {
             <table>
               <thead>
                 <tr>
-                  <td>Finalidade</td>
+                  <td>ID</td>
                   <td>Descrição</td>
                   <td>Tipo</td>
-                  <td>Valor R$</td>
+                  <td>Finalidade</td>
+                  <td>Valor</td>
                   <td>Criado em</td>
                   <td></td>
                 </tr>
@@ -111,14 +117,18 @@ export default function FinanceiroIndex() {
                 )}
                 {operacoes.map((operacao) => {
                   if (operacao.finalidade == FinalidadeOperacao.FEIRA)
-                    operacao.descricao = gerarDescricaoOperacaoFeira(operacao)
-                      
+                    operacao.descricao = gerarDescricaoOperacaoFeira(operacao);
 
                   return (
                     <tr key={operacao.id}>
-                      <td>{operacao.finalidade}</td>
-                      <td>{operacao.descricao}</td>
+                      <td>
+                        <Link to={`/financeiro/${operacao.id}`}>{operacao.id}</Link>
+                      </td>
+                      <td>
+                        <Link to={`/financeiro/${operacao.id}`}>{operacao.descricao}</Link>
+                      </td>
                       <td>{operacao.tipo}</td>
+                      <td>{operacao.finalidade}</td>
                       <td>{operacao.valor}</td>
                       <td
                         title={format(new Date(operacao.criado_em), "dd/MM/yyyy 'às' HH:mm", {
