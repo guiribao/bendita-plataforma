@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { FormaPagamento } from '@prisma/client';
-import { json } from '@remix-run/node';
+import { json, unstable_parseMultipartFormData } from '@remix-run/node';
 
 import type {
   ActionFunctionArgs,
@@ -29,6 +29,10 @@ import pegarOperacoesPorFeirante from '~/domain/Financeiro/pegar-operacoes-por-f
 import pegarPerfilPeloIdUsuario from '~/domain/Perfil/perfil-pelo-id-usuario.server';
 import { authenticator } from '~/secure/authentication.server';
 
+import uploadIcon from '~/assets/img/undraw/upload_photo.svg';
+import { getObjectUrlFromS3, s3UploaderHandler } from '~/storage/s3.service.server';
+import editarConfiguracoesBanca from '~/domain/Perfil/editar-perfil-feirante.server';
+
 export const meta: MetaFunction = ({ data }) => {
   return [
     {
@@ -55,7 +59,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
   let { id } = params;
   let errors = {};
 
-  let form = await request.formData();
+  const form = await unstable_parseMultipartFormData(request, s3UploaderHandler);
+
   let action = form.get('_action') as string;
 
   if (action === 'nova_venda') {
@@ -79,6 +84,18 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
+  if (action === 'editar_configuracao') {
+    let perfil_id = form.get('perfil_id') as string;
+    let nome_banca = form.get('nome_banca') as string;
+    let logo_banca = form.get(`logo_banca_${perfil_id}`);
+
+    await editarConfiguracoesBanca({
+      perfilId: Number(perfil_id),
+      nomeBanca: nome_banca,
+      logoBanca: logo_banca,
+    });
+  }
+
   return redirect(`/calendario/feira/${id}`);
 }
 
@@ -92,11 +109,19 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   let { id } = params;
 
   let feira = await pegarEventoFeiraPorId(id);
-  feira.eventoFeirante = feira.Feirantes.find((feirante) => feirante.perfilId == perfil.id);
+
+  feira.Feirantes.forEach(async (feirante) => {
+    if (feirante.perfilId == perfil.id) feira.eventoFeirante = feirante;
+
+    feirante.perfil.logo_banca = feirante.perfil?.logo_banca
+      ? await getObjectUrlFromS3(feirante.perfil.logo_banca).then((r) => r)
+      : feirante.perfil.logo_banca;
+  });
 
   if (feira.eventoFeirante)
     feira.operacoes = await pegarOperacoesPorFeirante(feira?.eventoFeirante?.id);
 
+  console.log(feira);
   return json({ feira, APP_URL });
 }
 
@@ -145,19 +170,21 @@ export default function FeiraIndex() {
   ];
 
   function handleVendendo() {
-    if(configurando) setConfigurando(!configurando)
+    if (configurando) setConfigurando(!configurando);
 
     setVendendo(!vendendo);
   }
 
   function handleConfigurando() {
-    if(vendendo) setVendendo(!vendendo)
+    if (vendendo) setVendendo(!vendendo);
     setConfigurando(!configurando);
   }
 
   useEffect(() => {
     setVendendo(false);
   }, [isSubmitting]);
+
+  console.log(feira);
 
   return (
     <main>
@@ -255,15 +282,51 @@ export default function FeiraIndex() {
               )}
 
               {configurando && (
-                <Form method='post' className='group view configuracao' data-role='FEIRANTE_CONFIGURACAO'>
-                  <input type='hidden' name='_action' value='nova_venda' />
-                  <p>Campo para nome da banca</p>
-                  <p>Campo para subir logo da banca</p>
-                  <div className='form-group'>
-                    <button type='submit' className='btn-cadastro' disabled={isSubmitting}>
-                      {!isSubmitting && 'Salvar'}
-                      {isSubmitting && 'Salvando'}
-                    </button>
+                <Form
+                  method='post'
+                  className='group view configuracao'
+                  encType='multipart/form-data'
+                  data-role='FEIRANTE_CONFIGURACAO'
+                >
+                  <div className='form-view'>
+                    <input type='hidden' name='_action' value='editar_configuracao' />
+                    <input
+                      type='hidden'
+                      name='perfil_id'
+                      id='perfil_id'
+                      value={feira.eventoFeirante.perfil.id}
+                    />
+
+                    <div className='form-group'>
+                      <img src={uploadIcon} width={256} alt='Escolha um logotipo para sua banca' />
+                      <label htmlFor='logo_banca'>Escolha um logotipo para sua banca</label>
+                      <input
+                        type='file'
+                        name={`logo_banca_${feira.eventoFeirante.perfil.id}`}
+                        id='logo_banca'
+                        defaultValue={''}
+                      />
+                      <p>É recomendada uma imagem de 500 x 500</p>
+                    </div>
+
+                    <div className='form-group'>
+                      <label htmlFor='nome_banca'>Qual o nome da sua banca?</label>
+                      <input
+                        type='text'
+                        id='nome_banca'
+                        placeholder='O nome da sua banca'
+                        name='nome_banca'
+                        defaultValue={feira.eventoFeirante.perfil?.nome_banca || ''}
+                        autoComplete='off'
+                      />
+                    </div>
+
+                    <div className='form-group'>
+                      <button type='submit' className='btn-cadastro' disabled={isSubmitting}>
+                        {!isSubmitting && 'Salvar'}
+                        {isSubmitting && 'Salvando'}
+                      </button>
+                    </div>
                   </div>
                 </Form>
               )}
@@ -302,12 +365,12 @@ export default function FeiraIndex() {
                     {feira.Feirantes.map((feirante) => (
                       <li className='field' key={feirante.id}>
                         <img
-                          src={`http://localhost:3000/user.png`}
+                          src={feirante.perfil?.logo_banca || `${APP_URL}/user.png`}
                           alt={`Logo da barraca do feirante - ${feirante.perfil.nome} ${feirante.perfil.sobrenome}`}
                           width={32}
                         />
                         <p>
-                          {feirante.nome_barraca ||
+                          {feirante.perfil.nome_banca ||
                             `${feirante.perfil.nome} ${feirante.perfil.sobrenome}`}
                         </p>
                       </li>
