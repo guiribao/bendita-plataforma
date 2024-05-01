@@ -191,7 +191,7 @@ export default function FeiraIndex() {
   }
 
   useEffect(() => {
-    setConsultando(true);
+    setConsultando(false);
     setVendendo(false);
     setConfigurando(false);
   }, [isSubmitting]);

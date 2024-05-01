@@ -60,9 +60,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const symbol = Object.getOwnPropertySymbols(request)[1];
     const parsed_url = request[symbol].parsedURL;
 
-    if (usuario?.papel == Papel.USUARIO && parsed_url.pathname != 'em_breve') {
-      return redirect('/em_breve');
-    }
+    // if (usuario?.papel == Papel.USUARIO && parsed_url.pathname != 'em_breve') {
+    //   return redirect('/em_breve');
+    // }
 
     perfil = await pegarPerfilPeloIdUsuario(usuario.id);
     if (!perfil?.id && !request.url.includes('/perfil/editar')) return redirect('/perfil/editar');
