@@ -121,7 +121,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (feira.eventoFeirante)
     feira.operacoes = await pegarOperacoesPorFeirante(feira?.eventoFeirante?.id);
 
-  console.log(feira);
   return json({ feira, APP_URL });
 }
 
@@ -130,6 +129,8 @@ export default function FeiraIndex() {
   const actionData = useActionData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
+
+  let [consultando, setConsultando] = useState(false);
 
   let [vendendo, setVendendo] = useState(false);
   let [valorReal, setValorReal] = useState(0);
@@ -149,8 +150,10 @@ export default function FeiraIndex() {
         style: 'currency',
         currency: 'BRL',
       }),
-      label: 'Total vendido',
+      label: 'Total vendido / Ver extrato',
       icon: 'las la-hand-holding-usd',
+      callback: handleConsultando,
+      classes: 'card-clicavel',
     },
 
     {
@@ -169,22 +172,29 @@ export default function FeiraIndex() {
     },
   ];
 
-  function handleVendendo() {
+  function handleConsultando() {
+    if (vendendo) setVendendo(!vendendo);
     if (configurando) setConfigurando(!configurando);
+    setConsultando(!consultando);
+  }
 
+  function handleVendendo() {
+    if (consultando) setConsultando(!consultando);
+    if (configurando) setConfigurando(!configurando);
     setVendendo(!vendendo);
   }
 
   function handleConfigurando() {
+    if (consultando) setConsultando(!consultando);
     if (vendendo) setVendendo(!vendendo);
     setConfigurando(!configurando);
   }
 
   useEffect(() => {
+    setConsultando(true);
     setVendendo(false);
+    setConfigurando(false);
   }, [isSubmitting]);
-
-  console.log(feira);
 
   return (
     <main>
@@ -199,84 +209,160 @@ export default function FeiraIndex() {
               <div className='feirante' data-role='CARDS_FEIRANTE'>
                 <Minicards cards={minicardsData} />
               </div>
-              {vendendo && (
-                <Form method='post' className='group view venda' data-role='FEIRANTE_VENDA'>
-                  <input type='hidden' name='_action' value='nova_venda' />
-                  <input type='hidden' name='eventoId' value={feira.id} />
-                  <input type='hidden' name='feiraId' value={feira?.eventoFeirante?.id} />
-                  <h1>
-                    Nova venda{' '}
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      width='24'
-                      height='24'
-                      viewBox='0 0 24 24'
-                      onClick={handleVendendo}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <path d='M23 20.168l-8.185-8.187 8.185-8.174-2.832-2.807-8.182 8.179-8.176-8.179-2.81 2.81 8.186 8.196-8.186 8.184 2.81 2.81 8.203-8.192 8.18 8.192z' />
-                    </svg>
-                  </h1>
-                  <div className='form-group'>
-                    <label htmlFor='produto'>Produto</label>
-                    <input
-                      type='text'
-                      id='produto'
-                      placeholder='Um ou mais produtos'
-                      name='produto'
-                      defaultValue={''}
-                      autoComplete='off'
-                      required
-                    />
+              {consultando && (
+                <div className='group view extrato' data-role='FEIRANTE_EXTRATO'>
+                  <div className='form-view'>
+                    <h1>
+                      Minhas vendas{' '}
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        width='24'
+                        height='24'
+                        viewBox='0 0 24 24'
+                        onClick={handleConsultando}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <path d='M23 20.168l-8.185-8.187 8.185-8.174-2.832-2.807-8.182 8.179-8.176-8.179-2.81 2.81 8.186 8.196-8.186 8.184 2.81 2.81 8.203-8.192 8.18 8.192z' />
+                      </svg>
+                    </h1>
+                    <table>
+                      <thead>
+                        <tr>
+                          <td>Produto</td>
+                          <td>Cliente</td>
+                          <td>Valor</td>
+                          <td>Forma de pagamento</td>
+                          <td>Obs</td>
+                          <td></td>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {feira.operacoes.length === 0 && (
+                          <tr>
+                            <td style={{ textAlign: 'center' }} colSpan={7}>
+                              Nenhum dado foi encontrado
+                            </td>
+                          </tr>
+                        )}
+                        {feira.operacoes.map((operacao) => {
+                          return (
+                            <tr key={operacao.id}>
+                              <td>{operacao.produto}</td>
+                              <td>{operacao.nome_cliente}</td>
+                              <td>{operacao.forma_pagamento}</td>
+                              <td>
+                                {Number(operacao.valor).toLocaleString('pt-BR', {
+                                  style: 'currency',
+                                  currency: 'BRL',
+                                })}
+                              </td>
+                              <td>{operacao.observacao}</td>
+                              <td>
+                                <div id='actions'>
+                                  {/* <button onClick={() => openDeletingModal(operacao)}>
+                                    <i className='las la-trash'></i>
+                                  </button> */}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
-                  <div className='form-group'>
-                    <label htmlFor='cliente'>Nome cliente</label>
-                    <input
-                      type='text'
-                      id='cliente'
-                      name='cliente'
-                      defaultValue={''}
-                      autoComplete='off'
-                      required
-                    />
-                  </div>
-                  <div className='form-group'>
-                    <label htmlFor='forma_pagamento'>Forma de pagamento *</label>
-                    <select name='forma_pagamento' id='forma_pagamento' defaultValue={''} required>
-                      <option value={FormaPagamento.PIX}>Pix</option>
-                      <option value={FormaPagamento.DINHEIRO}>Dinheiro</option>
-                      <option value={FormaPagamento.CREDITO_AVISTA}>Crédito a vista</option>
-                      <option value={FormaPagamento.CREDITO_PARCELADO}>Crédito Parcelado</option>
-                      <option value={FormaPagamento.NEGOCIACAO}>Negociação</option>
-                    </select>
-                  </div>
-                  <div className='form-group valor'>
-                    <label htmlFor='valor'>Valor da venda</label>
-                    <input type='hidden' name='valor_real' defaultValue={valorReal} />
-                    <CurrencyInput
-                      name='valor'
-                      id='valor'
-                      onChangeValue={(event, original, masked) => {
-                        setValorReal(Number(original));
-                      }}
-                    ></CurrencyInput>
-                  </div>
-                  <div className='form-group'>
-                    <label htmlFor='observacao'>Observação</label>
-                    <input
-                      type='text'
-                      id='observacao'
-                      name='observacao'
-                      defaultValue={''}
-                      autoComplete='off'
-                    />
-                  </div>
+                </div>
+              )}
 
-                  <div className='form-group'>
-                    <button type='submit' className='btn-cadastro' disabled={isSubmitting}>
-                      {!isSubmitting && 'Cadastrar'}
-                      {isSubmitting && 'Cadastrando'}
-                    </button>
+              {vendendo && (
+                <Form
+                  method='post'
+                  encType='multipart/form-data'
+                  className='group view venda'
+                  data-role='FEIRANTE_VENDA'
+                >
+                  <div className='form-view'>
+                    <input type='hidden' name='_action' value='nova_venda' />
+                    <input type='hidden' name='eventoId' value={feira.id} />
+                    <input type='hidden' name='feiraId' value={feira?.eventoFeirante?.id} />
+                    <h1>
+                      Nova venda{' '}
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        width='24'
+                        height='24'
+                        viewBox='0 0 24 24'
+                        onClick={handleVendendo}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <path d='M23 20.168l-8.185-8.187 8.185-8.174-2.832-2.807-8.182 8.179-8.176-8.179-2.81 2.81 8.186 8.196-8.186 8.184 2.81 2.81 8.203-8.192 8.18 8.192z' />
+                      </svg>
+                    </h1>
+                    <div className='form-group'>
+                      <label htmlFor='produto'>Produto</label>
+                      <input
+                        type='text'
+                        id='produto'
+                        placeholder='Um ou mais produtos'
+                        name='produto'
+                        defaultValue={''}
+                        autoComplete='off'
+                        required
+                      />
+                    </div>
+                    <div className='form-group'>
+                      <label htmlFor='cliente'>Nome cliente</label>
+                      <input
+                        type='text'
+                        id='cliente'
+                        name='cliente'
+                        defaultValue={''}
+                        autoComplete='off'
+                        required
+                      />
+                    </div>
+                    <div className='form-group'>
+                      <label htmlFor='forma_pagamento'>Forma de pagamento *</label>
+                      <select
+                        name='forma_pagamento'
+                        id='forma_pagamento'
+                        defaultValue={''}
+                        required
+                      >
+                        <option value={FormaPagamento.PIX}>Pix</option>
+                        <option value={FormaPagamento.DINHEIRO}>Dinheiro</option>
+                        <option value={FormaPagamento.CREDITO_AVISTA}>Crédito a vista</option>
+                        <option value={FormaPagamento.CREDITO_PARCELADO}>Crédito Parcelado</option>
+                        <option value={FormaPagamento.NEGOCIACAO}>Negociação</option>
+                      </select>
+                    </div>
+                    <div className='form-group valor'>
+                      <label htmlFor='valor'>Valor da venda</label>
+                      <input type='hidden' name='valor_real' defaultValue={valorReal} />
+                      <CurrencyInput
+                        name='valor'
+                        id='valor'
+                        onChangeValue={(event, original, masked) => {
+                          setValorReal(Number(original));
+                        }}
+                      ></CurrencyInput>
+                    </div>
+                    <div className='form-group'>
+                      <label htmlFor='observacao'>Observação</label>
+                      <input
+                        type='text'
+                        id='observacao'
+                        name='observacao'
+                        defaultValue={''}
+                        autoComplete='off'
+                      />
+                    </div>
+
+                    <div className='form-group'>
+                      <button type='submit' className='btn-cadastro' disabled={isSubmitting}>
+                        {!isSubmitting && 'Cadastrar'}
+                        {isSubmitting && 'Cadastrando'}
+                      </button>
+                    </div>
                   </div>
                 </Form>
               )}
@@ -289,6 +375,19 @@ export default function FeiraIndex() {
                   data-role='FEIRANTE_CONFIGURACAO'
                 >
                   <div className='form-view'>
+                    <h1>
+                      Configurar banca{' '}
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        width='24'
+                        height='24'
+                        viewBox='0 0 24 24'
+                        onClick={handleConfigurando}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <path d='M23 20.168l-8.185-8.187 8.185-8.174-2.832-2.807-8.182 8.179-8.176-8.179-2.81 2.81 8.186 8.196-8.186 8.184 2.81 2.81 8.203-8.192 8.18 8.192z' />
+                      </svg>
+                    </h1>
                     <input type='hidden' name='_action' value='editar_configuracao' />
                     <input
                       type='hidden'

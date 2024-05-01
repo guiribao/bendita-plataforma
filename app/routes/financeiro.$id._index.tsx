@@ -9,6 +9,7 @@ import { authenticator } from '~/secure/authentication.server';
 import pegarOperacaoPorId from '~/domain/Financeiro/pegar-operacao-por-id.server';
 
 import novaOperacaoPageStyle from '~/assets/css/nova-operacao-page.css';
+import { gerarDescricaoOperacaoFeira } from '~/shared/Operacao.util';
 
 export const meta: MetaFunction = () => {
   return [
@@ -43,12 +44,9 @@ export default function FinanceiroEditarIndex() {
 
   let [referencia, setReferencia] = useState(operacao.perfil);
 
-  function gerarDescricaoOperacaoFeira(operacao) {
-    let nomeBarraca = operacao.feirante?.nome_barraca || `${operacao.feirante.perfil.nome} ${operacao.feirante.perfil.sobrenome}`
-    return `${operacao.evento.titulo} - venda de ${nomeBarraca}`
-  }
-
-  if(operacao.finalidade == FinalidadeOperacao.FEIRA) operacao.descricao = gerarDescricaoOperacaoFeira(operacao)
+  if (operacao.finalidade == FinalidadeOperacao.FEIRA)
+    operacao.descricao = gerarDescricaoOperacaoFeira(operacao);
+  
   return (
     <main>
       <div className='view_container'>

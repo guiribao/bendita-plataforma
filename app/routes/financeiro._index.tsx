@@ -8,6 +8,7 @@ import { useState } from 'react';
 import DeletingModal from '~/component/DeletingModal';
 import deletarOperacaoPorId from '~/domain/Financeiro/deletar-operacao-por-id.server';
 import pegarOperacoes from '~/domain/Financeiro/pegar-operacoes.server';
+import { gerarDescricaoOperacaoFeira } from '~/shared/Operacao.util';
 
 export const meta: MetaFunction = () => {
   return [
@@ -69,13 +70,6 @@ export default function FinanceiroIndex() {
   function closeDeletingModal() {
     setDeleting(false);
     setDeletingItem({});
-  }
-
-  function gerarDescricaoOperacaoFeira(operacao) {
-    let nomeBarraca =
-      operacao.feirante.nome_barraca ||
-      `${operacao.feirante.perfil.nome} ${operacao.feirante.perfil.sobrenome}`;
-    return `${operacao.evento.titulo} - venda de ${nomeBarraca}`;
   }
 
   function verOperacao(operacaoId) {

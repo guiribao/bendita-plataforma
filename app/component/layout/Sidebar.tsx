@@ -1,6 +1,5 @@
 import { LoaderArgs, json } from '@remix-run/node';
 import { Link, useLoaderData, useLocation } from '@remix-run/react';
-import { is } from 'date-fns/locale';
 import { useEffect, useState } from 'react';
 import { authenticator } from '~/secure/authentication.server';
 import { canView } from '~/secure/authorization';

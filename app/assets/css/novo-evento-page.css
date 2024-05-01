@@ -91,8 +91,7 @@
 }
 
 .detalhes-feira div {
-  width: 45%;
-  min-width: 300px;
+  width: 100%;
 }
 
 .detalhes-feira div ul.busca-feirantes {

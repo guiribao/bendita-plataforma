@@ -67,14 +67,30 @@
   background: #f9f9f9;
   padding: 1.5em 1.3em;
   border-radius: 13px;
+  background: red;
 }
 
-.venda h1 {
+.venda .form-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  flex-wrap: wrap;
+}
+
+.extrato h1, .venda h1, .configuracao h1 {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
-.venda .form-group,
+.venda .form-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: .5em;
+}
+
 .configuracao .form-group {
   gap: 1em;
 }
@@ -100,7 +116,6 @@
 }
 
 .configuracao .form-view {
-  max-width: 450px;
   text-align: left;
   display: flex;
   gap: 2em;
@@ -117,4 +132,16 @@
 
 .form-group select {
   border-radius: 6px;
+}
+
+.extrato {
+  
+}
+
+.extrato .form-view {
+  width: 98%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
 }

@@ -1,4 +1,5 @@
 //@ts-nocheck
+import { FinalidadeOperacao } from '@prisma/client';
 import { json } from '@remix-run/node';
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
@@ -10,6 +11,7 @@ import pegarDadosEventosDashboard from '~/domain/Calendario/pegar-dados-eventos-
 import pegarDadosOperacoesDashboard from '~/domain/Financeiro/pegar-dados-operacoes-dashboard.server';
 import pegarDadosPerfisDashboard from '~/domain/Perfil/pegar-dados-perfis-dashboard.server';
 import { authenticator } from '~/secure/authentication.server';
+import { gerarDescricaoOperacaoFeira } from '~/shared/Operacao.util';
 
 export const meta: MetaFunction = () => {
   return [
@@ -102,30 +104,35 @@ export default function DashboardIndex() {
                     </td>
                   </tr>
                 )}
-                {ultimasDezOperacoes.map((operacao) => (
-                  <tr key={operacao.id}>
-                    <td>{operacao.id}</td>
-                    <td>{operacao.descricao}</td>
-                    <td>{operacao.tipo}</td>
-                    <td>
-                      <CurrencyInput
-                        name='valor'
-                        defaultValue={operacao.valor * 1}
-                        readOnly
-                        className="valor-operacao"
-                      ></CurrencyInput>
-                    </td>
-                    <td
-                      title={format(new Date(operacao.criado_em), "dd/MM/yyyy 'às' HH:mm", {
-                        locale: ptBR,
-                      })}
-                    >
-                      {format(new Date(operacao.criado_em), "d 'de' LLLL 'de' yyyy", {
-                        locale: ptBR,
-                      })}
-                    </td>
-                  </tr>
-                ))}
+                {ultimasDezOperacoes.map((operacao) => {
+                  if (operacao.finalidade == FinalidadeOperacao.FEIRA)
+                    operacao.descricao = gerarDescricaoOperacaoFeira(operacao);
+
+                  return (
+                    <tr key={operacao.id}>
+                      <td>{operacao.id}</td>
+                      <td className='texto-grande' title={operacao.descricao}>{operacao.descricao}</td>
+                      <td>{operacao.tipo}</td>
+                      <td>
+                        <CurrencyInput
+                          name='valor'
+                          defaultValue={operacao.valor * 1}
+                          readOnly
+                          className='valor-operacao'
+                        ></CurrencyInput>
+                      </td>
+                      <td
+                        title={format(new Date(operacao.criado_em), "dd/MM/yyyy 'às' HH:mm", {
+                          locale: ptBR,
+                        })}
+                      >
+                        {format(new Date(operacao.criado_em), "d 'de' LLLL 'de' yyyy", {
+                          locale: ptBR,
+                        })}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

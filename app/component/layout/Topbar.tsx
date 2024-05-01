@@ -31,7 +31,7 @@ export default function Topbar() {
         <div className='user-wrapper'>
           <img src={userImage} alt='some random user image' width={'40px'} height={'40px'} />
           <div>
-            <h4>{(perfil?.nome) ? `${perfil?.nome} ${perfil?.sobrenome}` : usuario.email}</h4>
+            <h4>{perfil?.nome ? `${perfil?.nome} ${perfil?.sobrenome}` : usuario.email}</h4>
             <small>
               <Link to='/perfil'>Meu perfil</Link>
               {' | '}
