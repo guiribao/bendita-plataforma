@@ -148,7 +148,6 @@ export default function DashboardIndex() {
             <table>
               <thead>
                 <tr>
-                  <td>Id</td>
                   <td>Nome</td>
                   <td>Grupo</td>
                   <td>É membro</td>
@@ -164,7 +163,6 @@ export default function DashboardIndex() {
                 )}
                 {ultimosDezPerfis.map((perfil) => (
                   <tr key={perfil.id}>
-                    <td>{perfil.id}</td>
                     <td>
                       {perfil.nome} {perfil.sobrenome}
                     </td>
