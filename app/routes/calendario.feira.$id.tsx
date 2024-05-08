@@ -365,7 +365,7 @@ export default function FeiraIndex() {
                             <td>Cliente</td>
                             <td>Valor</td>
                             <td>Forma de pagamento</td>
-                            <td>Obs</td>
+                            <td>Observações</td>
                             <td></td>
                           </tr>
                         </thead>
