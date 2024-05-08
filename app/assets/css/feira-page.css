@@ -153,12 +153,36 @@
   display: flex;
   flex-direction: row;
   gap: 3em;
-  font-size: 1.2em;
+  margin: 1em 0 2em 0;
+  font-size: 1.15em;
 }
 .detalhamento ul li,
 .resumo ul li {
-  width: 182px;
+  width: 160px;
   background: #f1f1f1;
   padding: 0.7em 1em 1em 0.7em;
   border-radius: 6px;
+}
+
+.extrato .historico {
+  display: flex;
+  flex-direction: row;
+  font-size: 1.1em;
+  color: var(--color-dark);
+  gap: 5em;
+  padding: 1.5em 0 1em 1.4em;
+  margin: 0 0 .5em 0;
+  border-top: 1px solid #f1f1f1;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.extrato .historico .historico-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.extrato .feedback {
+  font-size: 1.1em;
 }

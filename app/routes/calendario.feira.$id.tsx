@@ -170,26 +170,29 @@ export default function FeiraIndex() {
       totalLucro = totalVendido * 0.8;
       totalArrecadacao = totalVendido * 0.2;
 
-      if (saldoNoFeirante > totalLucro) {
-        // Saldo positivo
-        balanco = saldoNoChave - totalArrecadacao;
-      } else {
-        // Saldo negativo
-        balanco = totalLucro - saldoNoFeirante;
-      }
+      balanco = 0 // saldoNoChave + totalLucro - (totalVendido + saldoNoFeirante);
+      
+      balanco = totalVendido - saldoNoFeirante - totalArrecadacao;
+
+      //else {
+      //   // Saldo negativo
+      //   balanco = saldoNoChave - totalLucro;
+      // }
 
       if (balanco == 0) {
         feedbackPrompt = `Tudo certinho, as contas bateram!`;
       } else if (balanco > 0) {
-        feedbackPrompt = `O CHAVE irá repassar pra você: ${balanco.toLocaleString('pt-BR', {
+        // O CHAVE irá repassar pra você
+        feedbackPrompt = `Saldo a receber do CHAVE: ${balanco.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL',
-        })}.`;
+        })}`;
       } else {
-        feedbackPrompt = `Você deve repassar para o CHAVE: ${balanco.toLocaleString('pt-BR', {
+        // Você deve repassar para o CHAVE
+        feedbackPrompt = `Saldo a enviar para o CHAVE: ${balanco.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL',
-        })}.`;
+        }).replace('-', '')}`;
       }
     });
   }
@@ -298,6 +301,38 @@ export default function FeiraIndex() {
                   </div>
                   <div className='form-view'>
                     <h1>Extrato</h1>
+                    <div className='form-view detalhamento'>
+                      <h2>Vendas por método de pagamento</h2>
+                      <ul>
+                        <li>
+                          <h4>PIX</h4>
+                          <p>
+                            {totalVendidoPorTipo['PIX'].toLocaleString('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL',
+                            })}
+                          </p>
+                        </li>
+                        <li>
+                          <h4>Dinheiro</h4>
+                          <p>
+                            {totalVendidoPorTipo['DINHEIRO'].toLocaleString('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL',
+                            })}
+                          </p>
+                        </li>
+                        <li>
+                          <h4>Crédito / Negociado</h4>
+                          <p>
+                            {totalVendidoPorTipo['CREDITO'].toLocaleString('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL',
+                            })}
+                          </p>
+                        </li>
+                      </ul>
+                    </div>
                     <table>
                       <thead>
                         <tr>
@@ -342,43 +377,27 @@ export default function FeiraIndex() {
                         })}
                       </tbody>
                     </table>
-                    <div className='form-view detalhamento'>
-                      <h2>Vendas por método de pagamento</h2>
-                      <ul>
-                        <li>
-                          <h4>PIX</h4>
-                          <p>
-                            {totalVendidoPorTipo['PIX'].toLocaleString('pt-BR', {
-                              style: 'currency',
-                              currency: 'BRL',
-                            })}
-                          </p>
-                        </li>
-                        <li>
-                          <h4>Dinheiro</h4>
-                          <p>
-                            {totalVendidoPorTipo['DINHEIRO'].toLocaleString('pt-BR', {
-                              style: 'currency',
-                              currency: 'BRL',
-                            })}
-                          </p>
-                        </li>
-                        <li>
-                          <h4>Crédito / Negociado</h4>
-                          <p>
-                            {totalVendidoPorTipo['CREDITO'].toLocaleString('pt-BR', {
-                              style: 'currency',
-                              currency: 'BRL',
-                            })}
-                          </p>
-                        </li>
-                      </ul>
+                    <div className='form-view historico'>
+                      <div className='form-vew historico-info'>
+                        <h4>N° de vendas</h4>
+                        <span>{feira.operacoes?.length}</span>
+                      </div>
+
+                      <div className='form-vew historico-info'>
+                        <h4>$ de vendas</h4>
+                        <span>
+                          {totalVendido.toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                          })}
+                        </span>
+                      </div>
                     </div>
                     <div className='form-view resumo'>
                       <h2>Resumo financeiro</h2>
                       <ul>
                         <li>
-                          <h4>Saldo pago ao feirante</h4>
+                          <h4>Pago na banca</h4>
                           <p>
                             {saldoNoFeirante.toLocaleString('pt-BR', {
                               style: 'currency',
@@ -387,7 +406,7 @@ export default function FeiraIndex() {
                           </p>
                         </li>
                         <li>
-                          <h4>Saldo pago ao CHAVE</h4>
+                          <h4>Pago ao CHAVE</h4>
                           <p>
                             {saldoNoChave.toLocaleString('pt-BR', {
                               style: 'currency',
@@ -395,10 +414,8 @@ export default function FeiraIndex() {
                             })}
                           </p>
                         </li>
-                      </ul>
-                      <ul>
                         <li>
-                          <h4>Balanço</h4>
+                          <h4>Saldo balancete</h4>
                           <p>
                             {balanco.toLocaleString('pt-BR', {
                               style: 'currency',
@@ -408,21 +425,8 @@ export default function FeiraIndex() {
                         </li>
                       </ul>
                     </div>
-                    <div className='form-view historico'>
-                      <h2>Histórico</h2>
-                      <p>
-                        <strong>Total de vendas:</strong> {feira.operacoes?.length}
-                      </p>
-                      <p>
-                        <strong>Valor total vendido:</strong>
-                        {totalVendido.toLocaleString('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL',
-                        })}
-                      </p>
-                    </div>
                     <div className='form-view feedback'>
-                      <h2 className='feedback'>Feedback balancete</h2>
+                      <h2 className='feedback'>Resumo do balancete</h2>
                       <p>{feedbackPrompt}</p>
                     </div>
                   </div>
@@ -616,7 +620,7 @@ export default function FeiraIndex() {
                 </div>
 
                 <div className='field-group detalhes-feirantes'>
-                  {feira.Feirantes.length === 0 && <p>Nenhum feirantes foi encontrado</p>}
+                  {feira.Feirantes.length === 0 && <p>Nenhum feirante foi encontrado</p>}
 
                   <ul>
                     {feira.Feirantes.map((feirante) => (
