@@ -148,13 +148,13 @@ export default function FeiraIndex() {
   let saldoNoChave = 0;
 
   let balanco = 0;
-  let feedbackPrompt = '';
+  let feedbackPrompt = 'Ainda não calculado';
 
   let totalLucro = 0;
   let totalArrecadacao = 0;
 
   if (feira.operacoes) {
-    feira.operacoes.forEach((operacao) => {
+    feira?.operacoes.forEach((operacao) => {
       if (operacao.forma_pagamento == 'PIX') {
         totalVendidoPorTipo['PIX'] += Number(operacao.valor);
         saldoNoChave += Number(operacao.valor);
@@ -260,7 +260,7 @@ export default function FeiraIndex() {
   }
 
   useEffect(() => {
-    setConsultando(true);
+    setConsultando(false);
     setVendendo(false);
     setConfigurando(false);
   }, [isSubmitting]);
@@ -310,14 +310,14 @@ export default function FeiraIndex() {
                         </tr>
                       </thead>
                       <tbody>
-                        {feira.operacoes.length === 0 && (
+                        {feira.operacoes?.length === 0 && (
                           <tr>
                             <td style={{ textAlign: 'center' }} colSpan={7}>
                               Nenhum dado foi encontrado
                             </td>
                           </tr>
                         )}
-                        {feira.operacoes.map((operacao) => {
+                        {feira.operacoes?.map((operacao) => {
                           return (
                             <tr key={operacao.id}>
                               <td>{operacao.produto}</td>
@@ -343,12 +343,6 @@ export default function FeiraIndex() {
                       </tbody>
                     </table>
                     <div className='form-view detalhamento'>
-                      <h2>Histórico</h2>
-                      <p>Total de vendas: {feira.operacoes.length}</p>
-                      <p>Valor total vendido: {totalVendido.toLocaleString('pt-BR', {
-                              style: 'currency',
-                              currency: 'BRL',
-                            })}</p>
                       <h2>Vendas por método de pagamento</h2>
                       <ul>
                         <li>
@@ -413,7 +407,22 @@ export default function FeiraIndex() {
                           </p>
                         </li>
                       </ul>
-                      <h3 className='feedback'>De acordo com balancete</h3>
+                    </div>
+                    <div className='form-view historico'>
+                      <h2>Histórico</h2>
+                      <p>
+                        <strong>Total de vendas:</strong> {feira.operacoes?.length}
+                      </p>
+                      <p>
+                        <strong>Valor total vendido:</strong>
+                        {totalVendido.toLocaleString('pt-BR', {
+                          style: 'currency',
+                          currency: 'BRL',
+                        })}
+                      </p>
+                    </div>
+                    <div className='form-view feedback'>
+                      <h2 className='feedback'>Feedback balancete</h2>
                       <p>{feedbackPrompt}</p>
                     </div>
                   </div>
@@ -607,6 +616,8 @@ export default function FeiraIndex() {
                 </div>
 
                 <div className='field-group detalhes-feirantes'>
+                  {feira.Feirantes.length === 0 && <p>Nenhum feirantes foi encontrado</p>}
+
                   <ul>
                     {feira.Feirantes.map((feirante) => (
                       <li className='field' key={feirante.id}>

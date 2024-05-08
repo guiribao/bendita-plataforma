@@ -147,31 +147,18 @@
   gap: 1em;
 }
 
-.detalhamento ul {
-  min-width: 380px;
-  display: flex;
-  flex-direction: row;
-  gap: 3em;
-}
-.detalhamento ul li {
-  width: 160px;
-  background: #f1f1f1;
-  padding: .7em 1em 1em .7em;
-  border-radius: 6px;
-  font-size: 1.2em;
-}
-
+.detalhamento ul,
 .resumo ul {
   min-width: 380px;
   display: flex;
   flex-direction: row;
   gap: 3em;
+  font-size: 1.2em;
 }
-
+.detalhamento ul li,
 .resumo ul li {
   width: 160px;
   background: #f1f1f1;
-  padding: .7em 1em 1em .7em;
+  padding: 0.7em 1em 1em 0.7em;
   border-radius: 6px;
-  font-size: 1.2em;
 }
