@@ -137,21 +137,74 @@ export default function FeiraIndex() {
 
   let [configurando, setConfigurando] = useState(false);
 
-  let somaValorOperacoes = 0;
-  if (feira.operacoes)
-    somaValorOperacoes = feira.operacoes.reduce(
-      (acumulado, operacao) => acumulado + Number(operacao.valor),
-      0
-    );
+  let totalVendido = 0;
+  let totalVendidoPorTipo = {
+    PIX: 0,
+    CREDITO: 0,
+    DINHEIRO: 0,
+  };
+
+  let saldoNoFeirante = 0;
+  let saldoNoChave = 0;
+
+  let balanco = 0;
+  let feedbackPrompt = '';
+
+  let totalLucro = 0;
+  let totalArrecadacao = 0;
+
+  if (feira.operacoes) {
+    feira.operacoes.forEach((operacao) => {
+      if (operacao.forma_pagamento == 'PIX') {
+        totalVendidoPorTipo['PIX'] += Number(operacao.valor);
+        saldoNoChave += Number(operacao.valor);
+      } else if (operacao.forma_pagamento == 'DINHEIRO') {
+        totalVendidoPorTipo['DINHEIRO'] += Number(operacao.valor);
+        saldoNoFeirante += Number(operacao.valor);
+      } else {
+        totalVendidoPorTipo['CREDITO'] += Number(operacao.valor);
+        saldoNoFeirante += Number(operacao.valor);
+      }
+
+      totalVendido += Number(operacao.valor);
+      totalLucro = totalVendido * 0.8;
+      totalArrecadacao = totalVendido * 0.2;
+
+      if (saldoNoFeirante > totalLucro) {
+        balanco = saldoNoChave - totalArrecadacao;
+        console.log('saldo no feirante maior que lucro');
+      } else {
+        balanco = totalLucro - saldoNoFeirante;
+        console.log('total lucro maior que saldo no feirante');
+      }
+
+      if (balanco == 0) {
+        feedbackPrompt = `Tudo certinho, as contas bateram!`;
+      } else if (balanco > 0) {
+        feedbackPrompt = `Necessário CHAVE repassar pra você: ${balanco.toLocaleString(
+          'pt-BR',
+          {
+            style: 'currency',
+            currency: 'BRL',
+          }
+        )}.`;
+      } else {
+        feedbackPrompt = `Necessário repassar para o CHAVE: ${balanco.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+        })}.`;
+      }
+    });
+  }
 
   let minicardsData = [
     {
-      quantidade: somaValorOperacoes.toLocaleString('pt-BR', {
+      quantidade: totalVendido.toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL',
       }),
-      label: 'Total vendido / Ver extrato',
-      icon: 'las la-hand-holding-usd',
+      label: 'Total vendas - ver extrato',
+      icon: 'las la-dollar-sign',
       callback: handleConsultando,
       classes: 'card-clicavel',
     },
@@ -169,6 +222,25 @@ export default function FeiraIndex() {
       icon: 'las la-pen',
       callback: handleConfigurando,
       classes: 'card-clicavel',
+    },
+  ];
+
+  let minicardsExtratoData = [
+    {
+      quantidade: totalArrecadacao.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }),
+      label: 'Saldo arrecadação',
+      icon: 'las la-dolly',
+    },
+    {
+      quantidade: totalLucro.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }),
+      label: 'Saldo lucro',
+      icon: 'las la-hand-holding-usd',
     },
   ];
 
@@ -213,7 +285,7 @@ export default function FeiraIndex() {
                 <div className='group view extrato' data-role='FEIRANTE_EXTRATO'>
                   <div className='form-view'>
                     <h1>
-                      Minhas vendas{' '}
+                      Saldos{' '}
                       <svg
                         xmlns='http://www.w3.org/2000/svg'
                         width='24'
@@ -225,6 +297,10 @@ export default function FeiraIndex() {
                         <path d='M23 20.168l-8.185-8.187 8.185-8.174-2.832-2.807-8.182 8.179-8.176-8.179-2.81 2.81 8.186 8.196-8.186 8.184 2.81 2.81 8.203-8.192 8.18 8.192z' />
                       </svg>
                     </h1>
+                    <Minicards cards={minicardsExtratoData} />
+                  </div>
+                  <div className='form-view'>
+                    <h1>Extrato</h1>
                     <table>
                       <thead>
                         <tr>
@@ -249,13 +325,13 @@ export default function FeiraIndex() {
                             <tr key={operacao.id}>
                               <td>{operacao.produto}</td>
                               <td>{operacao.nome_cliente}</td>
-                              <td>{operacao.forma_pagamento}</td>
                               <td>
                                 {Number(operacao.valor).toLocaleString('pt-BR', {
                                   style: 'currency',
                                   currency: 'BRL',
                                 })}
                               </td>
+                              <td>{operacao.forma_pagamento}</td>
                               <td>{operacao.observacao}</td>
                               <td>
                                 <div id='actions'>
@@ -269,6 +345,74 @@ export default function FeiraIndex() {
                         })}
                       </tbody>
                     </table>
+                    <div className='form-view detalhamento'>
+                      <h2>Detalhamento por método de pagamento</h2>
+                      <ul>
+                        <li>
+                          <h4>Dinheiro</h4>
+                          <p>
+                            {totalVendidoPorTipo['DINHEIRO'].toLocaleString('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL',
+                            })}
+                          </p>
+                        </li>
+                        <li>
+                          <h4>Crédito / Negociado</h4>
+                          <p>
+                            {totalVendidoPorTipo['CREDITO'].toLocaleString('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL',
+                            })}
+                          </p>
+                        </li>
+                        <li>
+                          <h4>PIX</h4>
+                          <p>
+                            {totalVendidoPorTipo['PIX'].toLocaleString('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL',
+                            })}
+                          </p>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className='form-view resumo'>
+                      <h2>Resumo financeiro</h2>
+                      <ul>
+                        <li>
+                          <h4>Saldo em mãos</h4>
+                          <p>
+                            {saldoNoFeirante.toLocaleString('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL',
+                            })}
+                          </p>
+                        </li>
+                        <li>
+                          <h4>Saldo conta chave</h4>
+                          <p>
+                            {saldoNoChave.toLocaleString('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL',
+                            })}
+                          </p>
+                        </li>
+                      </ul>
+                      <ul>
+                        <li>
+                          <h4>Balanço</h4>
+                          <p>
+                            {balanco.toLocaleString('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL',
+                            })}
+                          </p>
+                        </li>
+                      </ul>
+                      <h3 className='feedback'>De acordo com balancete</h3>
+                      <p>{feedbackPrompt}</p>
+                    </div>
                   </div>
                 </div>
               )}
