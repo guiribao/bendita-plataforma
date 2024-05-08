@@ -2,9 +2,10 @@ import { Form } from '@remix-run/react';
 
 function DeletingModal({ item, close, entity }) {
   const endPointMatch = {
-    financeiro: { id: item.id, name: 'Operação financeira', endpoint: '/financeiro' },
-    calendario: { id: item.id, name: 'Evento', endpoint: '/calendario' },
-    gente: { id: item.id, name: 'Perfil', endpoint: '/gente' }
+    financeiro: { id: item.id, name: 'a Operação financeira', endpoint: '/financeiro' },
+    calendario: { id: item.id, name: 'o Evento', endpoint: '/calendario' },
+    gente: { id: item.id, name: 'o Perfil', endpoint: '/gente' },
+    "financeiro feira": { id: item.id, name: "a Venda na feira", endpoint: `/calendario/feira/${item.eventoId}`}
   };
 
   function handleSubmit(event) {
@@ -20,12 +21,12 @@ function DeletingModal({ item, close, entity }) {
         </div>
         <div className='modal-body'>
           <p>
-            Você tem certeza que deseja excluir o {endPointMatch[entity].name}: <br />
+            Você tem certeza que deseja excluir {endPointMatch[entity].name}: <br />
             <strong>#{endPointMatch[entity].id}</strong>
           </p>
         </div>
         <div className='modal-footer'>
-          <Form method='post' action={endPointMatch[entity].endpoint} onSubmit={handleSubmit}>
+          <Form method='post' encType='multipart/form-data' action={endPointMatch[entity].endpoint} onSubmit={handleSubmit}>
             <input type='hidden' name='_action' value='delete' />
             <input type='hidden' name='resource' value={item.id} />
             <button type='submit' className='btnSim'>

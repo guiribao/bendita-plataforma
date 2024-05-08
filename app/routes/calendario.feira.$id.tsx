@@ -15,6 +15,7 @@ import {
   useActionData,
   useLoaderData,
   useNavigation,
+  useSearchParams,
 } from '@remix-run/react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -32,6 +33,8 @@ import { authenticator } from '~/secure/authentication.server';
 import uploadIcon from '~/assets/img/undraw/upload_photo.svg';
 import { getObjectUrlFromS3, s3UploaderHandler } from '~/storage/s3.service.server';
 import editarConfiguracoesBanca from '~/domain/Perfil/editar-perfil-feirante.server';
+import DeletingModal from '~/component/DeletingModal';
+import deletarOperacaoPorId from '~/domain/Financeiro/deletar-operacao-por-id.server';
 
 export const meta: MetaFunction = ({ data }) => {
   return [
@@ -96,6 +99,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
     });
   }
 
+  if (action === 'delete') {
+    let operacaoId: number = Number(form.get('resource') as string);
+    await deletarOperacaoPorId(operacaoId);
+    return redirect(`/calendario/feira/${id}?consulting`);
+  }
+
   return redirect(`/calendario/feira/${id}`);
 }
 
@@ -130,12 +139,18 @@ export default function FeiraIndex() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
 
-  let [consultando, setConsultando] = useState(false);
+  const [params, setParams] = useSearchParams();
 
-  let [vendendo, setVendendo] = useState(false);
+  let [consultando, setConsultando] = useState(params.has('consulting'));
+
+  let [vendendo, setVendendo] = useState(params.has('selling'));
   let [valorReal, setValorReal] = useState(0);
 
   let [configurando, setConfigurando] = useState(false);
+
+  // Dados para modal deletar item
+  let [deleting, setDeleting] = useState(params.has('config'));
+  let [deletingItem, setDeletingItem] = useState({});
 
   let totalVendido = 0;
   let totalVendidoPorTipo = {
@@ -170,14 +185,7 @@ export default function FeiraIndex() {
       totalLucro = totalVendido * 0.8;
       totalArrecadacao = totalVendido * 0.2;
 
-      balanco = 0 // saldoNoChave + totalLucro - (totalVendido + saldoNoFeirante);
-      
       balanco = totalVendido - saldoNoFeirante - totalArrecadacao;
-
-      //else {
-      //   // Saldo negativo
-      //   balanco = saldoNoChave - totalLucro;
-      // }
 
       if (balanco == 0) {
         feedbackPrompt = `Tudo certinho, as contas bateram!`;
@@ -189,10 +197,12 @@ export default function FeiraIndex() {
         })}`;
       } else {
         // Você deve repassar para o CHAVE
-        feedbackPrompt = `Saldo a enviar para o CHAVE: ${balanco.toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL',
-        }).replace('-', '')}`;
+        feedbackPrompt = `Saldo a enviar para o CHAVE: ${balanco
+          .toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          })
+          .replace('-', '')}`;
       }
     });
   }
@@ -262,14 +272,27 @@ export default function FeiraIndex() {
     setConfigurando(!configurando);
   }
 
+  function openDeletingModal(operacao) {
+    setDeleting(true);
+    setDeletingItem(operacao);
+  }
+
+  function closeDeletingModal() {
+    setDeleting(false);
+    setDeletingItem({});
+  }
+
   useEffect(() => {
-    setConsultando(false);
+    setConsultando(consultando);
     setVendendo(false);
     setConfigurando(false);
-  }, [isSubmitting]);
+  }, [isSubmitting, params]);
 
   return (
     <main>
+      {deleting && (
+        <DeletingModal item={deletingItem} close={closeDeletingModal} entity='financeiro feira' />
+      )}
       <div className='view_container'>
         <div className='view'>
           <div className='view-header'>
@@ -333,50 +356,54 @@ export default function FeiraIndex() {
                         </li>
                       </ul>
                     </div>
-                    <table>
-                      <thead>
-                        <tr>
-                          <td>Produto</td>
-                          <td>Cliente</td>
-                          <td>Valor</td>
-                          <td>Forma de pagamento</td>
-                          <td>Obs</td>
-                          <td></td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {feira.operacoes?.length === 0 && (
+
+                    <div className='tabela'>
+                      <table>
+                        <thead>
                           <tr>
-                            <td style={{ textAlign: 'center' }} colSpan={7}>
-                              Nenhum dado foi encontrado
-                            </td>
+                            <td>Produto</td>
+                            <td>Cliente</td>
+                            <td>Valor</td>
+                            <td>Forma de pagamento</td>
+                            <td>Obs</td>
+                            <td></td>
                           </tr>
-                        )}
-                        {feira.operacoes?.map((operacao) => {
-                          return (
-                            <tr key={operacao.id}>
-                              <td>{operacao.produto}</td>
-                              <td>{operacao.nome_cliente}</td>
-                              <td>
-                                {Number(operacao.valor).toLocaleString('pt-BR', {
-                                  style: 'currency',
-                                  currency: 'BRL',
-                                })}
-                              </td>
-                              <td>{operacao.forma_pagamento}</td>
-                              <td>{operacao.observacao}</td>
-                              <td>
-                                <div id='actions'>
-                                  {/* <button onClick={() => openDeletingModal(operacao)}>
-                                    <i className='las la-trash'></i>
-                                  </button> */}
-                                </div>
+                        </thead>
+                        <tbody>
+                          {feira.operacoes?.length === 0 && (
+                            <tr>
+                              <td style={{ textAlign: 'center' }} colSpan={7}>
+                                Nenhum dado foi encontrado
                               </td>
                             </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
+                          )}
+                          {feira.operacoes?.map((operacao) => {
+                            return (
+                              <tr key={operacao.id}>
+                                <td>{operacao.produto}</td>
+                                <td>{operacao.nome_cliente}</td>
+                                <td>
+                                  {Number(operacao.valor).toLocaleString('pt-BR', {
+                                    style: 'currency',
+                                    currency: 'BRL',
+                                  })}
+                                </td>
+                                <td>{operacao.forma_pagamento}</td>
+                                <td>{operacao.observacao}</td>
+                                <td>
+                                  <div id='actions'>
+                                    <button onClick={() => openDeletingModal(operacao)}>
+                                      <i className='las la-trash'></i>
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+
                     <div className='form-view historico'>
                       <div className='form-vew historico-info'>
                         <h4>N° de vendas</h4>

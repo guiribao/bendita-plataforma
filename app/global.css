@@ -268,7 +268,7 @@ main {
 .cards {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 15px;
+  gap: 15px 0;
 }
 
 .card-single {
@@ -312,12 +312,11 @@ main {
 
 .view_container .view,
 .cards .view {
-  min-width: 260px;
   display: flex;
   flex-direction: column;
   gap: 1.5em;
   background: white;
-  padding: 1.6em;
+  padding: 0;
   box-shadow: 10px 0 50px -40px rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(0, 0, 0, 0.09);
   border-radius: 30px;
@@ -328,7 +327,7 @@ main {
 }
 
 .view_container .view {
-  padding: 2em 1.3em;
+  padding: 2em 1em;
 }
 
 .view-header {
