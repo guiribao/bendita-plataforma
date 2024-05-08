@@ -17,7 +17,15 @@
   gap: 1em;
   justify-content: space-between;
   align-items: center;
-  text-align: center;
+
+}
+
+.feira .extrato .minicards {
+  justify-content: flex-start;
+}
+
+.feira .extrato .minicards .card-single {
+  
 }
 
 .feira .informacoes {
@@ -65,7 +73,10 @@
   background: red;
 }
 
-.venda .form-view {
+.venda .form-view,
+.extrato .form-view,
+.configuracao .form-view {
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 1em;
@@ -119,7 +130,7 @@
   flex-wrap: wrap;
 }
 
-.configuracao .form-view button {
+.form-view button {
   margin: 0 auto;
 }
 
@@ -160,6 +171,7 @@
   margin: 1em 0 2em 0;
   font-size: 1.15em;
 }
+
 .detalhamento ul li,
 .resumo ul li {
   width: 100%;
@@ -196,5 +208,9 @@
   .detalhamento ul li,
   .resumo ul li {
     width: 200px;
+  }
+
+  .minicards .card-single {
+    width: calc(100% / 3.2);
   }
 }
