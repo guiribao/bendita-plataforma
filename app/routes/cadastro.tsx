@@ -154,10 +154,20 @@ export async function loader({ request }: LoaderFunctionArgs) {
     return await authenticator.logout(request, { redirectTo: '/cadastro' });
   }
 
-  let ufs = await fetch(
-    'https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome'
-  ).then((response) => response.json());
+  const controller = new AbortController();
+  const signal = controller.signal
 
+  let ufs;
+
+  setTimeout(() => {
+    if(!ufs) controller.abort()
+  }, 5000)
+
+  ufs = await fetch(
+    'https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome',
+    { signal }
+  ).then((response) => response.json()).catch(error => null);
+  
   return json({ ufs });
 }
 
@@ -203,8 +213,8 @@ export default function VisitanteNovo() {
 
     let cidades = await fetch(
       'https://servicodados.ibge.gov.br/api/v1/localidades/estados/' +
-        encodeURIComponent(uf) +
-        '/municipios'
+      encodeURIComponent(uf) +
+      '/municipios'
     );
 
     setArrayCidades(await cidades.json());

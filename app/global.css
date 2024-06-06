@@ -45,7 +45,7 @@ body {
   background: #f9f9f9;
   height: 100vh;
   overflow: hidden;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 @media screen and (min-width: 1208px) {
@@ -266,10 +266,12 @@ main {
 
 .minicards,
 .cards {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 15px 0;
 }
+
+.minicards { display: grid;}
 
 .card-single {
   width: 100%;
@@ -306,12 +308,12 @@ main {
 }
 
 .view_container {
-  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
 }
 
 .view_container .view,
-.cards .view {
+.cards .view {  
   display: flex;
   flex-direction: column;
   gap: 1.5em;
@@ -328,6 +330,10 @@ main {
 
 .view_container .view {
   padding: 2em 1em;
+}
+
+.cards .view {
+  width: 100%;
 }
 
 .view-header {
@@ -581,17 +587,19 @@ button:disabled {
 }
 
 @media screen and (min-width: 768px) {
-  main {
-    padding: 2em 1.5em;
-  }
-
   .minicards {
     grid-template-columns: 1fr 1fr;
     gap: 15px;
   }
+
   .cards {
-    grid-template-columns: 1fr 1fr;
-    gap: 35px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .cards .view {
+    max-width: calc(100vw / 2.29);
   }
 }
 
@@ -636,6 +644,7 @@ button:disabled {
   #nav-toggle:checked ~ .content main {
     width: calc(100vw - 260px);
   }
+  
 }
 
 @media screen and (min-width: 1300px) {
@@ -648,6 +657,7 @@ button:disabled {
     grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 35px;
   }
+
 }
 
 .mensagem-erro {

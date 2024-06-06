@@ -74,7 +74,7 @@ export const action: ActionFunction = async ({ request }) => {
       },
     });
   }
-
+  
   if (perfilSeExistir?.cpf == cpf && perfilSeExistir?.usuarioId) {
     return json({
       errors: {
