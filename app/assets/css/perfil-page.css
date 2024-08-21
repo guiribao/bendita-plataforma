@@ -1,12 +1,9 @@
 main {
-  height: 100vh;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 2em;
-  margin-top: 0;
-  padding: 2em 1.5em;
+  margin: 0 auto;
   background: #f9f9f9;
 }
 
@@ -15,12 +12,14 @@ main {
   text-align: center;
   padding-bottom: 2em;
 }
+
 .header img {
   width: 128px;
   border-radius: 50%;
   border: 1px solid var(--main-color);
   margin: 4em auto 0 auto;
 }
+
 .header h1 {
   max-width: 320px;
   font-size: 2.6em;
@@ -28,14 +27,10 @@ main {
   margin: 0 auto;
 }
 
-@media screen and (min-width: 768px) {
-  .header h1 {
-    max-width: 500px;
-  }
-}
 .header p {
   font-size: 26px;
 }
+
 .header a {
   color: var(--main-color);
   font-size: 18px;
@@ -44,7 +39,13 @@ main {
   padding: 5px 0 6px 0;
 }
 
-.meu-perfil {
+.cards-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.meu-perfil.cards {
   width: 100%;
   padding: 0;
   display: flex;
@@ -52,12 +53,22 @@ main {
 }
 
 @media screen and (min-width: 768px) {
-  .meu-perfil {
-    max-width: 43%;
+  .header h1 {
+    max-width: 500px;
+  }
+
+  .cards-content {
+    flex-direction: row;
+  }
+
+  .meu-perfil.cards {
+    width: 50%;
+    flex-direction: column;
   }
 }
 
 .meu-perfil .group {
+  width: 100%;
   height: fit-content;
   gap: 1em;
   padding-bottom: 3em;
@@ -89,9 +100,11 @@ main {
   height: 80%;
   overflow-y: auto;
 }
+
 .meu-perfil .field #email {
   line-break: anywhere;
 }
+
 .meu-perfil .field .profissao {
   width: 100%;
 }
