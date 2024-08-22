@@ -1,6 +1,6 @@
 main {
   display: flex;
-  flex-direction: row;
+  
   flex-wrap: wrap;
   justify-content: center;
   gap: 2em;
