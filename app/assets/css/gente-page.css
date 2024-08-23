@@ -1,12 +1,12 @@
 main {
+  width: calc(100% - 45px);
   display: flex;
-  
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2em;
-  margin-top: 70px;
-  padding: 2em 1.5em;
+  flex-direction: column;
+  gap: 40px;
+  margin: 65px 0;
+  padding: 2em 1em;
   background: #f9f9f9;
+  overflow: auto;
 }
 
 main .gente .sem-dados {

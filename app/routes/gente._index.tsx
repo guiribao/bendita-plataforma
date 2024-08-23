@@ -81,8 +81,44 @@ export default function FinanceiroIndex() {
           <div className='view-header'>
             <h1> </h1>
             <div className='view-header-actions'>
-              {/* <Link to={'/gente/perfil/novo'}>+ Perfil</Link>
-              <Link to={'/gente/usuario/novo'}>+ Usuário</Link> */}
+               <Link to={'/gente/perfil/novo'}>Exportar</Link>
+
+               {/*<Link to={'/gente/usuario/novo'}>+ Usuário</Link> */}
+            </div>
+          </div>
+          <div className='view-filters'>
+            <div className='view-filters-title'>
+              <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd"><path d="M23 0l-9 14.146v7.73l-3.996 2.124v-9.853l-9.004-14.147h22zm-20.249 1l8.253 12.853v8.491l1.996-1.071v-7.419l8.229-12.854h-18.478z" /></svg>
+              <h3>Filtros</h3>
+            </div>
+            <div className="filter-groups">
+              <div className='filter-group'>
+                <div className='group-items'>
+                  <div className='filter-group-item'>
+                    <label htmlFor="">Cadastro de</label>
+                    <input type="date"></input>
+                  </div>
+                  <div className='filter-group-item'>
+                    <label htmlFor="">até</label>
+                    <input type="date"></input>
+                  </div>
+                </div>
+              </div>
+              <div className='filter-group'>
+                <div className='group-items'>
+                  <div className='filter-group-item'>
+                    <label>Grupo</label>
+                    <select name="grupo" id="grupo">
+                      <option value="Todos">Todos</option>
+                      <option value="Todos">Fardado</option>
+                      <option value="Todos">Visitante</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className='view-filters-actions'>
+               <Link to={'/gente/perfil/novo'}>Filtrar</Link>
             </div>
           </div>
           <div className='view-body'>
