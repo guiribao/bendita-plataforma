@@ -655,7 +655,7 @@ export default function FeiraIndex() {
                         <img
                           src={feirante.perfil?.logo_banca || `${APP_URL}/user.png`}
                           alt={`Logo da barraca do feirante - ${feirante.perfil.nome} ${feirante.perfil.sobrenome}`}
-                          width={32}
+                          width={64}
                         />
                         <p>
                           {feirante.perfil.nome_banca ||
