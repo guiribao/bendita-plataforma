@@ -119,10 +119,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   let feira = await pegarEventoFeiraPorId(id);
 
-  feira.Feirantes.forEach(async (feirante) => {
-    // feirante.perfil.logo_banca = feirante.perfil?.logo_banca
-    //   ? await getObjectUrlFromS3(feirante.perfil.logo_banca).then((r) => r)
-    //   : feirante.perfil.logo_banca;
+  feira.Feirantes.forEach((feirante) => {
+    feirante.perfil.logo_banca = feirante.perfil?.logo_banca
+       ? `https://chave-files.s3.sa-east-1.amazonaws.com/${feirante.perfil.logo_banca}`
+       : null;
 
     if (feirante.perfilId == perfil.id) feira.eventoFeirante = feirante;
   });
@@ -653,7 +653,7 @@ export default function FeiraIndex() {
                     {feira.Feirantes.map((feirante) => (
                       <li className='field' key={feirante.id}>
                         <img
-                          src={feirante.perfil?.logo_banca ? `https://chave-files.s3.sa-east-1.amazonaws.com/${feirante.perfil?.logo_banca}` : `${APP_URL}/user.png`}
+                          src={feirante.perfil?.logo_banca || `${APP_URL}/user.png`}
                           alt={`Logo da barraca do feirante - ${feirante.perfil.nome} ${feirante.perfil.sobrenome}`}
                           width={32}
                         />
