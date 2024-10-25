@@ -3,14 +3,14 @@ import { s3Client } from './s3.gateway.server';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import Jimp from 'jimp';
 
-const STORAGE_SPACE_NAME = process.env.STORAGE_SPACE || 's3_VAR_NAO_INFORMADA';
+const S3_BUCKET_NAME = process.env.S3_BUCKET || 's3_VAR_NAO_INFORMADA';
 const STORAGE_ENV = process.env.NODE_ENV;
 const INPUT_FIELDS = ['logo_banca'];
 const INPUT_FORMAT = ['image/jpeg', 'image/png'];
 
 const uploadStreamToS3 = async (data: Buffer, key: string, contentType: string) => {
   const params = {
-    Bucket: STORAGE_SPACE_NAME,
+    Bucket: S3_BUCKET_NAME,
     Key: key,
     Body: data,
     ContentType: contentType,
@@ -91,7 +91,7 @@ export async function getObjectUrlFromS3(key: string) {
     return await getSignedUrl(
       s3Client,
       new GetObjectCommand({
-        Bucket: STORAGE_SPACE_NAME,
+        Bucket: S3_BUCKET_NAME,
         Key: key,
       }),
       { expiresIn: 15 * 60 }
