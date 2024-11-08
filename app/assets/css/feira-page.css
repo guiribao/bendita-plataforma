@@ -127,7 +127,7 @@
 
 .configuracao .form-disclaimer .form-group label {
   width: 160px;
-  text-align: right;
+  text-align: left;
   font-weight: 700;
   color: var(--color-dark);
 }
@@ -252,6 +252,11 @@
   .configuracao .form-disclaimer .form-group {
     flex-direction: row;
   }
+
+  .configuracao .form-disclaimer .form-group label {
+    text-align: right;
+  }
+  
   .configuracao .form-disclaimer .form-group input {
     max-width: 472px;
   }
