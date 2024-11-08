@@ -16,6 +16,7 @@ import { addHours, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import InputMask from 'react-input-mask';
 import enviarEmailCadastroPerfil from '~/domain/Perfil/enviar-email-cadastro-perfil.server';
+import { upperCaseNomes } from '~/shared/Text.util';
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -101,10 +102,12 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors });
   }
 
+
+
   let perfil = await editarPerfil({
     id: Number(perfilId),
-    nome,
-    sobrenome,
+    nome: upperCaseNomes(nome),
+    sobrenome: upperCaseNomes(sobrenome),
     data_nascimento,
     hora_nascimento,
     cidade_nascimento,

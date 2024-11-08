@@ -35,6 +35,7 @@ import { getObjectUrlFromS3, s3UploaderHandler } from '~/storage/s3.service.serv
 import editarConfiguracoesBanca from '~/domain/Perfil/editar-perfil-feirante.server';
 import DeletingModal from '~/component/DeletingModal';
 import deletarOperacaoPorId from '~/domain/Financeiro/deletar-operacao-por-id.server';
+import editarPagamentoFeirante from '~/domain/Calendario/editar-pagamento-feirante.server';
 
 export const meta: MetaFunction = ({ data }) => {
   return [
@@ -92,11 +93,25 @@ export async function action({ request, params }: ActionFunctionArgs) {
     let nome_banca = form.get('nome_banca') as string;
     let logo_banca = form.get(`logo_banca_${perfil_id}`);
 
+    let evento_feirante_id = form.get('evento_feirante_id') as string;
+    let pagamento_conta = form.get('pagamento_conta') as string;
+    let pagamento_agencia = form.get('pagamento_agencia') as string;
+    let pagamento_banco = form.get('pagamento_banco') as string;
+    let pagamento_chave_pix = form.get('pagamento_chave_pix') as string;
+
     await editarConfiguracoesBanca({
       perfilId: Number(perfil_id),
       nomeBanca: nome_banca,
       logoBanca: logo_banca,
     });
+
+    await editarPagamentoFeirante({
+      eventoFeiranteId: Number(evento_feirante_id),
+      pagamentoConta: pagamento_conta,
+      pagamentoAgencia: pagamento_agencia,
+      pagamentoBanco: pagamento_banco,
+      pagamentoChavePix: pagamento_chave_pix
+    })
   }
 
   if (action === 'delete') {
@@ -121,8 +136,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   feira.Feirantes.forEach((feirante) => {
     feirante.perfil.logo_banca = feirante.perfil?.logo_banca
-       ? `https://chave-files.s3.sa-east-1.amazonaws.com/${feirante.perfil.logo_banca}`
-       : null;
+      ? `https://chave-files.s3.sa-east-1.amazonaws.com/${feirante.perfil.logo_banca}`
+      : null;
 
     if (feirante.perfilId == perfil.id) feira.eventoFeirante = feirante;
   });
@@ -146,10 +161,10 @@ export default function FeiraIndex() {
   let [vendendo, setVendendo] = useState(params.has('selling'));
   let [valorReal, setValorReal] = useState(0);
 
-  let [configurando, setConfigurando] = useState(false);
+  let [configurando, setConfigurando] = useState(params.has('config'));
 
   // Dados para modal deletar item
-  let [deleting, setDeleting] = useState(params.has('config'));
+  let [deleting, setDeleting] = useState(false);
   let [deletingItem, setDeletingItem] = useState({});
 
   let totalVendido = 0;
@@ -582,7 +597,14 @@ export default function FeiraIndex() {
                       id='perfil_id'
                       value={feira.eventoFeirante.perfil.id}
                     />
+                    <input
+                      type='hidden'
+                      name='evento_feirante_id'
+                      id='evento_feirante_id'
+                      value={feira.eventoFeirante.id}
+                    />
 
+                    
                     <div className='form-group'>
                       <img src={uploadIcon} width={256} alt='Escolha um logotipo para sua banca' />
                       <label htmlFor='logo_banca'>Escolha um logotipo para sua banca</label>
@@ -605,6 +627,54 @@ export default function FeiraIndex() {
                         defaultValue={feira.eventoFeirante.perfil?.nome_banca || ''}
                         autoComplete='off'
                       />
+                    </div>
+
+                    <div className='form-disclaimer'>
+                      <h3>Configuração financeira</h3>
+                      <div className='form-group'>
+                        <label htmlFor='pagamento_banco'>Banco</label>
+                        <input
+                          type='text'
+                          id='pagamento_banco'
+                          placeholder='Nome da instituição bancária'
+                          name='pagamento_banco'
+                          defaultValue={feira.eventoFeirante.pagamento_banco || ''}
+                          autoComplete='off'
+                        />
+                      </div>
+                      <div className='form-group'>
+                        <label htmlFor='pagamento_agencia'>Agência</label>
+                        <input
+                          type='text'
+                          id='pagamento_agencia'
+                          placeholder='Número da sua agência'
+                          name='pagamento_agencia'
+                          defaultValue={feira.eventoFeirante.pagamento_agencia || ''}
+                          autoComplete='off'
+                        />
+                      </div>
+                      <div className='form-group'>
+                        <label htmlFor='pagamento_conta'>Conta</label>
+                        <input
+                          type='text'
+                          id='pagamento_conta'
+                          placeholder='Conta que receberá os valores'
+                          name='pagamento_conta'
+                          defaultValue={feira.eventoFeirante.pagamento_conta || ''}
+                          autoComplete='off'
+                        />
+                      </div>
+                      <div className='form-group'>
+                        <label htmlFor='pagamento_chave_pix'>Chave PIX</label>
+                        <input
+                          type='text'
+                          id='pagamento_chave_pix'
+                          placeholder='Chave para recebimento dos valores'
+                          name='pagamento_chave_pix'
+                          defaultValue={feira.eventoFeirante.pagamento_chave_pix || ''}
+                          autoComplete='off'
+                        />
+                      </div>
                     </div>
 
                     <div className='form-group'>

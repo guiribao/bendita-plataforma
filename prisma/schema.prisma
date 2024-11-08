@@ -85,8 +85,8 @@ model Perfil {
   Ref_operacao          Operacao[]        @relation("Ref_operacao")
   Operacao              Operacao[]        @relation("Operacao")
   Evento_Feirante       Evento_Feirante[]
-  nome_banca          String?           @db.VarChar(200)
-  logo_banca          String?           @db.VarChar(200)
+  nome_banca            String?           @db.VarChar(200)
+  logo_banca            String?           @db.VarChar(200)
 }
 
 model Filhos {
@@ -147,6 +147,11 @@ model Evento_Feirante {
   perfil   Perfil     @relation(fields: [perfilId], references: [id], onDelete: Cascade)
   perfilId Int
   Operacao Operacao[]
+
+  pagamento_banco     String @db.VarChar(64) @default("")
+  pagamento_agencia   String @db.VarChar(16) @default("")
+  pagamento_conta     String @db.VarChar(16) @default("")
+  pagamento_chave_pix String @db.VarChar(64) @default("")
 
   @@unique([eventoId, perfilId])
   @@index([eventoId])
