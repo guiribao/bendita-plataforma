@@ -133,7 +133,7 @@
 }
 
 .configuracao .form-disclaimer .form-group input {
-  max-width: 372px;
+  max-width: 272px;
 }
 
 .configuracao .form-group {
@@ -258,6 +258,6 @@
   }
   
   .configuracao .form-disclaimer .form-group input {
-    max-width: 472px;
+    max-width: 424px;
   }
 }
