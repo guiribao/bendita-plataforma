@@ -118,18 +118,22 @@
   margin: 0 0 1em 0;
 }
 
-.configuracao .form-disclaimer label {
+.configuracao .form-disclaimer .form-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.configuracao .form-disclaimer .form-group label {
   width: 160px;
   text-align: right;
   font-weight: 700;
   color: var(--color-dark);
 }
 
-.configuracao .form-disclaimer .form-group {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+.configuracao .form-disclaimer .form-group input {
+  max-width: 372px;
 }
 
 .configuracao .form-group {
@@ -143,6 +147,7 @@
 .configuracao .form-group label {
   text-align: center;
 }
+
 .configuracao .form-group img {
   margin: 0 auto;
 }
@@ -242,5 +247,12 @@
 
   .minicards .card-single {
     width: calc(100% / 3.2);
+  }
+
+  .configuracao .form-disclaimer .form-group {
+    flex-direction: row;
+  }
+  .configuracao .form-disclaimer .form-group input {
+    max-width: 472px;
   }
 }
