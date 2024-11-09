@@ -21,6 +21,7 @@ export const PaginasPorPapel = {
   '/calendario/novo': [Papel.ADMIN],
   '/calendario/feira/{id}': [Papel.ADMIN, Papel.USUARIO],
   '/calendario/{id}': [Papel.ADMIN, Papel.USUARIO],
+  '/feira/{id}/feirante/{id}': [Papel.ADMIN],
   '/financeiro': [Papel.ADMIN],
   '/financeiro/novo': [Papel.ADMIN],
   '/financeiro/{id}': [Papel.ADMIN],

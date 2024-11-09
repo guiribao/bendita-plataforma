@@ -10,7 +10,6 @@ main {
 }
 
 main .gente .sem-dados {
-  background: red;
   padding: 2em 0;
   background: #f9f9f9;
   border-radius: 30px;

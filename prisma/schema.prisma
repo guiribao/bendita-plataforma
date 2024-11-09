@@ -148,10 +148,12 @@ model Evento_Feirante {
   perfilId Int
   Operacao Operacao[]
 
-  pagamento_banco     String @db.VarChar(64) @default("")
-  pagamento_agencia   String @db.VarChar(16) @default("")
-  pagamento_conta     String @db.VarChar(16) @default("")
-  pagamento_chave_pix String @db.VarChar(64) @default("")
+  pagamento_banco     String @default("") @db.VarChar(64)
+  pagamento_agencia   String @default("") @db.VarChar(16)
+  pagamento_conta     String @default("") @db.VarChar(16)
+  pagamento_chave_pix String @default("") @db.VarChar(64)
+
+  caixa_aberto Boolean @default(true)
 
   @@unique([eventoId, perfilId])
   @@index([eventoId])

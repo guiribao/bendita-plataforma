@@ -197,9 +197,8 @@ export default function FeiraIndex() {
       }
 
       totalVendido += Number(operacao.valor);
-      totalLucro = totalVendido * 0.8;
-      totalArrecadacao = totalVendido * 0.2;
-
+      totalArrecadacao = (feira.eventoFeirante.perfil.membro) ? totalVendido * .2 : totalVendido * .3;
+      totalLucro = totalVendido - totalArrecadacao;
       balanco = totalVendido - saldoNoFeirante - totalArrecadacao;
 
       if (balanco == 0) {
@@ -604,7 +603,7 @@ export default function FeiraIndex() {
                       value={feira.eventoFeirante.id}
                     />
 
-                    
+
                     <div className='form-group'>
                       <img src={uploadIcon} width={256} alt='Escolha um logotipo para sua banca' />
                       <label htmlFor='logo_banca'>Escolha um logotipo para sua banca</label>

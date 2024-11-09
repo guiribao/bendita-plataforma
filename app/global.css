@@ -7,6 +7,8 @@
   --text-gray: #808080;
   --green: #06ba63;
   --brown: #795663;
+  --background: linear-gradient(30deg, #f39c12 30%, #f1c40f);
+  --background-select: linear-gradient(to left, var(--main-color) 3rem, rgba(55, 114, 255, .90) 3rem);
 }
 
 * {
@@ -267,7 +269,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: 40px;
-  margin: 65px 0;
+  margin: 100px auto;
   padding: 2em 1em;
   background: #f9f9f9;
   overflow: auto;
@@ -324,7 +326,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: 40px;
-  padding: 0 1em 100px 1em;
+  padding: 0 1em 40px 1em;
   background: #f9f9f9;
 }
 
@@ -725,7 +727,8 @@ button:disabled {
   border: 1px solid #f1f1f1;
 }
 
-.view-filters input, select {
+.view-filters input,
+select {
   min-width: 200px;
   min-height: 32px;
   font-size: .95em;
@@ -794,4 +797,110 @@ button:disabled {
   font-size: 0.859em;
   font-weight: 400;
   color: var(--text-gray);
+}
+
+.select select {
+  appearance: none;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: #fff;
+  border: 1px solid rgba(55, 114, 255, .60);
+  box-shadow: none;
+}
+
+.select select::-ms-expand {
+  display: none;
+}
+
+.select {
+  position: relative;
+  display: flex;
+  width: min(13rem, 90vw);
+  background: var(--background-select);
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.select select {
+  flex: 1;
+  padding: .80em 1em;
+  cursor: pointer;
+}
+
+.select select option {
+  color: var(--color-dark);
+}
+
+.select::after {
+  content: "\25BC";
+  position: absolute;
+  right: 1rem;
+  top: .66rem;
+  transition: 0.25s all ease;
+  pointer-events: none;
+  color: #fefefe;
+}
+
+.select:hover::after {
+  color: #efefef;
+  animation: bounce 0.5s infinite;
+}
+
+@keyframes bounce {
+  25% {
+    transform: translatey(5px);
+  }
+
+  75% {
+    transform: translatey(-5px);
+  }
+}
+
+@media print {
+
+  header,
+  footer,
+  aside,
+  form,
+  button,
+  .sidebar, a {
+    display: none;
+  }
+
+  .content {
+    width: 100%;
+    margin: 0 !important;
+    padding: 0;
+  }
+
+  main {
+    width: 100vw !important;
+    margin: 0;
+    padding: 0;
+  }
+
+  .view_container {
+    width: 100% !important;
+    margin: 0;
+    padding: 0;
+  }
+
+  table {
+    width: 100% !important;
+    margin: 0;
+    padding: 0;
+  }
+
+  table tr td {
+    max-width: fit-content !important;
+  }
+
+  .minicards {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@page {
+  margin: 1cm 1cm;
 }

@@ -6,6 +6,8 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useState } from 'react';
 import DeletingModal from '~/component/DeletingModal';
+import pegarEventosFeiras from '~/domain/Calendario/pegar-eventos-feiras.server';
+import pegarFeirantesPorFeira from '~/domain/Calendario/pegar-feirantes-por-feiras.server';
 import deletarOperacaoPorId from '~/domain/Financeiro/deletar-operacao-por-id.server';
 import pegarOperacoes from '~/domain/Financeiro/pegar-operacoes.server';
 import { gerarDescricaoOperacaoFeira } from '~/shared/Operacao.util';
@@ -51,16 +53,20 @@ export async function loader({ request }: LoaderFunctionArgs) {
     return operacao;
   });
 
-  return json({ operacoes });
+  let feiras = await pegarEventosFeiras()
+
+  return json({ operacoes, feiras });
 }
 
 export default function FinanceiroIndex() {
-  const { operacoes } = useLoaderData();
+  const { operacoes, feiras } = useLoaderData();
   const navigate = useNavigate();
 
   // Dados para modal deletar item
   let [deleting, setDeleting] = useState(false);
   let [deletingItem, setDeletingItem] = useState({});
+
+  let [feirantes, setFeirantes] = useState([])
 
   function openDeletingModal(operacao) {
     setDeleting(true);
@@ -76,12 +82,27 @@ export default function FinanceiroIndex() {
     navigate(`/financeiro/${operacaoId}`);
   }
 
+  async function carregarFeirantes(event) {
+    let feiraId = event.target.value
+
+    if (feiraId == 0) {
+      setFeirantes([])
+      return
+    }
+
+    let feirantes = await fetch(`/feira/${feiraId}/feirante`, { method: 'get' })
+      .then((res) => res.json());
+
+    setFeirantes(feirantes)
+  }
+
   return (
     <main>
       {deleting && (
         <DeletingModal item={deletingItem} close={closeDeletingModal} entity='financeiro' />
       )}
 
+      {/* Financeiro geral CHAVE: Admin */}
       <div className='view_container'>
         <div className='view'>
           <div className='view-header'>
@@ -144,6 +165,78 @@ export default function FinanceiroIndex() {
                           <button onClick={() => openDeletingModal(operacao)}>
                             <i className='las la-trash'></i>
                           </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <div className='view-footer'></div>
+        </div>
+      </div>
+
+      {/* Financeiro das feiras: Admin e Feirante */}
+      <div className='view_container'>
+        <div className='view'>
+          <div className='view-header'>
+            <h1>Financeiro feiras</h1>
+            <div>
+              <label className='select'>
+                <select onChange={carregarFeirantes}>
+                  <option value="0" defaultChecked>Selecionar feira</option>
+                  {feiras.map(feira => (
+                    <option key={feira.id} value={feira.id}>{feira.titulo}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          </div>
+          <div className='view-body'>
+            <table>
+              <thead>
+                <tr>
+                  <td>Nome banca</td>
+                  <td>Responsável</td>
+                  <td style={{ textAlign: "center" }}>Status caixa</td>
+                  <td style={{ textAlign: "center" }}>Chave PIX</td>
+                  <td style={{ textAlign: "center" }}>Qtd. vendas</td>
+                  <td style={{ textAlign: "center" }}>Total vendido</td>
+                  <td></td>
+                </tr>
+              </thead>
+              <tbody>
+                {feirantes.length === 0 && (
+                  <tr>
+                    <td style={{ textAlign: 'center' }} colSpan={7}>
+                      Nenhum dado para mostrar
+                    </td>
+                  </tr>
+                )}
+                {feirantes.map((feirante) => {
+                  return (
+                    <tr key={feirante.id}>
+                      <td style={{ maxWidth: "240px" }}>
+                        {feirante.perfil.nome_banca}
+                      </td>
+                      <td style={{ maxWidth: "180px" }}>
+                        {feirante.perfil.nome} {feirante.perfil.sobrenome}
+                      </td>
+                      <td style={{ textAlign: "center" }}>{feirante.caixa_aberto ? "ABERTO" : "FECHADO"}</td>
+                      <td style={{ textAlign: "center" }}>
+                        {feirante.pagamento_chave_pix}
+                      </td>
+                      <td style={{ textAlign: "center" }}>{feirante.Operacao.length}</td>
+                      <td style={{ textAlign: "center" }}>{feirante.valorVendas.toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      })}</td>
+                      <td>
+                        <div id='actions'>
+                          <Link to={`/feira/${feirante.eventoId}/feirante/${feirante.perfilId}`}>
+                            <i className="las la-search-dollar"></i>
+                          </Link>
                         </div>
                       </td>
                     </tr>
