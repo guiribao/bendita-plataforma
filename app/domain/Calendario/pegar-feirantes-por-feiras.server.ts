@@ -20,6 +20,7 @@ export default async function pegarFeirantesPorFeira(feiraId: string): Promise<E
       let soma = 0;
       feirante.Operacao.forEach(venda => soma += Number(venda.valor))
       feirante.valorVendas = soma;
+      feirante.statusCaixa = feirante.caixa_aberto ? "ABERTO" : "FECHADO"
     }
 
     return feirantes;

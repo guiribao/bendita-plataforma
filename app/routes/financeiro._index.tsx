@@ -215,6 +215,9 @@ export default function FinanceiroIndex() {
                   </tr>
                 )}
                 {feirantes.map((feirante) => {
+                  
+                  console.log(feirante)
+
                   return (
                     <tr key={feirante.id}>
                       <td style={{ maxWidth: "240px" }}>
@@ -223,7 +226,7 @@ export default function FinanceiroIndex() {
                       <td style={{ maxWidth: "180px" }}>
                         {feirante.perfil.nome} {feirante.perfil.sobrenome}
                       </td>
-                      <td style={{ textAlign: "center" }}>{feirante.caixa_aberto ? "ABERTO" : "FECHADO"}</td>
+                      <td style={{ textAlign: "center" }}>{feirante.statusCaixa}</td>
                       <td style={{ textAlign: "center" }}>
                         {feirante.pagamento_chave_pix}
                       </td>
