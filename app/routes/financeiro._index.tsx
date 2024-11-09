@@ -215,9 +215,6 @@ export default function FinanceiroIndex() {
                   </tr>
                 )}
                 {feirantes.map((feirante) => {
-                  
-                  console.log(feirante)
-
                   return (
                     <tr key={feirante.id}>
                       <td style={{ maxWidth: "240px" }}>
