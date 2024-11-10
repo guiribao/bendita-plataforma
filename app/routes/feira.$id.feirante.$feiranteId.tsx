@@ -256,7 +256,7 @@ export default function FeiraIndex() {
                   <div className='form-view historico'>
                     <div className='form-vew historico-info'>
                       <h4>N° de vendas</h4>
-                      <span>{feira.operacoes?.length}</span>
+                      <span>{feirante.Operacao?.length}</span>
                     </div>
 
                     <div className='form-vew historico-info'>
