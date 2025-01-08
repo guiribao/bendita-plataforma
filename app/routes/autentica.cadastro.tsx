@@ -8,13 +8,16 @@ import {
 import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
 
 import { authenticator } from '~/secure/authentication.server';
+
+
+
 import criarNovoUsuario from '~/domain/Usuario/criar-novo-usuario.server';
+import perfilPorEmailCpf from '~/domain/Perfil/perfil-por-email-cpf.server';
 
 import cadastroPageStyle from '~/assets/css/cadastro-page.css';
 import loading from '~/assets/img/loading.gif';
+
 import InputMask from 'react-input-mask';
-import perfilPorEmailCpf from '~/domain/Perfil/perfil-por-email-cpf.server';
-import atualizarUsuarioDoPerfil from '~/domain/Perfil/atualizar-usuario-do-perfil.server';
 import { verificarIdade } from '~/shared/Date.util';
 
 export const meta: MetaFunction = () => {

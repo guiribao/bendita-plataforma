@@ -361,7 +361,7 @@ main {
   max-width: 60%;
 }
 
-.view-header a {
+.view-header a, .view-header button {
   padding: 0.5em 1.25em;
   background: var(--main-color);
   color: #fff;
@@ -369,10 +369,12 @@ main {
   font-weight: 800;
   border: none;
   border-radius: 30px;
+  cursor: pointer;
 }
 
 .view-header .view-header-actions {
   display: flex;
+  align-items: center;
   gap: 1em;
 }
 
@@ -805,7 +807,6 @@ select {
   outline: 0;
   background: none;
   color: #fff;
-  border: 1px solid rgba(55, 114, 255, .60);
   box-shadow: none;
 }
 
@@ -824,7 +825,7 @@ select {
 
 .select select {
   flex: 1;
-  padding: .80em 1em;
+  padding: .5em 1em;
   cursor: pointer;
 }
 
@@ -835,8 +836,9 @@ select {
 .select::after {
   content: "\25BC";
   position: absolute;
-  right: 1rem;
-  top: .66rem;
+  font-size: .6em;
+  right: 1.5rem;
+  top: .7rem;
   transition: 0.25s all ease;
   pointer-events: none;
   color: #fefefe;
