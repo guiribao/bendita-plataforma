@@ -1,5 +1,3 @@
-import { differenceInYears, parse } from 'date-fns';
-import { da } from 'date-fns/locale';
 
 export function upperCaseNomes(nome: string): string {
   let partes_nome = nome.split(" ")
@@ -13,4 +11,16 @@ export function upperCaseNomes(nome: string): string {
   }
   
   return partes_nome.join(" ").trim()
+}
+
+export function createRandom(length = 6) {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
 }

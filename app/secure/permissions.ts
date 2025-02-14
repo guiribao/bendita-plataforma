@@ -9,6 +9,11 @@ export const PaginasAbertas = [
   '/perfil/editar',
   '/cadastro',
   '/em_breve',
+  "/",
+  "/sobre",
+  "servicos",
+  "conhecimento",
+  "contato"
 ];
 
 export const PaginaComPapelAdicional = ['/calendario/feira'];

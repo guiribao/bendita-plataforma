@@ -10,15 +10,13 @@ import {
   json,
   redirect,
   useLoaderData,
-  useLocation,
-  useNavigation,
+  useLocation
 } from '@remix-run/react';
 
 import stylesheet from '~/global.css';
 import toastyStyle from 'toastify-js/src/toastify.css';
 import line_awesome from '~/assets/lib/line-awesome/css/line-awesome.min.css';
 import modalStyle from '~/assets/css/modal.css';
-import Sidebar from './component/layout/Sidebar';
 import Layout from './component/layout/Layout';
 import Topbar from './component/layout/Topbar';
 import { authenticator } from './secure/authentication.server';
@@ -33,6 +31,7 @@ import {
   loadAditionalRoles,
   specificDynPages,
 } from './secure/authorization';
+
 import NotAuthorized from './routes/autorizacao';
 import { getEnv } from './env.server';
 
@@ -46,8 +45,8 @@ export const links: LinksFunction = () => [
 
 export const meta: MetaFunction = () => {
   return [
-    { charset: 'utf-8', title: 'ChaveCloud', viewport: 'width=device-width, initial-scale=1' },
-    { name: 'description', content: 'A Núvem do Chave!' },
+    { charset: 'utf-8', title: 'Bendita Associação Canábica', viewport: 'width=device-width, initial-scale=1' },
+    { name: 'description', content: 'Plataforma de sócios da Bendita Canabica' },
   ];
 };
 
@@ -56,14 +55,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
   let usuario: Usuario = await authenticator.isAuthenticated(request);
   let perfil: Perfil | null = null;
 
+  const symbol = Object.getOwnPropertySymbols(request)[1];
+  const parsed_url = request[symbol].parsedURL;
+
   if (usuario?.id) {
-    const symbol = Object.getOwnPropertySymbols(request)[1];
-    const parsed_url = request[symbol].parsedURL;
-
-    // if (usuario?.papel == Papel.USUARIO && parsed_url.pathname != 'em_breve') {
-    //   return redirect('/em_breve');
-    // }
-
     perfil = await pegarPerfilPeloIdUsuario(usuario.id);
     if (!perfil?.id && !request.url.includes('/perfil/editar')) return redirect('/perfil/editar');
 
@@ -115,12 +110,8 @@ export default function App() {
       </head>
       <body>
         <Layout>
-          <Sidebar />
-          <div className='content'>
-            <Topbar />
-
-            {isAuthorized ? <Outlet /> : <NotAuthorized />}
-          </div>
+          <Topbar />
+          {isAuthorized ? <Outlet /> : <NotAuthorized />}
         </Layout>
 
         <ScrollRestoration />
@@ -130,6 +121,7 @@ export default function App() {
             __html: `window.CLOUD = ${JSON.stringify(ENV)}`,
           }}
         />
+
         <LiveReload />
       </body>
     </html>

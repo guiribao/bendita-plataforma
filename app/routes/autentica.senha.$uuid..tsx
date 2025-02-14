@@ -10,7 +10,7 @@ import { Form, Link, useActionData, useLoaderData, useNavigation } from '@remix-
 import compareAsc from 'date-fns/compareAsc';
 
 import { authenticator } from '~/secure/authentication.server';
-import cadastroPageStyle from '~/assets/css/cadastro-page.css';
+import cadastroStyle from '~/assets/css/cadastro.css';
 import loading from '~/assets/img/loading.gif';
 import pegarRequisicaoEsqueciSenha from '~/domain/Usuario/pegar-requisicao-esqueci-senha.server';
 import pegarUsuarioPeloId from '~/domain/Usuario/pegar-usuario-pelo-id.server';

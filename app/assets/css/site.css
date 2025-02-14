@@ -1,0 +1,105 @@
+main.inicial {
+  width: 100%;
+  height: calc(100% - 100px);
+  justify-content: space-between;
+  padding: 1em 10% 10% 10%;
+  gap: 0;
+  background: var(--main-color);
+}
+
+section.disclaimer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  gap: 20px;
+  padding-left: 102px;
+  color: #212121;
+}
+
+section.disclaimer h2 {
+  font-size: 3em;
+  color: white
+}
+
+section.disclaimer p {
+  font-size: 2em;
+  color: var(--green);
+  padding-bottom: 100px;
+}
+
+
+section.call-to-action {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+section.call-to-action p {
+  font-size: 2em;
+}
+
+#button-background {
+  position: relative;
+  background-color: white;
+  width: 400px;
+  height: 60px;
+  border: white;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--green);
+}
+
+#slider {
+  transition: width 0.3s,
+    border-radius 0.3s,
+    height 0.3s;
+  position: absolute;
+  left: -10px;
+  background-color: var(--green);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#slider.unlocked {
+  transition: all 0.3s;
+  width: inherit;
+  left: 0 !important;
+  height: inherit;
+  border-radius: inherit;
+}
+
+#slider i {
+  color: var(--color-dark);
+  font-size: 40px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+
+.slide-text {
+	color: #333;
+	font-size: 18px;
+	text-transform: uppercase;
+	font-family: 'Merriweather', sans-serif;
+  font-weight: 900;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+}

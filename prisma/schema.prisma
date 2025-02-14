@@ -15,7 +15,7 @@ model Usuario {
   id            Int      @id @default(autoincrement())
   email         String   @unique
   senha         String   @db.VarChar(100)
-  papel         Papel    @default(USUARIO)
+  papel         Papel    @default(ASSOCIADO)
   criado_em     DateTime @default(now()) @db.Timestamptz()
   atualizado_em DateTime @updatedAt @db.Timestamptz()
   perfil        Perfil?
@@ -31,57 +31,75 @@ model Usuario_Esqueci_Senha {
   atualizado_em DateTime @updatedAt @db.Timestamptz()
 }
 
-enum Papel {
-  ADMIN
-  USUARIO
-  FEIRANTE
+model Perfil {
+  id                   String       @id @default(uuid())
+  // INFORMAÇÕES BASICAS
+  nome_completo        String
+  apelido              String?
+  data_nascimento      DateTime     @db.Date
+  sexo                 String?
+  cpf                  String?
+  rg                   String?
+  nacionalidade        String?
+  estado_civil         String?
+  cep                  String?
+  endereco_rua         String?
+  endereco_numero      String?
+  endereco_complemento String?
+  endereco_bairro      String?
+  endereco_cidade      String?
+  endereco_estado      String?
+  telefone             String?
+  usuario              Usuario      @relation(fields: [usuarioId], references: [id])
+  usuarioId            Int          @unique
+  criado_em            DateTime     @default(now()) @db.Timestamptz()
+  atualizado_em        DateTime     @updatedAt @db.Timestamptz()
+  Associacao           Associado?   @relation("PerfilDoAssociado")
+  Documentos           Documentos[]
+  Dependentes          Associado[]  @relation("PerfilDoResponsavel")
 }
 
-model Perfil {
-  id                    Int               @id @default(autoincrement())
-  // INFORMAÇÕES BASICAS
-  nome                  String
-  sobrenome             String
-  data_nascimento       DateTime?         @db.Date
-  hora_nascimento       String?           @db.VarChar(10)
-  cidade_nascimento     String?
-  estado_nascimento     String?
-  estado_civil          EstadoCivil?
-  nome_conjuge          String?
-  rg                    String?           @db.VarChar(15)
-  cpf                   String?           @db.VarChar(15)
-  email                 String?
-  celular               String?
-  telefone_fixo         String?
-  cep                   String?
-  endereco              String?
-  numero                String?
-  complemento           String?
-  bairro                String?
-  cidade                String?
-  estado                String?
-  nome_referencia       String?
-  email_referencia      String?
-  telefone_referencia   String?
-  endereco_referencia   String?
-  parentesco_referencia String?
-  grupo                 Grupo             @default(VISITANTE)
-  membro                Boolean           @default(false)
-  data_fardamento       DateTime?         @db.Date
-  local_fardamento      String?
-  foto                  String            @default("user.png") @db.VarChar(200)
-  bio                   String?           @db.Text
-  profissao             String?
-  escolaridade          Escolaridade?
-  medicacao_controlada  Boolean           @default(false)
-  nome_medicacao        String?
-  quadro_saude          String?
-  autorizacao_medico    Boolean?
-  primeira_vez          Boolean           @default(true)
-  usuario               Usuario?          @relation(fields: [usuarioId], references: [id])
-  usuarioId             Int?              @unique
-  criado_em             DateTime          @default(now()) @db.Timestamptz()
-  atualizado_em         DateTime          @updatedAt @db.Timestamptz()
+model Associado {
+  id                                        String           @id @default(uuid())
+  // SAÚDE
+  saude_quadro_geral                        String?
+  saude_uso_medicacao                       Boolean          @default(false)
+  saude_uso_medicacao_nome                  String?
+  saude_uso_terapeutico_canabis             Boolean          @default(false)
+  saude_uso_terapeutico_canabis_experiencia String?
+  saude_medico_prescritor                   Boolean          @default(false)
+  saude_medico_prescritor_nome              String?
+  saude_medico_prescritor_crm               String?
+  tipo_associado                            TipoAssociado    @default(APOIADOR)
+  perfil                                    Perfil           @relation(name: "PerfilDoAssociado", fields: [perfilId], references: [id])
+  perfilId                                  String           @unique
+  responsavel                               Perfil?          @relation(name: "PerfilDoResponsavel", fields: [responsavelId], references: [id])
+  responsavelId                             String?
+  status                                    AssociacaoStatus @default(AGUARDANDO_CADASTRO)
+  indicado_por                              String?          @db.VarChar(64)
+  de_acordo_termo_associativo               Boolean?
+  de_acordo_termo_associativo_em            DateTime?        @db.Timestamptz()
+
+  criado_em     DateTime @default(now()) @db.Timestamptz()
+  atualizado_em DateTime @updatedAt @db.Timestamptz()
+
+  Documentos Documentos[]
+
+  @@index([responsavelId])
+}
+
+model Documentos {
+  id           String        @id @default(uuid())
+  tipo         TipoDocumento @default(NAO_IDENTIFICADO)
+  nome_arquivo String
+  associado    Associado     @relation(fields: [associadoId], references: [id])
+  associadoId  String
+  criado_por   Perfil?       @relation(fields: [criadoPorId], references: [id])
+  criadoPorId  String?
+  criado_em    DateTime      @default(now()) @db.Timestamptz()
+
+  @@index([associadoId])
+  @@index([criadoPorId])
 }
 
 model Logger {
@@ -91,35 +109,36 @@ model Logger {
   criado_em DateTime   @default(now()) @db.Timestamptz()
 }
 
-// model Questionario_Respostas_Usuario {
-//   id             Int @id @default(autoincrement())
-//   respostas
-//   questionarioId
-//   perfilId
-// }
+enum Papel {
+  ADMIN
+  ASSOCIADO
+  ASSOCIADO_DEPENDENTE
+  SECRETARIA
+  SAUDE
+}
+
+enum TipoDocumento {
+  NAO_IDENTIFICADO
+  IDENTIFICACAO
+  IDENTIFICACAO_RESPONSAVEL
+  COMPROVANTE_RESIDENCIA
+  RECEITA_MEDICA
+  AUTORIZACAO_ANVISA
+}
+
+enum TipoAssociado {
+  APOIADOR
+  MEDICINAL
+}
+
+enum AssociacaoStatus {
+  AGUARDANDO_CADASTRO
+  AGUARDANDO_PAGAMENTO
+  AGUARDANDO_ASSINATURA
+  EM_ANALISE
+  ASSOCIADO
+}
 
 enum TipoLogger {
   EMAIL
-}
-
-enum Grupo {
-  FARDADO
-  VISITANTE
-}
-
-enum EstadoCivil {
-  SOLTEIRO
-  CASADO
-  VIUVO
-  DIVORCIADO
-}
-
-enum Escolaridade {
-  FUNDAMENTAL_INCOMPLETO
-  FUNDAMENTAL_COMPLETO
-  MEDIO_INCOMPLETO
-  MEDIO_COMPLETO
-  SUPERIOR_INCOMPLETO
-  SUPERIOR_COMPLETO
-  NAO_APLICA
 }

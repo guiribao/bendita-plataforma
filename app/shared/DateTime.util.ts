@@ -1,5 +1,10 @@
 import { differenceInYears, parse } from 'date-fns';
-import { da } from 'date-fns/locale';
+
+
+export function brStringToIsoString(stringDate: string) {
+  let [dia, mes, ano] = stringDate.split("/")
+  return new Date(`${ano}-${mes}-${dia}`).toISOString()
+}
 
 export function addHours(date: Date, hours: number) {
   const hoursToAdd = hours * 60 * 60 * 1000;
@@ -16,13 +21,13 @@ export function parseTime(date: Date | string) {
 
 export function parseDateTimeTZ(date, time) {
   let dt;
-  
-  if(!time) {
+
+  if (!time) {
     dt = new Date(date + ' 00:00:00 -03');
   } else {
     dt = new Date(date + ' ' + time + ' -03');
   }
-  
+
   return dt;
 }
 

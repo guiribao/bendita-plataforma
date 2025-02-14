@@ -1,7 +1,7 @@
 import { ActionFunction, LinksFunction, LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node';
 import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
 import { authenticator } from '~/secure/authentication.server';
-import cadastroPageStyle from '~/assets/css/cadastro-page.css';
+import cadastroStyle from '~/assets/css/cadastro.css';
 import loading from '~/assets/img/loading.gif';
 import pegarUsuarioPeloEmail from '~/domain/Usuario/pegar-usuario-pelo-email.server';
 import criarTokenEsqueciSenha from '~/domain/Usuario/criar-token-esqueci-senha.server';
@@ -18,7 +18,7 @@ export const meta: MetaFunction = () => {
 };
 
 export const links: LinksFunction = () => {
-  return [{ rel: 'stylesheet', href: cadastroPageStyle }];
+  return [{ rel: 'stylesheet', href: cadastroStyle }];
 };
 
 export const action: ActionFunction = async ({ request }) => {

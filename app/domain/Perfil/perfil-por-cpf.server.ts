@@ -1,14 +1,13 @@
 import { Perfil } from '@prisma/client';
 import { prisma } from '~/secure/db.server';
 
-export default async function perfilPorEmailCpf(
-  email: string,
+export default async function perfilPorCpf(
   cpf: string
 ): Promise<Perfil | null> {
   try {
     const perfil = await prisma.perfil.findFirst({
       where: {
-        OR: [{ email: { equals: email } }, { cpf: { equals: cpf } }],
+        cpf: { equals: cpf }
       },
       include: {
         usuario: true,

@@ -15,7 +15,7 @@ import {
   useSearchParams,
 } from '@remix-run/react';
 import { authenticator } from '~/secure/authentication.server';
-import cadastroPageStyle from '~/assets/css/cadastro-page.css';
+import cadastroStyle from '~/assets/css/cadastro.css';
 import loading from '~/assets/img/loading.gif';
 import { useEffect } from 'react';
 import Toastify from 'toastify-js';
@@ -90,8 +90,8 @@ export default function Entrar() {
       </Form>
       <div className='footer'>
         <p>
-          Não tem uma conta ainda? <br />
-          <Link to='/autentica/cadastro'>Cadastre-se</Link>
+          Para ser sócio da bendita<br />
+          <Link to='/autentica/cadastro-socio'>Solicite análise aqui</Link>
         </p>
       </div>
     </main>
