@@ -83,7 +83,7 @@ export default function Entrar() {
       <div className='footer'>
         <p>
           Para ser sócio da bendita<br />
-          <Link to='/autentica/cadastro-socio'>Solicite análise aqui</Link>
+          <Link to='/cadastro'>Solicite análise aqui</Link>
         </p>
       </div>
     </main>
