@@ -117,7 +117,6 @@ export default function CadastroSaude() {
     if (!storage) return navigate('/cadastro/basico')
 
     let basico = JSON.parse(storage);
-    //let basico = JSON.parse("{\"perfilId\": \"ca822a17-847c-4cc7-90b6-1481994a1dfe\", \"associadoId\": \"ff2217fc-d1ad-4722-a21a-6914aaeded26\"}")
 
     setPerfilId(basico.perfilId)
     setAssociadoId(basico.associadoId)
@@ -255,7 +254,7 @@ export default function CadastroSaude() {
         <div className="instruct">
           <h2><b style={{ fontWeight: '800' }}>Anexo:</b> Receita Média</h2>
           <p>Se você já tem receita médica para uso da cannabis medicinal anexe aqui.</p>
-          <span>Formatos aceito: JPG, PNG</span>
+          <span>Formatos aceito: JPG, PNG, PDF</span>
         </div>
         <label htmlFor='receita_uso_canabis'>Imagem única *</label>
         <input
@@ -269,7 +268,7 @@ export default function CadastroSaude() {
         <div className="instruct">
           <h2><b style={{ fontWeight: '800' }}>Anexo:</b> Autorização da ANVISA</h2>
           <p>Se você possui autorização da ANVISA para importação anexe aqui.</p>
-          <span>Formatos aceito: JPG, PNG</span>
+          <span>Formatos aceito: JPG, PNG, PDF</span>
         </div>
         <label htmlFor='autorizacao_anvisa'>Imagem única *</label>
         <input

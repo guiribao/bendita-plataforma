@@ -137,6 +137,7 @@ header .menu .menu-actions a:hover {
   flex-direction: row-reverse;
   align-items: center;
   text-align: right;
+  color: var(--green);
 }
 
 .user-wrapper img {
@@ -146,11 +147,12 @@ header .menu .menu-actions a:hover {
 
 .user-wrapper small a {
   display: inline-block;
-  color: var(--text-gray);
+  font-weight: 800;
+  color: white;
 }
 
 .user-wrapper small a:hover {
-  color: var(--main-color);
+  color: white;
 }
 
 main {
@@ -262,4 +264,8 @@ button:disabled {
   text-align: center;
   color: #f9f9f9;
   border-radius: 30px;
+}
+
+@media screen and (min-width: 768px) {
+  
 }

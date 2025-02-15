@@ -2,27 +2,40 @@ import { LoaderArgs, json } from '@remix-run/node';
 
 import { authenticator } from '~/secure/authentication.server';
 
-export const loader = ({ request }: LoaderArgs) => {
-  let usuario = authenticator.isAuthenticated(request);
+import userImage from '~/assets/img/user.png'
+import { Link, useLoaderData } from '@remix-run/react';
+import pegarPerfilPeloIdUsuario from '~/domain/Perfil/perfil-pelo-id-usuario.server';
 
-  return json({ usuario });
+export const loader = async ({ request }: LoaderArgs) => {
+  let usuario = await authenticator.isAuthenticated(request);
+  let perfil = await pegarPerfilPeloIdUsuario(usuario.id)
+
+  return json({ usuario, perfil });
 };
 
 export default function NavAuthenticated() {
+  let { perfil, usuario } = useLoaderData()
 
   return (
     <div className='menu'>
       <ul className='menu-list'>
-        <li>Gente</li>
-        <li>Documentos</li>
-        <li>Medicação</li>
-        <li>Financeiro</li>
+        <li>
+          <Link to="/sobre">Sobre</Link>
+        </li>
+        <li>
+          <Link to="/servicos">Serviços</Link>
+        </li>
+        <li>
+          <Link to="/conhecimento">Conhecimento</Link>
+        </li>
+        <li>
+          <Link to="/contato">Contato</Link>
+        </li>
       </ul>
 
       <div className='user-wrapper'>
         <img src={userImage} alt='some random user image' width={'40px'} height={'40px'} />
-        
-        {/* <div>
+        <div>
           <h4>{perfil?.nome ? `${perfil?.nome} ${perfil?.sobrenome}` : usuario?.email}</h4>
           <small>
             <Link to='/perfil'>Meu perfil</Link>
@@ -31,8 +44,7 @@ export default function NavAuthenticated() {
           <small>
             <Link to='/autentica/sair'>Sair</Link>
           </small>
-        </div> */}
-
+        </div>
       </div>
     </div>
   );

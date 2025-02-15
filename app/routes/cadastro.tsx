@@ -162,6 +162,9 @@ export default function Cadastro() {
     if (location.pathname.includes("concluido")) {
       setPageTitle("Cadastrado enviado")
       stepLineRef.current.style.display = "none"
+    } else {
+      setPageTitle("Cadastro de associado")
+      stepLineRef.current.style.display = "flex"
     }
   }
 

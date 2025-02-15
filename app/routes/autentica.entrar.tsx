@@ -2,27 +2,20 @@ import {
   ActionFunction,
   LinksFunction,
   LoaderFunctionArgs,
-  MetaFunction,
-  json,
-  redirect,
+  MetaFunction
 } from '@remix-run/node';
 import {
   Form,
   Link,
   useActionData,
-  useNavigation,
-  useRouteError,
-  useSearchParams,
+  useNavigation
 } from '@remix-run/react';
 import { authenticator } from '~/secure/authentication.server';
-import cadastroStyle from '~/assets/css/cadastro.css';
-import loading from '~/assets/img/loading.gif';
-import { useEffect } from 'react';
-import Toastify from 'toastify-js';
-import { createBrowserHistory } from 'history';
+import cadastroPageStyle from '~/assets/css/cadastro.css';
+import loading from "~/assets/img/loading.gif"
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'Entrar - ChaveCloud' }, { name: 'description', content: 'A Núvem do Chave!' }];
+  return [{ title: "Entrar - Bendita Associação Canábica" }, { name: 'description', content: 'A Plataforma da Bendita!' }];
 };
 
 export const links: LinksFunction = () => {
@@ -61,12 +54,12 @@ export default function Entrar() {
   const isSubmitting = ['submitting', 'loading'].includes(navigation.state);
 
   return (
-    <main>
+    <main className='entrar'>
       <div className='header'>
         <h1>Entrar</h1>
         <p>Informe seus dados de login para entrar</p>
       </div>
-      <Form method='POST' className='form-cadastro'>
+      <Form method='POST' className='form-entrar'>
         {actionData?.errors?.message && (
           <p className='mensagem-erro'>{actionData?.errors?.message}</p>
         )}
@@ -77,15 +70,14 @@ export default function Entrar() {
         <div className='form-group'>
           <label>Senha</label>
           <input type='password' name='senha' id='senha' autoComplete='off' />
-          <p>
+          <p style={{ textAlign: "center" }}>
             Esqueceu sua senha? <Link to='/autentica/senha'>Clique aqui</Link>
           </p>
         </div>
-        <div className='form-group form-button'>
-          <button type='submit' className='btn-cadastro' disabled={isSubmitting}>
-            {!isSubmitting && 'Entrar'}
-            {isSubmitting && 'Entrando'}
-          </button>
+        <div className='submit-button'>
+          {isSubmitting
+            ? <img src={loading} alt="Salvando dados" className="loading" />
+            : <button type="submit">Entrar</button>}
         </div>
       </Form>
       <div className='footer'>

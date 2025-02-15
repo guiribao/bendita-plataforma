@@ -7,5 +7,6 @@
     "Guilherme": {
       "email": "dev.rosa.guilherme@gmail.com"
     }
-  }
+  },
+  "postman.settings.dotenv-detection-notification-visibility": false
 }

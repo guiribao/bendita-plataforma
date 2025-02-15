@@ -3,12 +3,11 @@ import {
   LinksFunction,
   LoaderFunctionArgs,
   MetaFunction,
-  json,
 } from '@remix-run/node';
 import { useEffect, useState } from 'react';
 import { Form, useActionData, useNavigate, useNavigation } from '@remix-run/react';
 
-import { AssociacaoStatus, TipoAssociado } from '@prisma/client';
+import { AssociacaoStatus } from '@prisma/client';
 
 import atualizarIndicacaoAssociado from '~/domain/Associado/atualizar-indicacao-associado.server';
 import pegarAssociadoPorId from '~/domain/Associado/pegar-por-id.server';
@@ -78,16 +77,16 @@ export default function CadastroTermos() {
 
   useEffect(() => {
     let storage = localStorage.getItem('basico');
-    if (!storage) return navigate('/cadastro/basico')
+    //if (!storage) return navigate('/cadastro/basico')
 
     localStorage.removeItem("basico")
   }, [])
 
   return <div className='cadastro-sucesso'>
     <div className="disclaimer">
-      <h1>Seu perfil está em análise</h1>
+      <img src={successImg} alt="Cadastro enviado" />
       <div>
-        <p>Enquanto isso, faça o pagamento dos valores abaixo.</p>
+        <p><span>Perfil em análise.</span> Enquanto isso, faça o pagamento dos valores abaixo.</p>
         <p>Quando o acolhedor entrar em contato com você, envie o comprovante de pagamento.</p>
       </div>
     </div>

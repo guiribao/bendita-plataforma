@@ -122,7 +122,6 @@ export default function CadastroResponsavel() {
     if (!storage) return navigate('/cadastro/basico')
 
     let basico = JSON.parse(storage);
-    //let basico = JSON.parse("{\"perfilId\": \"ca822a17-847c-4cc7-90b6-1481994a1dfe\", \"associadoId\": \"ff2217fc-d1ad-4722-a21a-6914aaeded26\"}")
 
     setTemResponsavel(basico.necessarioResponsavel)
     setPerfilId(basico.perfilId)
@@ -218,7 +217,7 @@ export default function CadastroResponsavel() {
           <div className="instruct">
             <h2><b style={{ fontWeight: '800' }}>Anexo:</b> RG do responsável *</h2>
             <p>Anexe o documento em uma foto única, ou em dois arquivos separados.</p>
-            <span>Formatos aceito: JPG, PNG</span>
+            <span>Formatos aceito: JPG, PNG, PDF</span>
           </div>
           <label htmlFor='identificacao_responsavel_1'>Imagem frente / Imagem única *</label>
           <input

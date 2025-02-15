@@ -32,11 +32,11 @@ model Usuario_Esqueci_Senha {
 }
 
 model Perfil {
-  id                   String       @id @default(uuid())
+  id                   String   @id @default(uuid())
   // INFORMAÇÕES BASICAS
   nome_completo        String
   apelido              String?
-  data_nascimento      DateTime     @db.Date
+  data_nascimento      DateTime @db.Date
   sexo                 String?
   cpf                  String?
   rg                   String?
@@ -50,13 +50,15 @@ model Perfil {
   endereco_cidade      String?
   endereco_estado      String?
   telefone             String?
-  usuario              Usuario      @relation(fields: [usuarioId], references: [id])
-  usuarioId            Int          @unique
-  criado_em            DateTime     @default(now()) @db.Timestamptz()
-  atualizado_em        DateTime     @updatedAt @db.Timestamptz()
-  Associacao           Associado?   @relation("PerfilDoAssociado")
-  Documentos           Documentos[]
-  Dependentes          Associado[]  @relation("PerfilDoResponsavel")
+  redes_instagram      String?
+  redes_linkedin       String?
+  usuario       Usuario      @relation(fields: [usuarioId], references: [id])
+  usuarioId     Int          @unique
+  criado_em     DateTime     @default(now()) @db.Timestamptz()
+  atualizado_em DateTime     @updatedAt @db.Timestamptz()
+  Associacao    Associado?   @relation("PerfilDoAssociado")
+  Documentos    Documentos[]
+  Dependentes   Associado[]  @relation("PerfilDoResponsavel")
 }
 
 model Associado {

@@ -24,6 +24,8 @@ export default async function criarPerfil(perfil): Promise<Perfil | null> {
         endereco_estado: perfil.estado,
         endereco_complemento: perfil.enderecoComplemento,
         usuarioId: perfil.usuarioId,
+        redes_instagram: perfil.instagram,
+        redes_linkedin: perfil.linkedin
       },
     });
 

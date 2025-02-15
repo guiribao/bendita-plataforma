@@ -115,7 +115,7 @@ export default function CadastroAnexos() {
         <img src={identificationImg} width={256} alt="Inspeção de documentos" />
         <h2>Documento de identificação</h2>
         <p>Envie uma imagem única contendo frente e verso do documento, ou frente e verso em imagens separadas.</p>
-        <span>Formatos aceito: JPG, PNG</span>
+        <span>Formatos aceito: JPG, PNG, PDF</span>
       </div>
       <label htmlFor='identificacao_1'>Imagem frente / Imagem única *</label>
       <input
@@ -141,7 +141,7 @@ export default function CadastroAnexos() {
         <img src={residencyImg} width={256} alt="Inspeção de documentos" />
         <h2>Comprovante de residência *</h2>
         <p>Envie uma imagem única.</p>
-        <span>Formatos aceito: JPG, PNG</span>
+        <span>Formatos aceito: JPG, PNG, PDF</span>
       </div>
       <label htmlFor='comprovante_residencia'>Imagem única</label>
       <input

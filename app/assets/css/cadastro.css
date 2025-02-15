@@ -25,13 +25,13 @@ main {
 }
 
 .cadastro-associado {
-  width: 45%;
+  width: 50%;
 }
 
 .cadastro-associado .step-line {
   display: flex;
   justify-content: center;
-  gap: 2em;
+  gap: 1em;
 }
 
 .step-line .step-line-item {
@@ -78,7 +78,7 @@ main {
 
 .step-line .step-line-item.feito .step-id {
   background: var(--main-color);
-  color: transparent;  
+  color: transparent;
   text-shadow: 0 0 0 white;
 }
 
@@ -166,7 +166,7 @@ main {
   border: 1px solid var(--main-color);
 }
 
-.form-group.sexo > div  {
+.form-group.sexo>div {
   display: flex;
   gap: 1em;
 }
@@ -181,7 +181,7 @@ main {
   opacity: 0;
 }
 
-.form-group .form-field-response input + label {
+.form-group .form-field-response input+label {
   background: #c0c0c0;
   color: white;
   font-size: 1em;
@@ -190,7 +190,7 @@ main {
   cursor: pointer;
 }
 
-.form-group .form-field-response input:checked + label {
+.form-group .form-field-response input:checked+label {
   background: var(--main-color);
 }
 
@@ -224,7 +224,7 @@ main {
   flex-direction: column;
 }
 
-.form-group.sexo > div  {
+.form-group.sexo>div {
   display: flex;
   gap: 1em;
 }
@@ -239,6 +239,7 @@ main {
 .form-group .instruct.anexos {
   align-items: center;
 }
+
 .form-group .instruct h2 {
   color: var(--color-dark);
   font-weight: 200;
@@ -338,12 +339,9 @@ main {
   padding: 2em 0;
   font-size: 1.09em;
   color: var(--text-gray)
-  
 }
 
-.footer p {
-  
-}
+.footer p {}
 
 .footer a {
   font-weight: 800;
@@ -364,24 +362,27 @@ main {
   flex-direction: inherit;
   justify-content: center;
   align-items: center;
-  gap: .7em;
+  gap: .76em;
 }
 
-.cadastro-sucesso .disclaimer h1 {
-  color: var(--text-gray);
-  font-weight: 300;
-  text-align: center;
+.cadastro-sucesso .disclaimer img {
+  height: 100px;
 }
 
 .cadastro-sucesso .disclaimer p {
-  color: var(--main-color);
+  color: var(--text-gray);
   font-weight: 800;
   font-size: 1.30em;
   text-align: center;
 }
 
+.cadastro-sucesso .disclaimer p span {
+  color: var(--main-color);
+  text-align: center;
+}
+
 .cadastro-sucesso .pagamento {
-  width: 80%;
+
   background: #f1f1f1;
   padding: 1em 1.2em;
   border-radius: 6px;
@@ -394,7 +395,9 @@ main {
 .cadastro-sucesso .pagamento .valores {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: .76em;
+  text-align: center;
 }
 
 .cadastro-sucesso .pagamento .valores h2 {
@@ -409,10 +412,12 @@ main {
 .cadastro-sucesso .pagamento .forma-pagamento {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 1em;
+  text-align: center;
 }
 
-.cadastro-sucesso .pagamento .forma-pagamento div { 
+.cadastro-sucesso .pagamento .forma-pagamento div {
   display: flex;
   flex-direction: column;
   gap: .36em;
@@ -422,4 +427,34 @@ main {
   width: 200px;
   margin: 0 auto;
   margin-bottom: 5px;
+}
+
+main.entrar {
+  max-width: 480px;
+}
+
+main.entrar .form-entrar {
+  display: flex;
+  flex-direction: column;
+  gap: .76em;
+}
+
+main.entrar .form-entrar .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: .36em;
+}
+
+main.entrar .form-entrar .form-group p {
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+main.entrar .form-entrar .form-group p a {
+  color: var(--main-color);
+  font-weight: 800;
+}
+
+main.entrar .footer {
+  text-align: center;
 }

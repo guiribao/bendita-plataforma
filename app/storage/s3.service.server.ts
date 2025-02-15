@@ -8,7 +8,7 @@ const S3_BUCKET_NAME = process.env.S3_BUCKET || 's3_VAR_NAO_INFORMADA';
 const STORAGE_ENV = process.env.NODE_ENV;
 const FILE_FIELDS = ['identificacao_1', 'identificacao_2', 'comprovante_residencia',
   'receita_uso_canabis', 'autorizacao_anvisa', 'identificacao_responsavel_1', 'identificacao_responsavel_2'];
-const FILE_FORMAT = ['image/jpeg', 'image/png'];
+const FILE_FORMAT = ['image/jpeg', 'image/png', 'application/pdf'];
 
 const uploadStreamToS3 = async (data: Buffer, key: string, contentType: string) => {
   const params = {
@@ -55,7 +55,7 @@ export const s3UploaderHandler = async ({ name, data, filename, contentType }) =
   if (!filename) return;
 
   if (!FILE_FORMAT.includes(contentType))
-    throw new Error(`${name}: formato do arquivo é inválido\nUtilize JPG ou PNG.`);
+    throw new Error(`${name}: formato do arquivo é inválido\nUtilize JPG, PNG ou PDF.`);
 
   //@ts-ignore
   let fileBuffer = await convertToBuffer(data);
@@ -69,30 +69,45 @@ export const s3UploaderHandler = async ({ name, data, filename, contentType }) =
     throw new Error(`${name}: arquivo grande demais\nUtilize um arquivo de até 5mb.`);
 
   if (["identificacao_1", "identificacao_2",
-        "identificacao_responsavel_1", "identificacao_responsavel_2"].includes(name)) {
+    "identificacao_responsavel_1", "identificacao_responsavel_2"].includes(name)) {
+
     let newFilename = gerarUuid()
 
-    if (contentType === 'image/jpeg') newFilename += '.jpeg';
-    if (contentType === 'image/png') newFilename += '.png';
+    if (contentType === 'image/jpeg' || contentType === 'image/png') {
+      if (contentType === 'image/png') {
+        newFilename += '.png';
+      } else {
+        newFilename += '.jpeg';
+      }
+      finalFile = await Jimp.read(fileBuffer).then(async (image) => {
+        image.quality(70);
+        return await image.getBufferAsync(contentType);
+      });
+    }
 
-    finalFile = await Jimp.read(fileBuffer).then(async (image) => {
-      image.quality(70);
-      return await image.getBufferAsync(contentType);
-    });
+
+    if (contentType === 'application/pdf') newFilename += '.pdf';
 
     folderAndFile = `${STORAGE_ENV}/documentos/identificacao/${newFilename}`;
   }
 
   if (["comprovante_residencia"].includes(name)) {
+
     let newFilename = gerarUuid()
 
-    if (contentType === 'image/jpeg') newFilename += '.jpeg';
-    if (contentType === 'image/png') newFilename += '.png';
+    if (contentType === 'image/jpeg' || contentType === 'image/png') {
+      if (contentType === 'image/png') {
+        newFilename += '.png';
+      } else {
+        newFilename += '.jpeg';
+      }
+      finalFile = await Jimp.read(fileBuffer).then(async (image) => {
+        image.quality(70);
+        return await image.getBufferAsync(contentType);
+      });
+    }
 
-    finalFile = await Jimp.read(fileBuffer).then(async (image) => {
-      image.quality(70);
-      return await image.getBufferAsync(contentType);
-    });
+    if (contentType === 'application/pdf') newFilename += '.pdf';
 
     folderAndFile = `${STORAGE_ENV}/documentos/residencia/${newFilename}`;
   }
@@ -100,13 +115,19 @@ export const s3UploaderHandler = async ({ name, data, filename, contentType }) =
   if (["receita_uso_canabis"].includes(name)) {
     let newFilename = gerarUuid()
 
-    if (contentType === 'image/jpeg') newFilename += '.jpeg';
-    if (contentType === 'image/png') newFilename += '.png';
+    if (contentType === 'image/jpeg' || contentType === 'image/png') {
+      if (contentType === 'image/png') {
+        newFilename += '.png';
+      } else {
+        newFilename += '.jpeg';
+      }
+      finalFile = await Jimp.read(fileBuffer).then(async (image) => {
+        image.quality(70);
+        return await image.getBufferAsync(contentType);
+      });
+    }
 
-    finalFile = await Jimp.read(fileBuffer).then(async (image) => {
-      image.quality(70);
-      return await image.getBufferAsync(contentType);
-    });
+    if (contentType === 'application/pdf') newFilename += '.pdf';
 
     folderAndFile = `${STORAGE_ENV}/documentos/receitas/${newFilename}`;
   }
@@ -114,17 +135,26 @@ export const s3UploaderHandler = async ({ name, data, filename, contentType }) =
   if (["autorizacao_anvisa"].includes(name)) {
     let newFilename = gerarUuid()
 
-    if (contentType === 'image/jpeg') newFilename += '.jpeg';
-    if (contentType === 'image/png') newFilename += '.png';
+    if (contentType === 'image/jpeg' || contentType === 'image/png') {
+      if (contentType === 'image/png') {
+        newFilename += '.png';
+      } else {
+        newFilename += '.jpeg';
+      }
+      finalFile = await Jimp.read(fileBuffer).then(async (image) => {
+        image.quality(70);
+        return await image.getBufferAsync(contentType);
+      });
+    }
 
-    finalFile = await Jimp.read(fileBuffer).then(async (image) => {
-      image.quality(70);
-      return await image.getBufferAsync(contentType);
-    });
+    if (contentType === 'application/pdf') newFilename += '.pdf';
 
     folderAndFile = `${STORAGE_ENV}/documentos/anvisa/${newFilename}`;
   }
 
+  if (!finalFile) {
+    finalFile = fileBuffer
+  }
 
   if (!folderAndFile.length)
     throw new Error(`${name}: Erro ao processar upload do arquivo.`);

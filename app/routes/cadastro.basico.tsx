@@ -57,6 +57,8 @@ export const action: ActionFunction = async ({ request }) => {
   const cidade = form.get("cidade");
   const estado = form.get("estado");
   const enderecoComplemento = form.get("endereco_complemento");
+  const instagram = form.get("instagram");
+  const linkedin = form.get("linkedin");
 
   let dataNascimento = form.get("data_nascimento");
 
@@ -121,11 +123,11 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const usuario = await criarNovoUsuario(email, senha, papel)
-  
+
   const perfil = await criarPerfil({
     nomeCompleto, apelido, dataNascimento, cpf, rg, nacionalidade, estadoCivil,
     sexo, telefone, cep, enderecoRua, enderecoNumero, bairro, cidade, estado,
-    enderecoComplemento, usuarioId: usuario?.id
+    enderecoComplemento, usuarioId: usuario?.id, instagram, linkedin
   })
 
   const associado = await criarAssociado(perfil?.id)
@@ -156,7 +158,7 @@ export default function CadastroBasico() {
   const isSubmitting = ["submitting", "loading"].includes(navigation.state);
 
   useEffect(() => {
-    //localStorage.removeItem("basico")
+    localStorage.removeItem("basico")
   }, [])
 
   useEffect(() => {
@@ -351,10 +353,19 @@ export default function CadastroBasico() {
     </div>
 
     <div className="form-group">
-
       <label htmlFor="endereco_complemento">Complemento</label>
       <input type="text" name="endereco_complemento" id="endereco_complemento" autoComplete="off" required defaultValue={""} />
+    </div>
 
+    <div className="form-group inline-group">
+      <div>
+        <label htmlFor="instagram">Instagram</label>
+        <input type="text" name="instagram" id="instagram" autoComplete="off" placeholder="Link ou @"/>
+      </div>
+      <div>
+        <label htmlFor="linkedin">Linkedin</label>
+        <input type="text" name="linkedin" id="linkedin" autoComplete="off" placeholder="Link do perfil"/>
+      </div>
     </div>
 
     <div className="submit-button">
