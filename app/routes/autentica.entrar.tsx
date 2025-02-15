@@ -15,7 +15,7 @@ import cadastroPageStyle from '~/assets/css/cadastro.css';
 import loading from "~/assets/img/loading.gif"
 
 export const meta: MetaFunction = () => {
-  return [{ title: "Entrar - Bendita Associação Canábica" }, { name: 'description', content: 'A Plataforma da Bendita!' }];
+  return [{ title: "Entrar - Associação Bendita Canábica" }, { name: 'description', content: 'A Plataforma da Bendita!' }];
 };
 
 export const links: LinksFunction = () => {

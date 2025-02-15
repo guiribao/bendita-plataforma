@@ -22,8 +22,8 @@ import pegarAssociadoPorId from '~/domain/Associado/pegar-por-id.server';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Enviar documentos - Bendita Associação Canábica' },
-    { name: 'description', content: 'Solicitação de análise associativa da Bendita Associação Canábica' },
+    { title: 'Enviar documentos - Associação Bendita Canábica' },
+    { name: 'description', content: 'Solicitação de análise associativa da Associação Bendita Canábica' },
   ];
 };
 

@@ -45,7 +45,7 @@ export const links: LinksFunction = () => [
 
 export const meta: MetaFunction = () => {
   return [
-    { charset: 'utf-8', title: 'Bendita Associação Canábica', viewport: 'width=device-width, initial-scale=1' },
+    { charset: 'utf-8', title: 'Associação Bendita Canábica', viewport: 'width=device-width, initial-scale=1' },
     { name: 'description', content: 'Plataforma de sócios da Bendita Canabica' },
   ];
 };

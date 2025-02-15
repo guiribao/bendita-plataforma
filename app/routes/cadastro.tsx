@@ -24,8 +24,8 @@ import { useEffect, useRef, useState } from 'react';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Cadastro  - Bendita Associação Canábica' },
-    { name: 'description', content: 'Solicitação de análise associativa da Bendita Associação Canábica' },
+    { title: 'Cadastro  - Associação Bendita Canábica' },
+    { name: 'description', content: 'Solicitação de análise associativa da Associação Bendita Canábica' },
   ];
 };
 

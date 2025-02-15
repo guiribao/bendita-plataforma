@@ -27,8 +27,8 @@ import paises from "~/assets/paises.json"
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Informações básicas - Bendita Associação Canábica" },
-    { name: "description", content: "Solicitação de análise associativa da Bendita Associação Canábica" },
+    { title: "Informações básicas - Associação Bendita Canábica" },
+    { name: "description", content: "Solicitação de análise associativa da Associação Bendita Canábica" },
   ];
 };
 

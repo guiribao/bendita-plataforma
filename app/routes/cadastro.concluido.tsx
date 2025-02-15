@@ -25,8 +25,8 @@ import atualizarStatusAssociado from '~/domain/Associado/atualizar-status-associ
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Cadastro  - Bendita Associação Canábica' },
-    { name: 'description', content: 'Solicitação de análise associativa da Bendita Associação Canábica' },
+    { title: 'Cadastro  - Associação Bendita Canábica' },
+    { name: 'description', content: 'Solicitação de análise associativa da Associação Bendita Canábica' },
   ];
 };
 
@@ -102,9 +102,9 @@ export default function CadastroTermos() {
       <div className='forma-pagamento'>
         <div>
           <h3>PIX</h3>
-          <img src={qrCodePix} alt="QR Code Pix - Bendita Associação Canábica"  />
+          <img src={qrCodePix} alt="QR Code Pix - Associação Bendita Canábica"  />
           <p><strong>Chave CNPJ:</strong> 55841491000195</p>
-          <p>Bendita Associação Canábica</p>
+          <p>Associação Bendita Canábica</p>
         </div>
         <div>
           <h3>Transferência bancária</h3>

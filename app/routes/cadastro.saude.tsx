@@ -20,8 +20,8 @@ import criarDocumento from '~/domain/Documentos/criar-documento.server';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Informações de saúde - Bendita Associação Canábica' },
-    { name: 'description', content: 'Solicitação de análise associativa da Bendita Associação Canábica' },
+    { title: 'Informações de saúde - Associação Bendita Canábica' },
+    { name: 'description', content: 'Solicitação de análise associativa da Associação Bendita Canábica' },
   ];
 };
 
