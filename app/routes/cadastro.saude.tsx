@@ -262,7 +262,6 @@ export default function CadastroSaude() {
           name='receita_uso_canabis'
           id='receita_uso_canabis'
           defaultValue={''}
-          required
         />
 
         <div className="instruct">
@@ -276,7 +275,6 @@ export default function CadastroSaude() {
           name='autorizacao_anvisa'
           id='autorizacao_anvisa'
           defaultValue={''}
-          required
         />
       </div>}
 

@@ -13,7 +13,6 @@ section.disclaimer {
   flex-direction: column;
   justify-content: end;
   gap: 20px;
-  padding-left: 102px;
   color: #212121;
 }
 
@@ -60,7 +59,7 @@ section.call-to-action p {
     height 0.3s;
   position: absolute;
   left: -10px;
-  background-color: var(--green);
+  
   width: 60px;
   height: 60px;
   border-radius: 50%;
@@ -77,7 +76,29 @@ section.call-to-action p {
   border-radius: inherit;
 }
 
-#slider i {
+
+
+.call-to-action {
+	font-size: 18px;
+	text-transform: uppercase;
+	font-family: 'Merriweather', sans-serif;
+  font-weight: 900;
+
+  
+}
+.call-to-action a {
+  width: 100%;
+  max-width: 220px;
+  color: #fff;
+  background-color: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  padding: .36em 0;
+}
+
+.call-to-action a i {
   color: var(--color-dark);
   font-size: 40px;
   -webkit-touch-callout: none;
@@ -86,20 +107,24 @@ section.call-to-action p {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  cursor: default;
+  cursor: pointer;
 }
 
-.slide-text {
-	color: #333;
-	font-size: 18px;
-	text-transform: uppercase;
-	font-family: 'Merriweather', sans-serif;
-  font-weight: 900;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  cursor: default;
+main.sobre {
+  width: 100%;
+  height: calc(100% - 100px);
+  justify-content: space-between;
+  padding: 1em 10% 10% 10%;
+  gap: 0;
+  background: var(--main-color);
+}
+
+main.sobre .disclaimer img {
+  width: 45px;
+  bottom: 45px;
+  left: 50%;
+}
+
+.sobre .missao {
+  background: white;
 }
