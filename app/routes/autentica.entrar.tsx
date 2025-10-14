@@ -27,7 +27,7 @@ export const action: ActionFunction = async ({ request, context }) => {
 
   try {
     await authenticator.authenticate('form', request, {
-      successRedirect: '/dashboard',
+      successRedirect: '/app/dashboard',
       throwOnError: true,
     });
   } catch (error) {
@@ -42,7 +42,7 @@ export const action: ActionFunction = async ({ request, context }) => {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   let user = await authenticator.isAuthenticated(request, {
-    successRedirect: '/dashboard',
+    successRedirect: '/app/dashboard',
   });
   return {};
 }

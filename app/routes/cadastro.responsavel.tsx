@@ -101,7 +101,7 @@ export const action: ActionFunction = async ({ request }) => {
 export async function loader({ request }: LoaderFunctionArgs) {
   // If the user is already authenticated redirect to /dashboard directly
   return await authenticator.isAuthenticated(request, {
-    successRedirect: '/dashboard',
+    successRedirect: '/app/dashboard',
   });
 }
 
@@ -225,7 +225,6 @@ export default function CadastroResponsavel() {
             name='identificacao_responsavel_1'
             id='identificacao_responsavel_1'
             defaultValue={''}
-            required
           />
           <label htmlFor='identificacao_responsavel_2'>Imagem verso</label>
           <input
@@ -253,7 +252,6 @@ export default function CadastroResponsavel() {
               autoComplete='off'
               mask='\+55 \(99\) 9 9999-9999'
               maskChar={' '}
-              required
             />
           </div>
         </div>

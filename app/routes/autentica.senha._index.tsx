@@ -59,7 +59,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   let user = await authenticator.isAuthenticated(request, {
-    successRedirect: '/dashboard',
+    successRedirect: '/app/dashboard',
   });
   
   return {};

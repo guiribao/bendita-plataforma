@@ -25,22 +25,20 @@ main {
 }
 
 .cadastro-associado {
-  width: 50%;
+  width: 100%;
 }
 
 .cadastro-associado .step-line {
-  display: flex;
-  justify-content: center;
-  gap: 1em;
+  display: none;
 }
 
 .step-line .step-line-item {
   width: 130px;
   background: white;
-  padding: .42em 0;
+  padding: 0.42em 0;
   display: flex;
   flex-direction: column;
-  gap: .76em;
+  gap: 0.76em;
   padding: 5px;
   border-radius: 6px;
   color: var(--text-gray);
@@ -62,9 +60,8 @@ main {
   margin: 0 auto;
 }
 
-
 .step-line .step-line-item.ativo {
-  color: var(--color-dark)
+  color: var(--color-dark);
 }
 
 .step-line .step-line-item.ativo .step-id {
@@ -73,7 +70,7 @@ main {
 }
 
 .step-line .step-line-item.feito {
-  color: var(--text-gray)
+  color: var(--text-gray);
 }
 
 .step-line .step-line-item.feito .step-id {
@@ -83,7 +80,7 @@ main {
 }
 
 .step-line .step-line-item .step-titulo {
-  font-size: .96em;
+  font-size: 0.96em;
   font-weight: 900;
   font-family: 'Merriweather', sans-serif;
 }
@@ -123,13 +120,19 @@ main {
   color: var(--text-gray);
   font-weight: 700;
   font-size: 14px;
-
 }
 
 .form-group label {
   font-size: 1.1em;
   font-weight: 700;
-  color: var(--text-gray)
+  color: var(--text-gray);
+}
+
+.form-group label .required-field {
+  color: var(--main-color);
+  font-size: 16px;
+  position: absolute;
+  margin-left: 2px;
 }
 
 .form-group input {
@@ -166,7 +169,7 @@ main {
   border: 1px solid var(--main-color);
 }
 
-.form-group.sexo>div {
+.form-group.sexo > div {
   display: flex;
   gap: 1em;
 }
@@ -181,16 +184,16 @@ main {
   opacity: 0;
 }
 
-.form-group .form-field-response input+label {
+.form-group .form-field-response input + label {
   background: #c0c0c0;
   color: white;
   font-size: 1em;
   border-radius: 6px;
-  padding: .60em 1.40em;
+  padding: 0.6em 1.4em;
   cursor: pointer;
 }
 
-.form-group .form-field-response input:checked+label {
+.form-group .form-field-response input:checked + label {
   background: var(--main-color);
 }
 
@@ -217,14 +220,13 @@ main {
   display: flex;
   flex-direction: column;
   gap: 5px;
-
 }
 
 .step-group .form-group.sexo {
   flex-direction: column;
 }
 
-.form-group.sexo>div {
+.form-group.sexo > div {
   display: flex;
   gap: 1em;
 }
@@ -233,7 +235,7 @@ main {
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 1em 0 .5em 0;
+  padding: 1em 0 0.5em 0;
 }
 
 .form-group .instruct.anexos {
@@ -315,15 +317,15 @@ main {
 .submit-button button {
   background-color: var(--main-color);
   color: white;
-  padding: .47em 1em;
+  padding: 0.47em 1em;
   border-radius: 6px;
   border: none;
   outline: none;
   font-size: 1.13em;
-  font-family: "Roboto", serif;
+  font-family: 'Roboto', serif;
   font-weight: 800;
   cursor: pointer;
-  position: relative
+  position: relative;
 }
 
 .submit-button img.loading {
@@ -338,14 +340,15 @@ main {
   gap: 6px;
   padding: 2em 0;
   font-size: 1.09em;
-  color: var(--text-gray)
+  color: var(--text-gray);
 }
 
-.footer p {}
+.footer p {
+}
 
 .footer a {
   font-weight: 800;
-  border-bottom: 4px solid var(--green)
+  border-bottom: 4px solid var(--green);
 }
 
 .cadastro-sucesso {
@@ -362,7 +365,7 @@ main {
   flex-direction: inherit;
   justify-content: center;
   align-items: center;
-  gap: .76em;
+  gap: 0.76em;
 }
 
 .cadastro-sucesso .disclaimer img {
@@ -372,7 +375,7 @@ main {
 .cadastro-sucesso .disclaimer p {
   color: var(--text-gray);
   font-weight: 800;
-  font-size: 1.30em;
+  font-size: 1.3em;
   text-align: center;
 }
 
@@ -382,7 +385,6 @@ main {
 }
 
 .cadastro-sucesso .pagamento {
-
   background: #f1f1f1;
   padding: 1em 1.2em;
   border-radius: 6px;
@@ -396,7 +398,7 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: .76em;
+  gap: 0.76em;
   text-align: center;
 }
 
@@ -420,7 +422,7 @@ main {
 .cadastro-sucesso .pagamento .forma-pagamento div {
   display: flex;
   flex-direction: column;
-  gap: .36em;
+  gap: 0.36em;
 }
 
 .cadastro-sucesso .pagamento .forma-pagamento div img {
@@ -436,13 +438,13 @@ main.entrar {
 main.entrar .form-entrar {
   display: flex;
   flex-direction: column;
-  gap: .76em;
+  gap: 0.76em;
 }
 
 main.entrar .form-entrar .form-group {
   display: flex;
   flex-direction: column;
-  gap: .36em;
+  gap: 0.36em;
 }
 
 main.entrar .form-entrar .form-group p {
@@ -457,4 +459,28 @@ main.entrar .form-entrar .form-group p a {
 
 main.entrar .footer {
   text-align: center;
+}
+
+@media screen and (min-width: 508px) {
+  .cadastro-associado {
+    width: 70%;
+  }
+
+  .cadastro-associado .step-line {
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .cadastro-associado {
+    width: 50%;
+  }
+
+  .cadastro-associado .step-line {
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+  }
 }

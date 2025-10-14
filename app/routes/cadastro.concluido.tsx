@@ -63,7 +63,7 @@ export const action: ActionFunction = async ({ request }) => {
 export async function loader({ request }: LoaderFunctionArgs) {
   // If the user is already authenticated redirect to /dashboard directly
   return await authenticator.isAuthenticated(request, {
-    successRedirect: '/dashboard',
+    successRedirect: '/app/dashboard',
   });
 }
 

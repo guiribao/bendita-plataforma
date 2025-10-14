@@ -1,14 +1,11 @@
-import { useLocation } from '@remix-run/react';
-import { ReactElement, useEffect } from 'react';
+import { ReactElement } from "react";
 
 interface LayoutProps {
-  children: ReactElement | ReactElement[]
+  children: ReactElement | ReactElement[];
 }
 
-export default function Layout({ children }: LayoutProps) {
-  let location = useLocation();
+const Layout = ({ children }: LayoutProps) => (
+  <div className="plat-container">{children}</div>
+);
 
-  return <div className="container">
-    {children}
-  </div>;
-}
+export default Layout;

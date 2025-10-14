@@ -81,7 +81,7 @@ export const action: ActionFunction = async ({ request }) => {
 export async function loader({ request }: LoaderFunctionArgs) {
   // If the user is already authenticated redirect to /dashboard directly
   return await authenticator.isAuthenticated(request, {
-    successRedirect: '/dashboard',
+    successRedirect: '/app/dashboard',
   });
 }
 
@@ -117,7 +117,7 @@ export default function CadastroAnexos() {
         <p>Envie uma imagem única contendo frente e verso do documento, ou frente e verso em imagens separadas.</p>
         <span>Formatos aceito: JPG, PNG, PDF</span>
       </div>
-      <label htmlFor='identificacao_1'>Imagem frente / Imagem única *</label>
+      <label htmlFor='identificacao_1'>Imagem frente / Imagem única <span className='required-field'>*</span></label>
       <input
         type='file'
         name='identificacao_1'
@@ -139,11 +139,11 @@ export default function CadastroAnexos() {
     <div className='form-group'>
       <div className="instruct anexos">
         <img src={residencyImg} width={256} alt="Inspeção de documentos" />
-        <h2>Comprovante de residência *</h2>
+        <h2>Comprovante de residência</h2>
         <p>Envie uma imagem única.</p>
         <span>Formatos aceito: JPG, PNG, PDF</span>
       </div>
-      <label htmlFor='comprovante_residencia'>Imagem única</label>
+      <label htmlFor='comprovante_residencia'>Imagem única <span className='required-field'>*</span></label>
       <input
         type='file'
         name='comprovante_residencia'

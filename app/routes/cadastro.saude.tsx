@@ -92,7 +92,7 @@ export const action: ActionFunction = async ({ request }) => {
 export async function loader({ request }: LoaderFunctionArgs) {
   // If the user is already authenticated redirect to /dashboard directly
   return await authenticator.isAuthenticated(request, {
-    successRedirect: '/dashboard',
+    successRedirect: '/app/dashboard',
   });
 }
 
@@ -133,16 +133,16 @@ export default function CadastroSaude() {
   return <Form method='post' className='step-group' name="saude" encType='multipart/form-data'>
     <div className='form-group'>
       <div className="instruct">
-        <h2>Quadro geral de saúde *</h2>
+        <h2>Quadro geral de saúde</h2>
       </div>
       <label htmlFor='quadro_geral'>Descreva os diagnósticos de patologias existentes.</label>
-      <textarea name='quadro_geral' id='quadro_geral' required onInput={resizeTextarea} onChange={(event) => setQuadroGeral(event.target.value)} maxLength={2048} rows={1} />
+      <textarea name='quadro_geral' id='quadro_geral' onInput={resizeTextarea} onChange={(event) => setQuadroGeral(event.target.value)} maxLength={2048} rows={1} />
       <span className='char-lenght-info'>{quadroGeral.length} de até 2048 caracteres</span>
     </div>
 
     <div className='form-group'>
       <div className="instruct">
-        <h2>Usa alguma medicação? *</h2>
+        <h2>Usa alguma medicação?</h2>
       </div>
       <div className="medicacao">
         <div className='form-field-response'>
@@ -152,7 +152,6 @@ export default function CadastroSaude() {
             id="usa_medicacao_nao"
             value={'false'}
             onChange={() => setUsaMedicacao(false)}
-            required
           />
           <label htmlFor='usa_medicacao_nao'>Não</label>
         </div>
@@ -169,13 +168,13 @@ export default function CadastroSaude() {
       </div>
       {usaMedicacao && <div className='form-group'>
         <label htmlFor='medicacao_nome'>Escreva os nomes das medicações que você faz uso.</label>
-        <input name='medicacao_nome' id='medicacao_nome' required />
+        <input name='medicacao_nome' id='medicacao_nome' />
       </div>}
     </div>
 
     <div className='form-group'>
       <div className="instruct">
-        <h2>Já fez uso terapêutico com a cannabis? *</h2>
+        <h2>Já fez uso terapêutico com a cannabis?</h2>
       </div>
       <div className="medicacao">
         <div className='form-field-response'>
@@ -185,7 +184,6 @@ export default function CadastroSaude() {
             id="uso_terapeutico_nao"
             value={'false'}
             onChange={() => setUsoTerapeutico(false)}
-            required
           />
           <label htmlFor='uso_terapeutico_nao'>Não</label>
         </div>
@@ -201,9 +199,9 @@ export default function CadastroSaude() {
         </div>
       </div>
       {usoTerapeutico && <div className='form-group'>
-        <label htmlFor='relato_uso_terapeutico'>Faça um breve relato da sua experiência com o uso terapêutico da cannabis. *</label>
+        <label htmlFor='relato_uso_terapeutico'>Faça um breve relato da sua experiência com o uso terapêutico da cannabis.</label>
         <textarea name='relato_uso_terapeutico' id='relato_uso_terapeutico'
-          required onInput={resizeTextarea}
+          onInput={resizeTextarea}
           onChange={(event) => setRelatoUsoTerapeutico(event.target.value)}
           maxLength={512} rows={1}
         />
@@ -214,7 +212,7 @@ export default function CadastroSaude() {
 
     <div className='form-group'>
       <div className="instruct">
-        <h2>É acompanhado por médico prescritor de cannabis? *</h2>
+        <h2>É acompanhado por médico prescritor de cannabis?</h2>
       </div>
       <div className="medicacao">
         <div className='form-field-response'>
@@ -224,7 +222,6 @@ export default function CadastroSaude() {
             id="acompanhado_prescritor_nao"
             value={'false'}
             onChange={() => setAcompanhadoPrescritor(false)}
-            required
           />
           <label htmlFor='acompanhado_prescritor_nao'>Não</label>
         </div>
@@ -241,12 +238,12 @@ export default function CadastroSaude() {
       </div>
       {acompanhadoPrescritor && <div className='form-group inline-group'>
         <div>
-          <label htmlFor='nome_prescritor'>Nome do profissional *</label>
-          <input name='nome_prescritor' id='nome_prescritor' required />
+          <label htmlFor='nome_prescritor'>Nome do profissional</label>
+          <input name='nome_prescritor' id='nome_prescritor' />
         </div>
         <div>
-          <label htmlFor='crm_prescritor'>CRM *</label>
-          <input name='crm_prescritor' id='crm_prescritor' required />
+          <label htmlFor='crm_prescritor'>CRM</label>
+          <input name='crm_prescritor' id='crm_prescritor' />
         </div>
       </div>}
 
@@ -256,7 +253,7 @@ export default function CadastroSaude() {
           <p>Se você já tem receita médica para uso da cannabis medicinal anexe aqui.</p>
           <span>Formatos aceito: JPG, PNG, PDF</span>
         </div>
-        <label htmlFor='receita_uso_canabis'>Imagem única *</label>
+        <label htmlFor='receita_uso_canabis'>Imagem única</label>
         <input
           type='file'
           name='receita_uso_canabis'
@@ -269,7 +266,7 @@ export default function CadastroSaude() {
           <p>Se você possui autorização da ANVISA para importação anexe aqui.</p>
           <span>Formatos aceito: JPG, PNG, PDF</span>
         </div>
-        <label htmlFor='autorizacao_anvisa'>Imagem única *</label>
+        <label htmlFor='autorizacao_anvisa'>Imagem única</label>
         <input
           type='file'
           name='autorizacao_anvisa'

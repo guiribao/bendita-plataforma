@@ -62,7 +62,7 @@ export const action: ActionFunction = async ({ request }) => {
 export async function loader({ request }: LoaderFunctionArgs) {
   // If the user is already authenticated redirect to /dashboard directly
   return await authenticator.isAuthenticated(request, {
-    successRedirect: '/dashboard',
+    successRedirect: '/app/dashboard',
   });
 }
 
@@ -97,17 +97,14 @@ export default function CadastroTermos() {
 
   return <Form method='post' className='step-group' name="termos">
     <div className='form-group'>
-      <label htmlFor='tipo_associacao'>Tipo de associado *</label>
+      <label htmlFor='tipo_associacao'>Tipo de associado <span className='required-field'>*</span></label>
       <select name="tipo_associacao" id="tipo_associacao">
         <option value={TipoAssociado.APOIADOR}>Associado Apoiador</option>
         <option value={TipoAssociado.MEDICINAL}>Associado Medicinal</option>
       </select>
     </div>
-    <div className='form-group'>
-      <div className="instruct">
-        <h2>Você foi indicado por alguem?</h2>
-        <p></p>
-      </div>
+    <div className='form-group mt-2'>
+      <label>Você foi indicado por alguem? <span className='required-field'>*</span></label>
       <div className="medicacao">
         <div className='form-field-response'>
           <input

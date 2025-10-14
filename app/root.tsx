@@ -35,6 +35,8 @@ import {
 import NotAuthorized from './routes/autorizacao';
 import { getEnv } from './env.server';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: line_awesome },
   { rel: 'stylesheet', href: stylesheet },
@@ -60,7 +62,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   if (usuario?.id) {
     perfil = await pegarPerfilPeloIdUsuario(usuario.id);
-    if (!perfil?.id && !request.url.includes('/perfil/editar')) return redirect('/perfil/editar');
+    if (!perfil?.id && !request.url.includes('/app/perfil/editar')) return redirect('/app/perfil/editar');
 
     let canAccessSpecific = specificDynPages(parsed_url.pathname, usuario.papel);
 
@@ -88,7 +90,7 @@ export default function App() {
     if (usuario) {
       isAuthorized = canView(location.pathname, usuario.papel);
 
-      if (!perfil && location.pathname !== '/perfil/editar') {
+      if (!perfil && location.pathname !== '/app/perfil/editar') {
         history.back();
       }
 

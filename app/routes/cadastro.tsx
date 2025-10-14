@@ -97,7 +97,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   if (criarUsuario) {
     await authenticator.authenticate('form', request, {
-      successRedirect: '/dashboard',
+      successRedirect: '/app/dashboard',
       failureRedirect: '/autentica/cadastro',
       context: { formData: form },
     });
@@ -110,7 +110,7 @@ export const action: ActionFunction = async ({ request }) => {
 export async function loader({ request }: LoaderFunctionArgs) {
   // If the user is already authenticated redirect to /dashboard directly
   await authenticator.isAuthenticated(request, {
-    successRedirect: '/dashboard',
+    successRedirect: '/app/dashboard',
   });
 
   const symbol = Object.getOwnPropertySymbols(request)[1];

@@ -72,7 +72,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export async function loader({ request, params }: LoaderArgs) {
   let usuario: Usuario | null = await authenticator.isAuthenticated(request, {
-    successRedirect: '/dashboard',
+    successRedirect: '/app/dashboard',
   });
   //@ts-ignore
   let uuid: string = params.uuid;
