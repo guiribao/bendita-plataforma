@@ -1,7 +1,4 @@
-import { LoaderFunctionArgs, json } from '@remix-run/node';
-import { Link, useLoaderData } from '@remix-run/react';
-import { Col, Container, Nav, Navbar, Row } from 'react-bootstrap';
-import pegarPerfilPeloIdUsuario from '~/domain/Perfil/perfil-pelo-id-usuario.server';
+import { Container, Nav, Navbar, Row } from 'react-bootstrap';
 
 interface NavRestrictProps {
   role: string;
@@ -10,9 +7,9 @@ interface NavRestrictProps {
 const NavRestrictArea: React.FC<NavRestrictProps> = ({ role }) => (
   <Container>
     <Row>
-      <Navbar bg='light' data-bs-theme='light' className='mt-2 rounded-pill'>
+      <Navbar bg='light' data-bs-theme='light' className='my-3 rounded-pill menu-bar'>
         <Container>
-          <Nav className='me-5'>
+          <Nav className='mx-auto'>
             <Nav.Link href='/app/dashboard'>Dashboard</Nav.Link>
             <Nav.Link href='/app/gente'>Gente</Nav.Link>
             <Nav.Link href='/app/documentos'>Documentos</Nav.Link>

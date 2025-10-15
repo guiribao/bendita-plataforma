@@ -17,7 +17,6 @@ import perfilPorEmailCpf from '~/domain/Perfil/perfil-por-cpf.server';
 
 import cadastroStyle from '~/assets/css/cadastro.css';
 
-import InputMask from 'react-input-mask';
 
 import { verificarIdade } from '~/shared/DateTime.util';
 import { useEffect, useRef, useState } from 'react';

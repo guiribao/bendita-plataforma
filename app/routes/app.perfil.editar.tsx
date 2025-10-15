@@ -47,9 +47,7 @@ const EditarPerfil = () => {
       <Container>
         <Row>
           <Col>
-            Busca por perfil
-            Filtros
-            Select tipo de visão tabela/cards
+            Editar perfil
             
           </Col>
         </Row>

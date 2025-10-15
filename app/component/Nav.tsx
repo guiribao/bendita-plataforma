@@ -63,7 +63,7 @@ export default function Nav() {
                 : usuario?.email}
             </h6>
             <small>
-              <Link to="/perfil">Meu perfil</Link>
+              <Link to="/app/perfil">Meu perfil</Link>
               {" | "}
             </small>
             <small>

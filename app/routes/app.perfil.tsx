@@ -17,16 +17,12 @@ import { gerarDescricaoOperacaoFeira } from "~/shared/Operacao.util";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Dashboard  - Associação Bendita Canábica" },
+    { title: "Editar perfil  - Associação Bendita Canábica" },
     {
       name: "description",
-      content: "Dashboard do app da Associação Bendita Canábica.",
+      content: "Editar perfil do usuário Associação Bendita Canábica.",
     },
   ];
-};
-
-type UserLoaderDataType = {
-  usuario: Usuario;
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -37,17 +33,21 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return json({ usuario });
 }
 
-const Dashboard = () => {
+type UserLoaderDataType = {
+  usuario: Usuario;
+};
+
+const Perfil = () => {
   const { usuario } = useLoaderData<UserLoaderDataType>();
-  
+
   return (
-    <LayoutRestrictArea usuarioSistema={usuario.papel}>
+    <LayoutRestrictArea usuarioSistema={usuario}>
       {/* Criar componente layout area logado */}
       {/* Criar componente menu com opões dinamicas pela user role */}
       <Container>
         <Row>
           <Col>
-            <h1>Dashboard</h1>
+            {usuario.email}
           </Col>
         </Row>
       </Container>
@@ -55,4 +55,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Perfil;
