@@ -1,26 +1,12 @@
 import { Perfil } from '@prisma/client';
 import { prisma } from '~/secure/db.server';
 
-export default async function pegarPerfis(): Promise<[] | null> {
+export default async function pegarPerfis(): Promise<Perfil[] | null> {
   try {
-    const perfil = await prisma.perfil.findMany({
-      select: {
-        id: true,
-        foto: true,
-        grupo: true,
-        membro: true,
-        nome: true,
-        sobrenome: true,
-        profissao: true,
-        celular: true,
-        usuarioId: true,
-        primeira_vez: true,
-        criado_em: true,
-      },
-      orderBy: { id: 'asc' },
+    return await prisma.perfil.findMany({
+      include: { usuario: true },
+      orderBy: { criado_em: 'desc' },
     });
-
-    return perfil;
   } catch (error) {
     return null;
   }

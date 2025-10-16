@@ -10,12 +10,9 @@ interface LayoutProps {
   usuarioSistema: Usuario;
 }
 
-export const links: LinksFunction = () => {
-  return [{ rel: 'stylesheet', href: templateStyle }];
-};
 
 const LayoutRestrictArea = ({ children, usuarioSistema }: LayoutProps) => (
-  <div className='plat-container'>
+  <div className='app-container'>
     <NavRestrictArea role={usuarioSistema.papel} />
     {children}
   </div>

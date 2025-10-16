@@ -1,9 +1,16 @@
-import { differenceInYears, parse } from 'date-fns';
+import { differenceInYears, format, parse } from 'date-fns';
 
+export function brDataFromIsoString(iso: string) {
+  return format(parseDateTime(iso), 'dd/MM/yyyy');
+}
+
+export function brDisplayDateTime(iso: string) {
+  return format(new Date(iso), 'dd/MM/yyyy [*] HH:mm').replace("[*]", "às");
+}
 
 export function brStringToIsoString(stringDate: string) {
-  let [dia, mes, ano] = stringDate.split("/")
-  return new Date(`${ano}-${mes}-${dia}`).toISOString()
+  let [dia, mes, ano] = stringDate.split('/');
+  return new Date(`${ano}-${mes}-${dia}`).toISOString();
 }
 
 export function addHours(date: Date, hours: number) {
@@ -19,6 +26,13 @@ export function parseTime(date: Date | string) {
   return date_utc_correct.toLocaleTimeString().slice(0, 5);
 }
 
+export function parseDateTime(date: Date | string) {
+  let date_utc_wrong: Date = new Date(date);
+  let date_utc_correct: Date = addHours(date_utc_wrong, 3);
+
+  return date_utc_correct;
+}
+
 export function parseDateTimeTZ(date, time) {
   let dt;
 
@@ -32,5 +46,5 @@ export function parseDateTimeTZ(date, time) {
 }
 
 export function verificarIdade(date) {
-  return differenceInYears(new Date(), date)
+  return differenceInYears(new Date(), date);
 }
