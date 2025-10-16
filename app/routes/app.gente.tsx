@@ -67,24 +67,20 @@ const Gente = () => {
       {/* Criar componente layout area logado */}
       {/* Criar componente menu com opões dinamicas pela user role */}
       <Container fluid className='app-content'>
-        <Row className='align-items-center mt-3 mb-4'>
+        <Row className='align-items-center mt-1 mb-3'>
           <Col sm={1}>
             <h2>Gente</h2>
           </Col>
         </Row>
 
-        <Row className='mb-5'>
+        <Row className='mb-4'>
           <Col sm={5} md={4}>
             <Form.Group controlId='filterNome'>
-              <Form.Control
-                type='text'
-                placeholder='Buscar por nome'
-                
-              />
+              <Form.Control type='text' placeholder='Buscar por nome' />
             </Form.Group>
           </Col>
           <Col sm={5} md={2}>
-            <Form.Select aria-label='Tipo Gente' >
+            <Form.Select aria-label='Tipo Gente'>
               <option defaultChecked>Todos perfis</option>
               <option value={Papel.ASSOCIADO}>Associado</option>
               <option value={Papel.ASSOCIADO_DEPENDENTE}>
@@ -101,21 +97,21 @@ const Gente = () => {
                 variant='outline-dark'
                 className='novo-cadastro-btn'
                 id='dropdown-basic'
-               
               >
                 Novo cadastro
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
                 <Dropdown.Item href='#/action-1'>Associado</Dropdown.Item>
-                <Dropdown.Item href='#/action-2'>Usuário Bendita</Dropdown.Item>
+                <Dropdown.Item href='#/action-2'>Bendita</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </Col>
         </Row>
+        <hr />
         <Row>
           <Col>
-            <Table >
+            <Table>
               <thead>
                 <tr>
                   <th>#</th>
@@ -128,6 +124,13 @@ const Gente = () => {
                 </tr>
               </thead>
               <tbody>
+                {!listaDePerfis && (
+                  <tr>
+                    <td style={{ textAlign: 'center' }} colSpan={7}>
+                      <p>Nenhum registro encontrado</p>
+                    </td>
+                  </tr>
+                )}
                 {listaDePerfis &&
                   listaDePerfis.map((perfil) => {
                     return (
@@ -144,6 +147,20 @@ const Gente = () => {
                   })}
               </tbody>
             </Table>
+          </Col>
+        </Row>
+        <Row className='mt-3'>
+          <Col>
+            <p>
+              {listaDePerfis && (
+                <p>
+                  <strong>Resultado:</strong> {listaDePerfis.length}
+                  {listaDePerfis.length === 1
+                    ? ' perfil encontrado'
+                    : ' perfis encontrado'}
+                </p>
+              )}
+            </p>
           </Col>
         </Row>
       </Container>

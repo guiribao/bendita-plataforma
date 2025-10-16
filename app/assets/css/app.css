@@ -1,27 +1,46 @@
 .app-container {
   width: 90%;
   margin: 20px auto;
-  padding: 10px 30px 50px 30px;
-  border-radius: 20px;
+  padding: 10px 30px 30px 30px;
+  border-radius: 30px;
   box-shadow: 0px -5px 30px -21px rgba(0, 0, 0, 0.4);
+}
+.app-container hr {
+  opacity: .13;
 }
 
 .menu-bar {
   background-color: #f9f9f9 !important;
   margin: 0 auto;
-  border-radius: 20px;
+  border-radius: 30px;
 }
 
 .menu-bar a {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 1.1em;
+  font-size: 13px;
   font-weight: 700;
   color: #606060;
   border-radius: 20px;
+  padding: 0 6px;
+  transition: all linear .2s;
 }
-.menu-bar a:hover {
+.menu-bar a:hover, .menu-bar a.active {
+  color: var(--text-light) !important;
+  background: var(--main-color);
+}
+
+.menu-bar a .las {
   color: var(--color-dark);
-  background: #f1f1f1;
+  font-size: 2em;
+  background: var(--text-light);
+  border: 2px solid var(--text-light);
+  border-radius: 30px;
+}
+
+.menu-bar a:hover .las, .menu-bar a.active .las {
+  background-color: var(--main-color);
+  border: 2px solid var(--main-color);
+  color: white;
 }
 
 .menu-bar .navbar-nav {
