@@ -80,8 +80,8 @@ export const action: ActionFunction = async ({ request }) => {
     email: !email || email.trim() === '',
     papel: !papel,
     nomeCompleto: !nomeCompleto || nomeCompleto.trim() === '',
-    dataNascimento: !dataNascimento || dataNascimento.trim() === '',
-    cpf: !cpf || cpf.trim() === '',
+    dataNascimento: papel === Papel.ASSOCIADO ? (!dataNascimento || dataNascimento.trim() === '') : false,
+    cpf: papel === Papel.ASSOCIADO ? (!cpf || cpf.trim() === '') : false,
     telefone: !telefone || telefone.trim() === '',
   };
 
@@ -94,7 +94,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   // Verificar se email ou CPF já existem
   let usuarioSeExistir = await pegarUsuarioPeloEmail(email);
-  let perfilSeExistir = await perfilPorCpf(cpf);
+  let perfilSeExistir = cpf && cpf.trim() !== '' ? await perfilPorCpf(cpf) : null;
 
   if (email == usuarioSeExistir?.email) {
     return json({
@@ -102,7 +102,7 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  if (cpf == perfilSeExistir?.cpf) {
+  if (cpf && cpf.trim() !== '' && cpf == perfilSeExistir?.cpf) {
     return json({
       errors: { data: 'Já existe uma conta associada a este CPF.' },
     });
@@ -500,7 +500,7 @@ const NovoAssociado = () => {
                   <Form.Group controlId='data_nascimento'>
                     <Form.Label className='fw-medium'>
                       <i className='las la-calendar text-secondary me-1'></i>
-                      Data de Nascimento <span className='text-danger'>*</span>
+                      Data de Nascimento {papelSelecionado === Papel.ASSOCIADO && <span className='text-danger'>*</span>}
                     </Form.Label>
                     <InputMaskClient
                       type='text'
@@ -510,7 +510,7 @@ const NovoAssociado = () => {
                       mask='99/99/9999'
                       maskPlaceholder={'_'}
                       placeholder='DD/MM/AAAA'
-                      required
+                      required={papelSelecionado === Papel.ASSOCIADO}
                     />
                   </Form.Group>
                 </Col>
@@ -519,7 +519,7 @@ const NovoAssociado = () => {
                   <Form.Group controlId='cpf'>
                     <Form.Label className='fw-medium'>
                       <i className='las la-id-card-alt text-secondary me-1'></i>
-                      CPF <span className='text-danger'>*</span>
+                      CPF {papelSelecionado === Papel.ASSOCIADO && <span className='text-danger'>*</span>}
                     </Form.Label>
                     <InputMaskClient
                       type='text'
@@ -528,7 +528,7 @@ const NovoAssociado = () => {
                       autoComplete='off'
                       mask='999.999.999-99'
                       maskPlaceholder={'_'}
-                      required
+                      required={papelSelecionado === Papel.ASSOCIADO}
                     />
                   </Form.Group>
                 </Col>
