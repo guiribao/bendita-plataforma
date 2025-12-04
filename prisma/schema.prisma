@@ -36,7 +36,7 @@ model Perfil {
   // INFORMAÇÕES BASICAS
   nome_completo        String
   apelido              String?
-  data_nascimento      DateTime @db.Date
+  data_nascimento      DateTime? @db.Date
   sexo                 String?
   cpf                  String?
   rg                   String?

@@ -124,7 +124,7 @@ export const action: ActionFunction = async ({ request }) => {
   const perfil = await criarPerfil({
     nomeCompleto,
     apelido,
-    dataNascimento: brStringToIsoString(dataNascimento),
+    dataNascimento: dataNascimento ? brStringToIsoString(dataNascimento) : null,
     cpf,
     rg,
     nacionalidade,
