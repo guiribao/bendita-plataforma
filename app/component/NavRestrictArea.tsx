@@ -1,40 +1,92 @@
 import { Link, useLocation } from '@remix-run/react';
-import { Container, Nav, Navbar, Row } from 'react-bootstrap';
+import { Container, Nav, Navbar, Badge } from 'react-bootstrap';
+import { getMenuItemsForRole } from '~/secure/menu-config';
 
 interface NavRestrictProps {
   role: string;
+  mensagensNaoLidas?: number;
 }
 
-const NavRestrictArea: React.FC<NavRestrictProps> = ({ role }) => {
+const NavRestrictArea: React.FC<NavRestrictProps> = ({ role, mensagensNaoLidas = 0 }) => {
   const location = useLocation();
-  console.log()
+  const menuItems = getMenuItemsForRole(role);
+
   return (
-    <Container fluid>
-      <Row>
-        <Navbar bg='light' data-bs-theme='light' className='my-3 menu-bar'>
-          <Container>
-            <Nav className='ml-5'>
-              <Nav.Link to='/app/dashboard' as={Link} active={location.pathname === '/app/dashboard'}>
-                <i className='las la-chart-line'></i>Dashboard
+    <Navbar 
+      bg='white' 
+      className='navbar-restrict shadow-sm border-bottom mb-4' 
+      style={{ padding: '0.5rem 0' }}
+    >
+      <Container fluid>
+        <Nav className='gap-1 mx-auto' style={{ 
+          overflowX: 'auto', 
+          overflowY: 'hidden',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'thin',
+          flexWrap: 'nowrap',
+          justifyContent: 'center',
+        }}>
+          {menuItems.map((item) => {
+            const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
+            const isContatos = item.id === 'contatos';
+            const showBadge = isContatos && mensagensNaoLidas > 0;
+            
+            return (
+              <Nav.Link
+                key={item.id}
+                to={item.path}
+                as={Link}
+                className='px-3 px-md-4 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2'
+                style={{
+                  backgroundColor: isActive ? 'darkorchid' : 'transparent',
+                  color: isActive ? 'white' : '#333',
+                  fontWeight: isActive ? '600' : '500',
+                  transition: 'all 0.2s ease',
+                  border: 'none',
+                  position: 'relative',
+                  whiteSpace: 'nowrap',
+                  minWidth: 'fit-content',
+                  fontSize: '0.95rem',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = '#f8f9fa';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }
+                }}
+              >
+                <i className={`${item.icon} nav-restrict-icon`}></i>
+                <span className='d-none d-lg-inline'>{item.label}</span>
+                {showBadge && (
+                  <Badge 
+                    bg={isActive ? 'light' : 'danger'} 
+                    text={isActive ? 'dark' : 'white'}
+                    pill
+                    style={{
+                      fontSize: '0.7rem',
+                      padding: '0.25rem 0.5rem',
+                      fontWeight: '700',
+                      position: 'absolute',
+                      top: '0',
+                      right: '0',
+                      transform: 'translate(25%, -25%)',
+                    }}
+                  >
+                    {mensagensNaoLidas}
+                  </Badge>
+                )}
               </Nav.Link>
-              <Nav.Link to='/app/gente' as={Link} active={location.pathname === '/app/gente'}>
-                <i className='las la-people-carry'></i>Gente
-              </Nav.Link>
-              <Nav.Link to='/app/documentos' as={Link} active={location.pathname === '/app/documentos'}>
-                <i className='las la-file-alt'></i>Documentos
-              </Nav.Link>
-              <Nav.Link to='/app/medicacao' as={Link} active={location.pathname === '/app/medicacao'}>
-                <i className='las la-notes-medical'></i>Medicação
-              </Nav.Link>
-              <Nav.Link to='/app/financeiro' as={Link} active={location.pathname === '/app/financeiro'}>
-                <i className='las la-hand-holding-usd'></i>Financeiro
-              </Nav.Link>
-            </Nav>
-          </Container>
-        </Navbar>
-      </Row>
-    </Container>
+            );
+          })}
+        </Nav>
+      </Container>
+    </Navbar>
   );
 };
 
 export default NavRestrictArea;
+

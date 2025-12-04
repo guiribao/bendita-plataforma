@@ -4,6 +4,9 @@
   padding: 10px 30px 30px 30px;
   border-radius: 30px;
   box-shadow: 0px -5px 30px -21px rgba(0, 0, 0, 0.4);
+  min-height: calc(100vh - 40px);
+  display: flex;
+  flex-direction: column;
 }
 .app-container hr {
   opacity: .13;
@@ -56,6 +59,8 @@
 }
 
 .app-content {
+  max-width: 94%;
+  margin: 0 auto;
   border-radius: 20px;
 }
 
@@ -63,4 +68,22 @@
   color: white;
   font-weight: 600;
   background-color: var(--main-color);
+}
+
+.submit-button button {
+  background-color: var(--main-color);
+  color: white;
+  padding: 0.47em 1em;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  font-size: 1.13em;
+  font-family: 'Roboto', serif;
+  font-weight: 800;
+  cursor: pointer;
+  position: relative;
+}
+
+.submit-button img.loading {
+  height: 32px;
 }

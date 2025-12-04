@@ -1,10 +1,32 @@
+/* Regra base para todos os main */
+main {
+  width: 100%;
+  padding: 0;
+  gap: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
 main.inicial {
   width: 100%;
-  height: calc(100% - 100px);
   justify-content: space-between;
-  padding: 1em 10% 10% 10%;
+  padding: 0;
   gap: 0;
-  background: var(--main-color);
+  position: relative;
+  background: transparent;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(30px, -30px) rotate(5deg);
+  }
+  66% {
+    transform: translate(-20px, 20px) rotate(-5deg);
+  }
 }
 
 section.disclaimer {
@@ -112,11 +134,51 @@ section.call-to-action p {
 
 main.sobre {
   width: 100%;
-  height: calc(100% - 100px);
-  justify-content: space-between;
-  padding: 1em 10% 10% 10%;
+  padding: 0;
   gap: 0;
-  background: var(--main-color);
+  position: relative;
+  background: linear-gradient(160deg, 
+    #ffffff 0%, 
+    #faf7fc 15%, 
+    #f5f0fa 30%, 
+    #efe8f7 45%, 
+    #e9dff4 60%, 
+    #e2d5f0 75%, 
+    #dac9ec 90%, 
+    #d1bce7 100%
+  );
+}
+
+main.sobre::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: -15%;
+  width: 65%;
+  height: 120%;
+  background: radial-gradient(circle at center, 
+    rgba(153, 50, 204, 0.07) 0%, 
+    rgba(153, 50, 204, 0.04) 35%, 
+    transparent 65%
+  );
+  pointer-events: none;
+  animation: float 18s ease-in-out infinite;
+}
+
+main.sobre::after {
+  content: '';
+  position: absolute;
+  bottom: -25%;
+  right: -12%;
+  width: 55%;
+  height: 90%;
+  background: radial-gradient(circle at center, 
+    rgba(153, 50, 204, 0.05) 0%, 
+    rgba(153, 50, 204, 0.025) 40%, 
+    transparent 65%
+  );
+  pointer-events: none;
+  animation: float 22s ease-in-out infinite reverse;
 }
 
 main.sobre .disclaimer img {

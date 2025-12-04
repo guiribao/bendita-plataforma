@@ -8,7 +8,11 @@
   --text-light: #f0e5f7;
   --text-gray: #808080;
   --green: #00deb1;
+  --header-height: 70px;
+  --footer-height: 50px;
   --brown: #795663;
+  --bs-primary: #9932cc;
+  --bs-primary-rgb: 153, 50, 204;
 }
 
 * {
@@ -45,8 +49,11 @@
 
 html,
 body {
-  height: 100%;
-  min-height: 768px;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  overflow-x: hidden;
 }
 
 body {
@@ -54,31 +61,53 @@ body {
   transition: all 0.3s;
 }
 
-@media screen and (min-width: 1208px) {
+@media screen and (min-width: 768px) {
   body {
     font-size: 14px;
   }
 }
 
-@media screen and (min-width: 1408px) {
+@media screen and (min-width: 1208px) {
   body {
     font-size: 16px;
   }
 }
 
+@media screen and (min-width: 1408px) {
+  body {
+    font-size: 18px;
+  }
+}
+
 .plat-container {
-  width: 100vw;
-  height: 100%;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.plat-container > main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
 }
 
 header {
   width: 100%;
+  flex-shrink: 0;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   padding: 0 1.5em;
   background: var(--main-color);
   transition: all 0.3s;
+  position: relative;
+  z-index: 1000;
+  flex-shrink: 0;
 }
 
 header .brand {
@@ -175,6 +204,46 @@ header .menu .menu-actions a:hover {
 .user-wrapper div h6 {
   margin: 0;
   padding: 0;
+}
+
+/* Responsive container width for public pages */
+.public-page-container {
+  width: 96%;
+}
+
+/* Card styling for public pages - subtle and harmonious */
+.public-page-card {
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 2px 8px rgba(153, 50, 204, 0.04);
+  border: 1px solid rgba(153, 50, 204, 0.08);
+  backdrop-filter: blur(8px);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-left: auto;
+  margin-right: auto;
+  transition: all 0.3s ease;
+}
+
+.public-page-card:hover {
+  box-shadow: 0 4px 12px rgba(153, 50, 204, 0.06);
+  background: rgba(255, 255, 255, 0.45);
+}
+
+@media (max-width: 1200px) {
+  .public-page-card {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .public-page-card {
+    padding: 1.5rem;
+  }
 }
 
 main {

@@ -19,7 +19,7 @@ import criarNovoUsuario from '~/domain/Usuario/criar-novo-usuario.server';
 
 import cadastroStyle from '~/assets/css/cadastro.css';
 
-import InputMask from 'react-input-mask';
+import { InputMaskClient } from '~/component/InputMaskClient';
 import criarPerfil from '~/domain/Perfil/criar-perfil.server';
 import criarAssociado from '~/domain/Associado/criar-associado.server';
 import { useEffect, useState } from 'react';
@@ -30,6 +30,7 @@ import perfilPorCpf from '~/domain/Perfil/perfil-por-cpf.server';
 import loading from '~/assets/img/loading.gif';
 import { Papel } from '@prisma/client';
 import paises from '~/assets/paises.json';
+import { buscarEnderecoViaCep } from '~/shared/Address.util';
 
 export const meta: MetaFunction = () => {
   return [
@@ -201,17 +202,14 @@ export default function CadastroBasico() {
   async function carregarEndereco(event) {
     let cep = event.target.value.replace(/\D/g, '');
 
-    if (cep.length < 8) return;
-
-    let { logradouro, bairro, localidade, uf } = await fetch(
-      'https://viacep.com.br/ws/' + encodeURIComponent(cep) + '/json/ '
-    ).then(async (response) => await response.json());
+    //@ts-ignore
+    let { logradouro, bairro, cidade, estado } = await buscarEnderecoViaCep(cep);
 
     setEndereco({
       logradouro,
       bairro,
-      cidade: localidade,
-      estado: uf,
+      cidade,
+      estado
     });
 
     if (!logradouro) {
@@ -315,13 +313,13 @@ export default function CadastroBasico() {
           <label htmlFor='data_nascimento'>
             Data de nascimento <span className='required-field'>*</span>
           </label>
-          <InputMask
+          <InputMaskClient
             type='text'
             name='data_nascimento'
             id='data_nascimento'
             autoComplete='off'
             mask='99/99/9999'
-            maskChar={'_'}
+            maskPlaceholder={'_'}
             placeholder='DD/MM/AAAA'
           />
         </div>
@@ -331,13 +329,13 @@ export default function CadastroBasico() {
           <label htmlFor='cpf'>
             Seu CPF <span className='required-field'>*</span>
           </label>
-          <InputMask
+          <InputMaskClient
             type='text'
             name='cpf'
             id='cpf'
             autoComplete='off'
             mask='999.999.999-99'
-            maskChar={'_'}
+            maskPlaceholder={'_'}
             required
           />
         </div>
@@ -362,7 +360,9 @@ export default function CadastroBasico() {
           </select>
         </div>
         <div>
-          <label htmlFor='estado_civil'>Estado civil <span className='required-field'>*</span></label>
+          <label htmlFor='estado_civil'>
+            Estado civil <span className='required-field'>*</span>
+          </label>
           <select name='estado_civil' id='estado_civil' required>
             <option value='Solteiro (a)'>Solteiro (a)</option>
             <option value='Casado (a)'>Casado (a)</option>
@@ -381,34 +381,40 @@ export default function CadastroBasico() {
           </select>
         </div>
         <div>
-          <label htmlFor='celular'>Telefone / Whatsapp <span className='required-field'>*</span></label>
-          <InputMask
+          <label htmlFor='celular'>
+            Telefone / Whatsapp <span className='required-field'>*</span>
+          </label>
+          <InputMaskClient
             type='text'
             name='telefone'
             id='telefone'
             autoComplete='off'
             mask='\+55 \(99\) 9 9999-9999'
-            maskChar={'_'}
+            maskPlaceholder={'_'}
             required
           />
         </div>
       </div>
       <div className='form-group inline-group'>
         <div>
-          <label htmlFor='cep'>CEP <span className='required-field'>*</span></label>
-          <InputMask
+          <label htmlFor='cep'>
+            CEP <span className='required-field'>*</span>
+          </label>
+          <InputMaskClient
             type='text'
             name='cep'
             id='cep'
             autoComplete='off'
             mask='99999-999'
-            maskChar={'_'}
+            maskPlaceholder={'_'}
             onChange={carregarEndereco}
             required
           />
         </div>
         <div>
-          <label htmlFor='endereco_rua'>Endereço <span className='required-field'>*</span></label>
+          <label htmlFor='endereco_rua'>
+            Endereço <span className='required-field'>*</span>
+          </label>
           <input
             type='text'
             name='endereco_rua'
@@ -422,7 +428,9 @@ export default function CadastroBasico() {
 
       <div className='form-group inline-group'>
         <div>
-          <label htmlFor='endereco_numero'>Número <span className='required-field'>*</span></label>
+          <label htmlFor='endereco_numero'>
+            Número <span className='required-field'>*</span>
+          </label>
           <input
             type='text'
             name='endereco_numero'
@@ -433,7 +441,9 @@ export default function CadastroBasico() {
           />
         </div>
         <div>
-          <label htmlFor='bairro'>Bairro <span className='required-field'>*</span></label>
+          <label htmlFor='bairro'>
+            Bairro <span className='required-field'>*</span>
+          </label>
           <input
             type='text'
             name='bairro'
@@ -447,7 +457,9 @@ export default function CadastroBasico() {
 
       <div className='form-group inline-group'>
         <div>
-          <label htmlFor='cidade'>Cidade <span className='required-field'>*</span></label>
+          <label htmlFor='cidade'>
+            Cidade <span className='required-field'>*</span>
+          </label>
           <input
             type='text'
             name='cidade'
@@ -458,7 +470,9 @@ export default function CadastroBasico() {
           />
         </div>
         <div>
-          <label htmlFor='estado'>Estado <span className='required-field'>*</span></label>
+          <label htmlFor='estado'>
+            Estado <span className='required-field'>*</span>
+          </label>
           <input
             type='text'
             name='estado'

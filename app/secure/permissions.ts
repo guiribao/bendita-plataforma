@@ -29,6 +29,13 @@ export const PaginasPorPapel = {
     Papel.SECRETARIA,
     Papel.ADMIN,
   ],
+  "/app/perfil/editar": [
+    Papel.ASSOCIADO,
+    Papel.ASSOCIADO_DEPENDENTE,
+    Papel.SAUDE,
+    Papel.SECRETARIA,
+    Papel.ADMIN,
+  ],
   "/app/dashboard": [
     Papel.ASSOCIADO,
     Papel.ASSOCIADO_DEPENDENTE,
@@ -46,6 +53,30 @@ export const PaginasPorPapel = {
     Papel.SECRETARIA,
     Papel.ADMIN,
   ],
+  "/app/contatos": [
+    Papel.SAUDE,
+    Papel.SECRETARIA,
+    Papel.ADMIN,
+  ],
+  "/app/financeiro": [
+    Papel.SECRETARIA,
+    Papel.ADMIN,
+    Papel.ASSOCIADO
+  ],
+  "/app/medicacao": [
+    Papel.SAUDE,
+    Papel.ADMIN,
+    Papel.ASSOCIADO
+  ],
+  '/medicacao/{id}/interesse': [
+    Papel.ASSOCIADO,
+  ],
+  "/app/documentos": [
+    Papel.SAUDE,
+    Papel.SECRETARIA,
+    Papel.ADMIN,
+    Papel.ASSOCIADO,
+  ]
 };
 
 export const FuncionalidadesPorPapel = {

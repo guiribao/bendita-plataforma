@@ -7,3 +7,10 @@ export function cortarDecimal(numero, casas) {
 export function substituirPontoDecimalPorVirtgula(aStringNumber) {
   return aStringNumber.replaceAll(".", ",")
 }
+
+export function formatarMoeda(valor: number): string {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  }).format(valor);
+}

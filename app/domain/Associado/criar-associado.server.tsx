@@ -1,12 +1,14 @@
-import { Associado } from '@prisma/client';
+import { Associado, AssociacaoStatus } from '@prisma/client';
 import { prisma } from '~/secure/db.server';
 
 //@ts-ignore
-export default async function criarAssociado(perfilId): Promise<Associado | null> {
+export default async function criarAssociado(perfilId, statusInicial?: AssociacaoStatus, elegivelTarifaSocial?: boolean): Promise<Associado | null> {
   try {
     let associadoCriado = await prisma.associado.create({
       data: {
-        perfilId       
+        perfilId,
+        status: statusInicial || AssociacaoStatus.AGUARDANDO_PAGAMENTO,
+        elegivel_tarifa_social: elegivelTarifaSocial || false,
       },
     });
 

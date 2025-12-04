@@ -1,11 +1,6 @@
 //@ts-nocheck
 import { Papel } from '@prisma/client';
-import {
-  FuncionalidadesPorPapel,
-  PaginaComPapelAdicional,
-  PaginasAbertas,
-  PaginasPorPapel,
-} from './permissions';
+import { FuncionalidadesPorPapel, PaginaComPapelAdicional, PaginasAbertas, PaginasPorPapel } from './permissions';
 
 export function canView(pathname: string, papelUsuario: string) {
   const papeisPermitidos = PaginasPorPapel[pathname];
@@ -13,7 +8,7 @@ export function canView(pathname: string, papelUsuario: string) {
   return (
     papeisPermitidos?.includes(papelUsuario) ||
     PaginasAbertas.find((e) => {
-      return pathname.includes(e) == true;
+      return pathname.includes(e);
     }) ||
     specificDynPages(pathname, papelUsuario)
   );
@@ -21,10 +16,11 @@ export function canView(pathname: string, papelUsuario: string) {
 
 export function canAccess(pathname: string, papelUsuario: string) {
   const papeisPermitidos = PaginasPorPapel[pathname];
+
   return (
     papeisPermitidos?.includes(papelUsuario) ||
     PaginasAbertas.find((e) => {
-      return pathname.includes(e) == true;
+      return pathname.includes(e);
     })
   );
 }
@@ -32,28 +28,18 @@ export function canAccess(pathname: string, papelUsuario: string) {
 export function specificDynPages(pathname: string, papelUsuario: string) {
   let canI = false;
 
-  if (/\/financeiro\/[0-9]+/i.test(pathname)) {
+  if (/\/app\/gente\/[0-9]+/i.test(pathname)) {
+    const papeisPermitidos = PaginasPorPapel['/gente/{id}'];
+    return papeisPermitidos?.includes(papelUsuario);
+  }
+
+  if (/\/app\/financeiro\/[0-9]+/i.test(pathname)) {
     const papeisPermitidos = PaginasPorPapel['/financeiro/{id}'];
     return papeisPermitidos?.includes(papelUsuario);
   }
 
-  if (/\/feira\/[0-9]\/feirante\/[0-9]+/i.test(pathname)) {
-    const papeisPermitidos = PaginasPorPapel['/feira/{id}/feirante/{id}'];
-    return papeisPermitidos?.includes(papelUsuario);
-  }
-
-  if (/\/calendario\/[0-9]+/i.test(pathname)) {
-    const papeisPermitidos = PaginasPorPapel['/calendario/{id}'];
-    return papeisPermitidos?.includes(papelUsuario);
-  }
-
-  if (/\/calendario\/feira\/[0-9]/i.test(pathname)) {
-    const papeisPermitidos = PaginasPorPapel['/calendario/feira/{id}'];
-    return papeisPermitidos?.includes(papelUsuario);
-  }
-
-  if (/\/gente\/[0-9]+/i.test(pathname)) {
-    const papeisPermitidos = PaginasPorPapel['/gente/{id}'];
+  if (/\/app\/medicacao\/[a-f0-9-]+/i.test(pathname)) {
+    const papeisPermitidos = PaginasPorPapel['/medicacao/{id}/interesse'];
     return papeisPermitidos?.includes(papelUsuario);
   }
 
@@ -67,7 +53,7 @@ export async function loadAditionalRoles(pathname: string, perfilId) {
 
   let response = await fetch('/autentica/roles/', {
     method: 'post',
-    body: JSON.stringify({ path: pathname, perfilId}),
+    body: JSON.stringify({ path: pathname, perfilId }),
   }).then((res) => res.json());
 
   return response.roles;
@@ -85,8 +71,7 @@ export async function handleElements(document, papel, papelAdicional, path) {
   for (let element of elements) {
     if (
       !funcionalidades[element.dataset.role] ||
-      (!funcionalidades[element.dataset.role].includes(papel) &&
-        !aditionalRole.find((str) => funcionalidades[element.dataset.role] == str))
+      (!funcionalidades[element.dataset.role].includes(papel) && !aditionalRole.find((str) => funcionalidades[element.dataset.role] == str))
     ) {
       element.parentNode?.removeChild(element);
     }

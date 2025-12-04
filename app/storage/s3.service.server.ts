@@ -51,8 +51,15 @@ async function convertToString(a: AsyncIterable<Uint8Array>) {
 export const s3UploaderHandler = async ({ name, data, filename, contentType }) => {
   let finalFile = null;
 
-  if (!FILE_FIELDS.filter((f) => name.includes(f)).length) return await convertToString(data);
-  if (!filename) return;
+  // Se não for um campo de arquivo (sem filename), retornar o valor como string
+  if (!filename) {
+    return await convertToString(data);
+  }
+
+  // Se o campo não está na lista de campos esperados de arquivo, ignorar
+  if (!FILE_FIELDS.filter((f) => name.includes(f)).length) {
+    return '';
+  }
 
   if (!FILE_FORMAT.includes(contentType))
     throw new Error(`${name}: formato do arquivo é inválido\nUtilize JPG, PNG ou PDF.`);

@@ -6,8 +6,7 @@ import {
   unstable_parseMultipartFormData,
 } from '@remix-run/node';
 import { Form, Link, useActionData, useNavigate, useNavigation } from '@remix-run/react';
-import { useEffect, useRef, useState } from 'react';
-import InputMask from 'react-input-mask';
+import { useEffect, useState } from 'react';
 
 import { authenticator } from '~/secure/authentication.server';
 
@@ -21,6 +20,7 @@ import { createRandom } from '~/shared/Text.util';
 import criarPerfil from '~/domain/Perfil/criar-perfil.server';
 import criarDocumento from '~/domain/Documentos/criar-documento.server';
 import { brStringToIsoString } from '~/shared/DateTime.util';
+import { InputMaskClient } from '~/component/InputMaskClient';
 
 export const meta: MetaFunction = () => {
   return [
@@ -174,13 +174,13 @@ export default function CadastroResponsavel() {
         <div className='form-group inline-group'>
           <div>
             <label htmlFor='data_nascimento'>Data de nascimento *</label>
-            <InputMask
+            <InputMaskClient
               type='text'
               name='data_nascimento'
               id='data_nascimento'
               autoComplete='off'
               mask='99/99/9999'
-              maskChar={' '}
+              maskPlaceholder={' '}
               required
             />
           </div>
@@ -197,13 +197,13 @@ export default function CadastroResponsavel() {
         <div className="form-group inline-group">
           <div>
             <label htmlFor='cpf_responsavel'>CPF *</label>
-            <InputMask
+            <InputMaskClient
               type='text'
               name='cpf_responsavel'
               id='cpf_responsavel'
               autoComplete='off'
               mask='999.999.999-99'
-              maskChar={' '}
+              maskPlaceholder={' '}
               required
             />
           </div>
@@ -245,13 +245,13 @@ export default function CadastroResponsavel() {
           </div>
           <div>
             <label htmlFor='telefone_responsavel'>Telefone / Whatsapp *</label>
-            <InputMask
+            <InputMaskClient
               type='text'
               name='telefone_responsavel'
               id='telefone_responsavel'
               autoComplete='off'
               mask='\+55 \(99\) 9 9999-9999'
-              maskChar={' '}
+              maskPlaceholder={' '}
             />
           </div>
         </div>

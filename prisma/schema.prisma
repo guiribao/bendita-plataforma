@@ -73,6 +73,7 @@ model Associado {
   saude_medico_prescritor_nome              String?
   saude_medico_prescritor_crm               String?
   tipo_associado                            TipoAssociado    @default(APOIADOR)
+  elegivel_tarifa_social                    Boolean          @default(false)
   perfil                                    Perfil           @relation(name: "PerfilDoAssociado", fields: [perfilId], references: [id])
   perfilId                                  String           @unique
   responsavel                               Perfil?          @relation(name: "PerfilDoResponsavel", fields: [responsavelId], references: [id])
@@ -86,6 +87,8 @@ model Associado {
   atualizado_em DateTime @updatedAt @db.Timestamptz()
 
   Documentos Documentos[]
+  Pagamentos Pagamento[]
+  Interesses Interesse[]
 
   @@index([responsavelId])
 }
@@ -104,11 +107,108 @@ model Documentos {
   @@index([criadoPorId])
 }
 
+model Pagamento {
+  id                 String    @id @default(uuid())
+  associado          Associado @relation(fields: [associadoId], references: [id])
+  associadoId        String
+  data_pagamento     DateTime  @default(now()) @db.Timestamptz()
+  proximo_vencimento DateTime  @db.Date
+  valor              Decimal?  @db.Decimal(10, 2)
+  observacao         String?   @db.Text
+  criado_em          DateTime  @default(now()) @db.Timestamptz()
+  atualizado_em      DateTime  @updatedAt @db.Timestamptz()
+
+  @@index([associadoId])
+  @@index([proximo_vencimento])
+}
+
+model Remessa {
+  id                String   @id @default(uuid())
+  nome              String
+  descricao         String?  @db.Text
+  quantidade_total  Int
+  quantidade_disponivel Int
+  valor_unitario    Decimal? @db.Decimal(10, 2)
+  data_limite       DateTime @db.Date
+  ativa             Boolean  @default(true)
+  criado_por_id     Int
+  criado_em         DateTime @default(now()) @db.Timestamptz()
+  atualizado_em     DateTime @updatedAt @db.Timestamptz()
+
+  Interesses        Interesse[]
+
+  @@index([ativa])
+  @@index([data_limite])
+}
+
+model Interesse {
+  id              String   @id @default(uuid())
+  remessa         Remessa  @relation(fields: [remessaId], references: [id])
+  remessaId       String
+  associado       Associado @relation(fields: [associadoId], references: [id])
+  associadoId     String
+  quantidade      Int
+  observacao      String?  @db.Text
+  aprovado        Boolean  @default(false)
+  criado_em       DateTime @default(now()) @db.Timestamptz()
+  atualizado_em   DateTime @updatedAt @db.Timestamptz()
+
+  @@index([remessaId])
+  @@index([associadoId])
+  @@unique([remessaId, associadoId])
+}
+
 model Logger {
   id        Int        @id @default(autoincrement())
   tipo_log  TipoLogger
   log       Json?
   criado_em DateTime   @default(now()) @db.Timestamptz()
+}
+
+model Contato {
+  id            String     @id @default(uuid())
+  nome          String
+  email         String?
+  telefone      String
+  criado_em     DateTime   @default(now()) @db.Timestamptz()
+  atualizado_em DateTime   @updatedAt @db.Timestamptz()
+  Mensagens     Mensagem[]
+  CheckMails    CheckMail[]
+
+  @@unique([email, telefone])
+}
+
+model Mensagem {
+  id            String     @id @default(uuid())
+  contato       Contato    @relation(fields: [contatoId], references: [id])
+  contatoId     String
+  assunto       String?
+  texto         String     @db.Text
+  lido          Boolean    @default(false)
+  respostaParaId String?
+  remetente     Remetente  @default(FROM_CONTACT)
+  criado_em     DateTime   @default(now()) @db.Timestamptz()
+
+  @@index([contatoId])
+  @@index([respostaParaId])
+}
+
+model CheckMail {
+  id            String   @id @default(uuid())
+  messageId     String   @unique // Identificador único do email (Message-ID)
+  emailFrom     String   // Email de quem enviou
+  emailTo       String   // Email destinatário
+  inReplyTo     String?  // Identificador da mensagem que está respondendo
+  salvo         Boolean  @default(false) // Flag se foi salvo como mensagem
+  contatoId     String?  // FK para contato se foi vinculado
+  contato       Contato? @relation(fields: [contatoId], references: [id])
+  criado_em     DateTime @default(now()) @db.Timestamptz()
+  atualizado_em DateTime @updatedAt @db.Timestamptz()
+
+  @@index([messageId])
+  @@index([inReplyTo])
+  @@index([emailFrom])
+  @@index([contatoId])
 }
 
 enum Papel {
@@ -143,4 +243,9 @@ enum AssociacaoStatus {
 
 enum TipoLogger {
   EMAIL
+}
+
+enum Remetente {
+  FROM_CONTACT
+  FROM_BENDITA
 }

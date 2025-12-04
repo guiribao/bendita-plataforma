@@ -19,6 +19,7 @@ import { authenticator } from '~/secure/authentication.server';
 
 import criarNovoUsuario from '~/domain/Usuario/criar-novo-usuario.server';
 import perfilPorEmailCpf from '~/domain/Perfil/perfil-por-cpf.server';
+import { verificarTermoAssociativo } from '~/domain/Associado/verificar-termo-associativo.server';
 
 import appStyle from '~/assets/css/app.css';
 
@@ -41,9 +42,12 @@ export const links: LinksFunction = () => {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await authenticator.isAuthenticated(request, {
+  const usuario = await authenticator.isAuthenticated(request, {
     failureRedirect: '/autentica/entrar',
   });
+
+  // Verificar se o associado precisa aceitar o termo
+  await verificarTermoAssociativo(usuario, request.url);
 
   return null;
 }
