@@ -4,12 +4,11 @@
 
 .site-footer {
   width: 100%;
-  height: 50px;
-  flex-shrink: 0;
+  min-height: 50px;
   background: transparent;
   border-top: none;
   padding: 10px 2rem;
-  margin-top: 0;
+  margin-top: auto;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -97,6 +96,7 @@
 @media (max-width: 576px) {
   .site-footer {
     padding: 10px 1rem;
+    justify-content: center;
   }
 
   .footer-content p {

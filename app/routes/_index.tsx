@@ -14,10 +14,10 @@ export const links: LinksFunction = () => [
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Bendita Canábica - Associação Espiritual' },
+    { title: 'Bendita Canábica - Associação de Saúde e Bem-estar' },
     {
       name: 'description',
-      content: 'Conheça a história e os serviços da Associação Bendita Canábica. Faça parte de uma comunidade dedicada ao trabalho espiritual e bem-estar.',
+      content: 'Conheça a história e os serviços da Associação Bendita Canábica. Faça parte de uma comunidade dedicada à saúde e bem-estar.',
     },
   ];
 };

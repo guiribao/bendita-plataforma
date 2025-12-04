@@ -13,7 +13,7 @@ export default async function enviarEmailCadastroPerfil(
     subject: 'Seja Bem-vindo (a) ao CHAVE de São Pedro',
     html: `Olá, ${nome}! <br/><br/>
 
-    Agora você está cadastrado para visitar o Chave de São Pedro e participar de um trabalho espiritual com o Santo Daime. <br/><br/>
+    Agora você está cadastrado para visitar o Chave de São Pedro e participar de nossas atividades. <br/><br/>
 
     Se você usa alguma medicação controlada é importante também entrar em contato por algum dos nossos canais de atendimento para realizar uma anamnese <a href='https://wa.me/5551993589591?text=Ol%C3%A1.' target='_blank'>(51) 99358-9591</a>. <br/>
     A medicação não vai lhe impedir de participar das sessões mas nós temos orientações específicas para lhe passar. Por isso é importante entrar em contato além de preencher o questionário. <br/><br/>
