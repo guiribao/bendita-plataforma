@@ -1,27 +1,16 @@
-import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-import { s3Client } from './s3.gateway.server';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import Jimp from 'jimp';
 import { gerarUuid } from '~/shared/Uuid.util';
+import { writeStorageFile } from './local-storage.server';
 
-const S3_BUCKET_NAME = process.env.S3_BUCKET || 's3_VAR_NAO_INFORMADA';
-const STORAGE_ENV = process.env.NODE_ENV;
+const STORAGE_ENV = process.env.NODE_ENV || 'development';
 const FILE_FIELDS = ['identificacao_1', 'identificacao_2', 'comprovante_residencia',
   'receita_uso_canabis', 'autorizacao_anvisa', 'identificacao_responsavel_1', 'identificacao_responsavel_2'];
 const FILE_FORMAT = ['image/jpeg', 'image/png', 'application/pdf'];
 
-const uploadStreamToS3 = async (data: Buffer, key: string, contentType: string) => {
-  const params = {
-    Bucket: S3_BUCKET_NAME,
-    Key: key,
-    Body: data,
-    ContentType: contentType,
-  };
-
+const uploadStreamToS3 = async (data: Buffer, key: string, _contentType: string) => {
   try {
-    //@ts-ignore
-    const response = await s3Client.send(new PutObjectCommand(params));
-    return response.$metadata.httpStatusCode === 200 ? key : false;
+    await writeStorageFile(key, data);
+    return key;
   } catch (error) {
     console.warn(error);
     return;
@@ -43,7 +32,7 @@ async function convertToString(a: AsyncIterable<Uint8Array>) {
     result.push(new TextDecoder().decode(letter));
   }
 
-  return result.join();
+  return result.join('');
 }
 
 
@@ -170,16 +159,5 @@ export const s3UploaderHandler = async ({ name, data, filename, contentType }) =
 };
 
 export async function getObjectUrlFromS3(key: string) {
-  try {
-    return await getSignedUrl(
-      s3Client,
-      new GetObjectCommand({
-        Bucket: S3_BUCKET_NAME,
-        Key: key,
-      }),
-      { expiresIn: 60 }
-    );
-  } catch (error) {
-    console.log(error);
-  }
+  return key;
 }

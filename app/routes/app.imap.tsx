@@ -77,6 +77,12 @@ export async function action({ request }: LoaderFunctionArgs) {
     }
 
     if (actionType === 'teste_imap') {
+      if (process.env.DISABLE_IMAP === 'true' || process.env.NODE_ENV === 'local') {
+        return json(
+          { success: false, error: 'IMAP está desabilitado no ambiente local.' },
+          { status: 400 }
+        );
+      }
       try {
         const { checkNewEmails } = await import('~/services/imap.server');
         await checkNewEmails();

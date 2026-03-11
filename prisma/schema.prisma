@@ -19,6 +19,7 @@ model Usuario {
   criado_em     DateTime @default(now()) @db.Timestamptz()
   atualizado_em DateTime @updatedAt @db.Timestamptz()
   perfil        Perfil?
+  linksTemporariosDocumento LinkTemporarioDocumento[]
 }
 
 model Usuario_Esqueci_Senha {
@@ -102,9 +103,37 @@ model Documentos {
   criado_por   Perfil?       @relation(fields: [criadoPorId], references: [id])
   criadoPorId  String?
   criado_em    DateTime      @default(now()) @db.Timestamptz()
+  linksTemporarios LinkTemporarioDocumento[]
 
   @@index([associadoId])
   @@index([criadoPorId])
+}
+
+model PermissaoSolicitacaoLinkDocumento {
+  id            String                   @id @default(uuid())
+  papel         Papel
+  tipoDocumento TipoDocumento?
+  escopo        EscopoPermissaoDocumento @default(NENHUM)
+  ativo         Boolean                  @default(true)
+  criado_em     DateTime                 @default(now()) @db.Timestamptz()
+  atualizado_em DateTime                 @updatedAt @db.Timestamptz()
+
+  @@unique([papel, tipoDocumento])
+  @@index([papel, ativo])
+}
+
+model LinkTemporarioDocumento {
+  id         String     @id @default(uuid())
+  token      String     @unique
+  documento  Documentos @relation(fields: [documentoId], references: [id])
+  documentoId String
+  usuario    Usuario    @relation(fields: [usuarioId], references: [id])
+  usuarioId  Int
+  expira_em  DateTime   @db.Timestamptz()
+  criado_em  DateTime   @default(now()) @db.Timestamptz()
+
+  @@index([documentoId, usuarioId])
+  @@index([expira_em])
 }
 
 model Pagamento {
@@ -243,6 +272,12 @@ enum AssociacaoStatus {
 
 enum TipoLogger {
   EMAIL
+}
+
+enum EscopoPermissaoDocumento {
+  NENHUM
+  PROPRIOS
+  TODOS
 }
 
 enum Remetente {

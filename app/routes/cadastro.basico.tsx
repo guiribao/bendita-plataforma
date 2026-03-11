@@ -55,6 +55,7 @@ export const action: ActionFunction = async ({ request }) => {
   const senhaRepetida = form.get('senha_repetida');
   const nomeCompleto = form.get('nome_completo');
   const apelido = form.get('apelido');
+  const dataNascimentoRaw = form.get('data_nascimento');
   const cpf = form.get('cpf');
   const rg = form.get('rg');
   const nacionalidade = form.get('nacionalidade');
@@ -70,14 +71,14 @@ export const action: ActionFunction = async ({ request }) => {
   const enderecoComplemento = form.get('endereco_complemento');
   const instagram = form.get('instagram');
   const linkedin = form.get('linkedin');
-
-  let dataNascimento = form.get('data_nascimento');
+  const dataNascimento = brStringToIsoString(dataNascimentoRaw);
 
   let errors = {
     email: !email,
     senha: !senha,
     nomeCompleto: !nomeCompleto,
     apelido: !apelido,
+    dataNascimento: !dataNascimento,
     cpf: !cpf,
     nacionalidade: !nacionalidade,
     estado_civil: !estadoCivil,
@@ -128,8 +129,6 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  dataNascimento = brStringToIsoString(dataNascimento);
-
   let necessarioResponsavel = verificarIdade(dataNascimento) < 18;
   let papel: Papel = Papel.ASSOCIADO;
 
@@ -138,6 +137,12 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const usuario = await criarNovoUsuario(email, senha, papel);
+
+  if (!usuario) {
+    return json({
+      errors: { data: 'Erro ao criar usuário. Tente novamente.' },
+    });
+  }
 
   const perfil = await criarPerfil({
     nomeCompleto,
@@ -161,11 +166,23 @@ export const action: ActionFunction = async ({ request }) => {
     linkedin,
   });
 
+  if (!perfil) {
+    return json({
+      errors: { data: 'Erro ao criar perfil. Verifique os dados e tente novamente.' },
+    });
+  }
+
   const associado = await criarAssociado(perfil?.id);
 
+  if (!associado) {
+    return json({
+      errors: { data: 'Erro ao criar associação. Tente novamente.' },
+    });
+  }
+
   const basico = {
-    perfilId: perfil?.id,
-    associadoId: associado?.id,
+    perfilId: perfil.id,
+    associadoId: associado.id,
     necessarioResponsavel,
   };
 
@@ -234,6 +251,9 @@ export default function CadastroBasico() {
 
       {actionData?.errors?.senha && (
         <p className='mensagem-erro'>Por favor, preencha o campo senha </p>
+      )}
+      {actionData?.errors?.dataNascimento && (
+        <p className='mensagem-erro'>Por favor, preencha a data de nascimento (DD/MM/AAAA)</p>
       )}
       <div className='disclaimer-usuario'>
         <div className='form-group'>

@@ -251,7 +251,7 @@ async function processarDocumentos(perfilId: string, linha: LinhaXLSX) {
   for (const doc of documentos) {
     if (doc.url && doc.url.trim()) {
       try {
-        // Faz upload do Google Drive para S3
+        // Faz download do Google Drive e salva no storage local
         const s3Key = await uploadGoogleDriveToS3(doc.url, perfilId);
         
         // Busca o associado pelo perfil
@@ -265,7 +265,7 @@ async function processarDocumentos(perfilId: string, linha: LinhaXLSX) {
             data: {
               associadoId: associado.id,
               tipo: doc.tipo as any,
-              nome_arquivo: s3Key.split('/').pop() || 'documento',
+              nome_arquivo: s3Key,
             },
           });
         }
@@ -358,7 +358,7 @@ async function criarResponsavel(linha: LinhaXLSX, dependentePerfilId: string) {
             data: {
               associadoId: associadoResp.id,
               tipo: 'IDENTIFICACAO_RESPONSAVEL' as any,
-              nome_arquivo: s3Key.split('/').pop() || 'rg-responsavel',
+              nome_arquivo: s3Key,
             },
           });
         }

@@ -3,6 +3,7 @@ import {
   LinksFunction,
   LoaderFunctionArgs,
   MetaFunction,
+  json,
   unstable_parseMultipartFormData,
 } from '@remix-run/node';
 import { Form, Link, useActionData, useNavigate, useNavigation } from '@remix-run/react';
@@ -42,9 +43,20 @@ export const action: ActionFunction = async ({ request }) => {
   const perfilId = form.get('perfilId');
   const associadoId = form.get('associadoId');
 
-  const associado = await pegarAssociadoPorId(associadoId)
+  if (typeof perfilId !== 'string' || typeof associadoId !== 'string' || !perfilId || !associadoId) {
+    return json(
+      { errors: { data: 'Sessão de cadastro inválida. Volte para a etapa 1 e tente novamente.' } },
+      { status: 400 }
+    );
+  }
 
-  if (perfilId != associado?.perfilId) throw new Error("Algo de errado não está certo.");
+  const associado = await pegarAssociadoPorId(associadoId);
+  if (!associado || perfilId !== associado.perfilId) {
+    return json(
+      { errors: { data: 'Sessão de cadastro não confere. Volte para a etapa 1 e tente novamente.' } },
+      { status: 403 }
+    );
+  }
 
   const temResponsavel = (form.get('tem_responsavel') === "true");
 
@@ -54,6 +66,9 @@ export const action: ActionFunction = async ({ request }) => {
     const rg = form.get('rg_responsavel')
     const sexo = form.get('sexo_responsavel')
     const dataNascimento = brStringToIsoString(form.get('data_nascimento'))
+    if (!dataNascimento) {
+      return json({ errors: { data: 'Data de nascimento do responsável inválida.' } }, { status: 400 });
+    }
     const telefone = form.get('telefone_responsavel')
     const endereco = form.get('endereco_responsavel')
 
@@ -121,7 +136,18 @@ export default function CadastroResponsavel() {
     let storage = localStorage.getItem('basico');
     if (!storage) return navigate('/cadastro/basico')
 
-    let basico = JSON.parse(storage);
+    let basico: any = null;
+    try {
+      basico = JSON.parse(storage);
+    } catch {
+      localStorage.removeItem('basico');
+      return navigate('/cadastro/basico');
+    }
+
+    if (!basico?.perfilId || !basico?.associadoId) {
+      localStorage.removeItem('basico');
+      return navigate('/cadastro/basico');
+    }
 
     setTemResponsavel(basico.necessarioResponsavel)
     setPerfilId(basico.perfilId)
@@ -134,6 +160,9 @@ export default function CadastroResponsavel() {
   }, [actionData])
 
   return <Form method='post' className='step-group' name="responsavel" encType='multipart/form-data'>
+    {actionData?.errors?.data && (
+      <p className='mensagem-erro'>{actionData.errors.data}</p>
+    )}
     <div className='form-group'>
       <div className="instruct">
         <h2>Cadastrar um responsável?</h2>

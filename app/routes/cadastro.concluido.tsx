@@ -3,6 +3,7 @@ import {
   LinksFunction,
   LoaderFunctionArgs,
   MetaFunction,
+  json,
 } from '@remix-run/node';
 import { useEffect, useState } from 'react';
 import { Form, useActionData, useNavigate, useNavigation } from '@remix-run/react';
@@ -40,9 +41,21 @@ export const action: ActionFunction = async ({ request }) => {
   const perfilId = form.get('perfilId');
   const associadoId = form.get('associadoId');
 
+  if (typeof perfilId !== 'string' || typeof associadoId !== 'string' || !perfilId || !associadoId) {
+    return json(
+      { errors: { data: 'Sessão de cadastro inválida. Volte para a etapa 1 e tente novamente.' } },
+      { status: 400 }
+    );
+  }
+
   const associado = await pegarAssociadoPorId(associadoId);
 
-  if (perfilId != associado?.perfilId) throw new Error("Algo de errado não está certo.");
+  if (!associado || perfilId !== associado.perfilId) {
+    return json(
+      { errors: { data: 'Sessão de cadastro não confere. Volte para a etapa 1 e tente novamente.' } },
+      { status: 403 }
+    );
+  }
 
   const temIndicacao = (form.get('tem_indicacao') === "true");
   const tipoAssociacao = form.get('tipo_associacao')

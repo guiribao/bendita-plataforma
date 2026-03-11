@@ -3,7 +3,23 @@ import { checkNewEmails } from './imap.server';
 
 let cronJob: cron.ScheduledTask | null = null;
 
+function isImapEnabled(): boolean {
+  if (process.env.DISABLE_IMAP === 'true') return false;
+  // No ambiente local, nao precisamos mapear IMAP nem rodar cron
+  if (process.env.NODE_ENV === 'local') return false;
+  return true;
+}
+
 export function startEmailCron(): void {
+  if (!isImapEnabled()) {
+    return;
+  }
+
+  if (!process.env.IMAP_USER || !process.env.IMAP_PASSWORD) {
+    console.log('[CRON] ℹ️  IMAP nao configurado (IMAP_USER/IMAP_PASSWORD ausentes). Cron nao iniciado.');
+    return;
+  }
+
   if (cronJob) {
     console.log('[CRON] ⚠️  Cron de emails já está rodando');
     return;

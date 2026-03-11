@@ -4,10 +4,10 @@
 
 .site-footer {
   width: 100%;
-  min-height: 50px;
+  min-height: var(--footer-height);
   background: transparent;
   border-top: none;
-  padding: 10px 2rem;
+  padding: 0 2rem;
   margin-top: auto;
   display: flex;
   justify-content: flex-end;
@@ -76,7 +76,7 @@
 /* Responsividade */
 @media (max-width: 768px) {
   .site-footer {
-    padding: 10px 1.5rem;
+    padding: 0 1.5rem;
     justify-content: center;
   }
 
@@ -95,7 +95,7 @@
 
 @media (max-width: 576px) {
   .site-footer {
-    padding: 10px 1rem;
+    padding: 0 1rem;
     justify-content: center;
   }
 
@@ -108,4 +108,3 @@
     height: 20px;
   }
 }
-

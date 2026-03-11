@@ -39,9 +39,21 @@ export const action: ActionFunction = async ({ request }) => {
   const perfilId = form.get('perfilId');
   const associadoId = form.get('associadoId');
 
+  if (typeof perfilId !== 'string' || typeof associadoId !== 'string' || !perfilId || !associadoId) {
+    return json(
+      { errors: { data: 'Sessão de cadastro inválida. Volte para a etapa 1 e tente novamente.' } },
+      { status: 400 }
+    );
+  }
+
   const associado = await pegarAssociadoPorId(associadoId);
 
-  if (perfilId != associado?.perfilId) throw new Error("Algo de errado não está certo.");
+  if (!associado || perfilId !== associado.perfilId) {
+    return json(
+      { errors: { data: 'Sessão de cadastro não confere. Volte para a etapa 1 e tente novamente.' } },
+      { status: 403 }
+    );
+  }
 
   const temIndicacao = (form.get('tem_indicacao') === "true");
   const tipoAssociacao = form.get('tipo_associacao')
@@ -82,7 +94,18 @@ export default function CadastroTermos() {
     let storage = localStorage.getItem('basico');
     if (!storage) return navigate('/cadastro/basico')
 
-    let basico = JSON.parse(storage);
+    let basico: any = null;
+    try {
+      basico = JSON.parse(storage);
+    } catch {
+      localStorage.removeItem('basico');
+      return navigate('/cadastro/basico');
+    }
+
+    if (!basico?.perfilId || !basico?.associadoId) {
+      localStorage.removeItem('basico');
+      return navigate('/cadastro/basico');
+    }
 
     setPerfilId(basico.perfilId)
     setAssociadoId(basico.associadoId)
@@ -96,6 +119,9 @@ export default function CadastroTermos() {
   }, [actionData])
 
   return <Form method='post' className='step-group' name="termos">
+    {actionData?.errors?.data && (
+      <p className='mensagem-erro'>{actionData.errors.data}</p>
+    )}
     <div className='form-group'>
       <label htmlFor='tipo_associacao'>Tipo de associado <span className='required-field'>*</span></label>
       <select name="tipo_associacao" id="tipo_associacao">
