@@ -8,8 +8,8 @@ import LayoutRestrictArea from '~/component/layout/LayoutRestrictArea';
 import { authenticator } from '~/secure/authentication.server';
 import { prisma } from '~/secure/db.server';
 import { brDataFromIsoString } from '~/shared/DateTime.util';
-import { getObjectUrlFromS3 } from '~/storage/s3.service.server';
 import { RoleBasedRender } from '~/secure/protected-components';
+import { solicitarLinkPrivadoDocumento } from '~/storage/documento-link.server';
 
 export const meta: MetaFunction = () => {
   return [
@@ -101,7 +101,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     documentos.map(async (doc) => {
       let thumbnailUrl = null;
       try {
-        thumbnailUrl = await getObjectUrlFromS3(doc.nome_arquivo);
+        thumbnailUrl = await solicitarLinkPrivadoDocumento(doc.id, { id: usuario.id, papel: usuario.papel });
       } catch (error) {
         console.error('Erro ao gerar URL do documento:', error);
       }
@@ -118,7 +118,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         documentosAssociado.map(async (doc) => {
           let thumbnailUrl = null;
           try {
-            thumbnailUrl = await getObjectUrlFromS3(doc.nome_arquivo);
+            thumbnailUrl = await solicitarLinkPrivadoDocumento(doc.id, { id: usuario.id, papel: usuario.papel });
           } catch (error) {
             console.error('Erro ao gerar URL do documento:', error);
           }

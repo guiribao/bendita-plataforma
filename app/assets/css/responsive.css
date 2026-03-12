@@ -850,6 +850,8 @@ header {
 @media screen and (max-width: 991px) {
   .table-responsive {
     font-size: 0.875rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .table-responsive th,
@@ -861,12 +863,28 @@ header {
 @media screen and (max-width: 575px) {
   .table-responsive {
     font-size: 0.75rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .table-responsive th,
   .table-responsive td {
     padding: 0.35rem !important;
     white-space: nowrap;
+  }
+  
+  /* Garantir scroll horizontal em todas as tabelas */
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+  
+  table thead,
+  table tbody {
+    display: table;
+    width: 100%;
   }
 }
 

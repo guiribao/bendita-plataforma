@@ -112,10 +112,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     successRedirect: '/app/dashboard',
   });
 
-  const symbol = Object.getOwnPropertySymbols(request)[1];
-  const parsed_url = request[symbol].parsedURL;
+  const url = new URL(request.url);
 
-  if (parsed_url.pathname == '/cadastro') return redirect('/cadastro/basico')
+  if (url.pathname === '/cadastro') return redirect('/cadastro/basico')
 
   return null;
 }

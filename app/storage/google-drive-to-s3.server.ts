@@ -1,13 +1,7 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import axios from 'axios';
+import { writeStorageFile } from './local-storage.server';
 
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION || 'us-east-1',
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-  },
-});
+const STORAGE_ENV = process.env.NODE_ENV || 'development';
 
 /**
  * Extrai o ID do arquivo do Google Drive de uma URL
@@ -30,7 +24,7 @@ function extrairIdGoogleDrive(url: string): string | null {
 }
 
 /**
- * Faz download de um arquivo do Google Drive e upload para o S3
+ * Faz download de um arquivo do Google Drive e salva no storage local
  */
 export async function uploadGoogleDriveToS3(
   googleDriveUrl: string,
@@ -56,7 +50,7 @@ export async function uploadGoogleDriveToS3(
     });
 
     // Tenta determinar o tipo de conteúdo
-    let contentType = response.headers['content-type'] || 'application/octet-stream';
+    const contentType = response.headers['content-type'] || 'application/octet-stream';
     
     // Extensão do arquivo baseada no content-type
     let extensao = '.pdf';
@@ -68,21 +62,12 @@ export async function uploadGoogleDriveToS3(
     // Gera nome único para o arquivo
     const timestamp = Date.now();
     const nomeArquivo = `importacao-${timestamp}${extensao}`;
-    const s3Key = `documentos/${perfilId}/${nomeArquivo}`;
-
-    // Upload para S3
-    const uploadCommand = new PutObjectCommand({
-      Bucket: process.env.AWS_S3_BUCKET || '',
-      Key: s3Key,
-      Body: Buffer.from(response.data),
-      ContentType: contentType,
-    });
-
-    await s3Client.send(uploadCommand);
+    const s3Key = `${STORAGE_ENV}/documentos/importacao/${perfilId}/${nomeArquivo}`;
+    await writeStorageFile(s3Key, Buffer.from(response.data));
 
     return s3Key;
   } catch (erro: any) {
-    console.error('Erro ao transferir arquivo do Google Drive para S3:', erro);
+    console.error('Erro ao transferir arquivo do Google Drive para storage local:', erro);
     throw new Error(`Falha ao processar arquivo do Google Drive: ${erro.message}`);
   }
 }

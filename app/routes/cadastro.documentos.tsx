@@ -3,6 +3,7 @@ import {
   LinksFunction,
   LoaderFunctionArgs,
   MetaFunction,
+  json,
   unstable_parseMultipartFormData
 } from '@remix-run/node';
 import { Form, useActionData, useNavigate, useNavigation } from '@remix-run/react';
@@ -41,9 +42,23 @@ export const action: ActionFunction = async ({ request }) => {
   const perfilId = form.get('perfilId');
   const associadoId = form.get('associadoId');
 
-  const associado = await pegarAssociadoPorId(associadoId)
+  if (typeof perfilId !== 'string' || typeof associadoId !== 'string' || !perfilId || !associadoId) {
+    return json(
+      { errors: { data: 'Sessão de cadastro inválida. Volte para a etapa 1 e tente novamente.' } },
+      { status: 400 }
+    );
+  }
 
-  if (perfilId != associado?.perfilId) throw new Error("Algo de errado não está certo.");
+  const associado = await pegarAssociadoPorId(associadoId);
+
+  console.log(perfilId, associado?.perfilId);
+  
+  if (!associado || perfilId !== associado.perfilId) {
+    return json(
+      { errors: { data: 'Sessão de cadastro não confere. Volte para a etapa 1 e tente novamente.' } },
+      { status: 403 }
+    );
+  }
 
   if (identificacao_1) {
     let documentoObj = {
@@ -98,7 +113,18 @@ export default function CadastroAnexos() {
     let storage = localStorage.getItem('basico');
     if (!storage) return navigate('/cadastro/basico')
 
-    let basico = JSON.parse(storage);
+    let basico: any = null;
+    try {
+      basico = JSON.parse(storage);
+    } catch {
+      localStorage.removeItem('basico');
+      return navigate('/cadastro/basico');
+    }
+
+    if (!basico?.perfilId || !basico?.associadoId) {
+      localStorage.removeItem('basico');
+      return navigate('/cadastro/basico');
+    }
     //let basico = JSON.parse("{\"perfilId\": \"ca822a17-847c-4cc7-90b6-1481994a1dfe\", \"associadoId\": \"ff2217fc-d1ad-4722-a21a-6914aaeded26\"}")
 
     setPerfilId(basico.perfilId)
@@ -110,6 +136,9 @@ export default function CadastroAnexos() {
   }, [actionData])
 
   return <Form method='post' className='step-group' name="documentos" encType='multipart/form-data'>
+    {actionData?.errors?.data && (
+      <p className='mensagem-erro'>{actionData.errors.data}</p>
+    )}
     <div className='form-group'>
       <div className="instruct anexos">
         <img src={identificationImg} width={256} alt="Inspeção de documentos" />

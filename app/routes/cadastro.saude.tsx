@@ -3,6 +3,7 @@ import {
   LinksFunction,
   LoaderFunctionArgs,
   MetaFunction,
+  json,
   unstable_parseMultipartFormData
 } from '@remix-run/node';
 import { Form, useActionData, useNavigate, useNavigation } from '@remix-run/react';
@@ -16,6 +17,7 @@ import loading from '~/assets/img/loading.gif';
 import atualizarSaudeAssociado from '~/domain/Associado/atualizar-saude-associado.server';
 import { TipoDocumento } from '@prisma/client';
 import criarDocumento from '~/domain/Documentos/criar-documento.server';
+import pegarAssociadoPorId from '~/domain/Associado/pegar-por-id.server';
 
 
 export const meta: MetaFunction = () => {
@@ -49,7 +51,20 @@ export const action: ActionFunction = async ({ request }) => {
   const perfilId = form.get('perfilId')
   const associadoId = form.get('associadoId')
 
-  console.log("associado id", associadoId)
+  if (typeof perfilId !== 'string' || typeof associadoId !== 'string' || !perfilId || !associadoId) {
+    return json(
+      { errors: { data: 'Sessão de cadastro inválida. Volte para a etapa 1 e tente novamente.' } },
+      { status: 400 }
+    );
+  }
+
+  const associado = await pegarAssociadoPorId(associadoId);
+  if (!associado || perfilId !== associado.perfilId) {
+    return json(
+      { errors: { data: 'Sessão de cadastro não confere. Volte para a etapa 1 e tente novamente.' } },
+      { status: 403 }
+    );
+  }
 
   let objAtualizacao = {
     quadroGeral,
@@ -116,7 +131,18 @@ export default function CadastroSaude() {
     let storage = localStorage.getItem('basico');
     if (!storage) return navigate('/cadastro/basico')
 
-    let basico = JSON.parse(storage);
+    let basico: any = null;
+    try {
+      basico = JSON.parse(storage);
+    } catch {
+      localStorage.removeItem('basico');
+      return navigate('/cadastro/basico');
+    }
+
+    if (!basico?.perfilId || !basico?.associadoId) {
+      localStorage.removeItem('basico');
+      return navigate('/cadastro/basico');
+    }
 
     setPerfilId(basico.perfilId)
     setAssociadoId(basico.associadoId)
@@ -131,6 +157,9 @@ export default function CadastroSaude() {
   }
 
   return <Form method='post' className='step-group' name="saude" encType='multipart/form-data'>
+    {actionData?.errors?.data && (
+      <p className='mensagem-erro'>{actionData.errors.data}</p>
+    )}
     <div className='form-group'>
       <div className="instruct">
         <h2>Quadro geral de saúde</h2>

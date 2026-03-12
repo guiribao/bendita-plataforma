@@ -38,11 +38,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
     failureRedirect: '/autentica/entrar',
   });
 
-  // Verificar se o usuário é ADMIN ou SECRETARIA
-  if (usuario.papel !== Papel.ADMIN && usuario.papel !== Papel.SECRETARIA) {
-    return redirect('/app/dashboard');
-  }
-
   // Buscar todos os contatos com suas mensagens
   const contatos = await prisma.contato.findMany({
     include: {

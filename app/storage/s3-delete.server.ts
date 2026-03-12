@@ -1,26 +1,14 @@
-import { DeleteObjectCommand } from '@aws-sdk/client-s3';
-import { s3Client } from './s3.gateway.server';
-
-const S3_BUCKET_NAME = process.env.S3_BUCKET || 's3_VAR_NAO_INFORMADA';
+import { deleteStorageFile } from './local-storage.server';
 
 export async function deletarArquivoS3(key: string): Promise<boolean> {
   try {
-    const params = {
-      Bucket: S3_BUCKET_NAME,
-      Key: key,
-    };
-
-    //@ts-ignore
-    const response = await s3Client.send(new DeleteObjectCommand(params));
-    
-    if (response.$metadata.httpStatusCode === 204) {
-      console.log(`[${new Date().toISOString()}] Arquivo S3 deletado: ${key}`);
-      return true;
+    const deleted = await deleteStorageFile(key);
+    if (deleted) {
+      console.log(`[${new Date().toISOString()}] Arquivo local deletado: ${key}`);
     }
-    
-    return false;
+    return deleted;
   } catch (error) {
-    console.error(`[${new Date().toISOString()}] Erro ao deletar arquivo S3: ${key}`, error);
+    console.error(`[${new Date().toISOString()}] Erro ao deletar arquivo local: ${key}`, error);
     return false;
   }
 }

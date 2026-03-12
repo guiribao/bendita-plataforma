@@ -4,12 +4,11 @@
 
 .site-footer {
   width: 100%;
-  height: 50px;
-  flex-shrink: 0;
+  min-height: var(--footer-height);
   background: transparent;
   border-top: none;
-  padding: 10px 2rem;
-  margin-top: 0;
+  padding: 0 2rem;
+  margin-top: auto;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -77,7 +76,8 @@
 /* Responsividade */
 @media (max-width: 768px) {
   .site-footer {
-    padding: 10px 1.5rem;
+    padding: 0 1.5rem;
+    justify-content: center;
   }
 
   .footer-content {
@@ -89,14 +89,22 @@
   }
 
   .lomgui-logo img {
-    height: 20px;
+    height: 24px;
   }
 }
 
 @media (max-width: 576px) {
+  .site-footer {
+    padding: 0 1rem;
+    justify-content: center;
+  }
+
   .footer-content p {
-    flex-direction: column;
-    text-align: center;
-    gap: 0.75rem;
+    font-size: 0.85rem;
+    gap: 0.4rem;
+  }
+
+  .lomgui-logo img {
+    height: 20px;
   }
 }

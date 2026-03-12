@@ -1,17 +1,6 @@
 import { cssBundleHref } from '@remix-run/css-bundle';
 import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
-import {
-  Links,
-  LiveReload,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-  json,
-  redirect,
-  useLoaderData,
-  useLocation
-} from '@remix-run/react';
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, json, redirect, useLoaderData, useLocation } from '@remix-run/react';
 
 import stylesheet from '~/global.css';
 import toastyStyle from 'toastify-js/src/toastify.css';
@@ -26,13 +15,7 @@ import { Papel, Perfil, Usuario } from '@prisma/client';
 import pegarPerfilPeloIdUsuario from './domain/Perfil/perfil-pelo-id-usuario.server';
 import { useEffect, useState } from 'react';
 import { createHashHistory } from 'history';
-import {
-  canAccess,
-  canView,
-  handleElements,
-  loadAditionalRoles,
-  specificDynPages,
-} from './secure/authorization';
+import { canAccess, canView, handleElements, loadAditionalRoles, specificDynPages } from './secure/authorization';
 
 import NotAuthorized from './routes/app.autorizacao';
 import { getEnv } from './env.server';
@@ -40,6 +23,7 @@ import { contarMensagensNaoLidas } from './domain/Contatos/contar-mensagens-nao-
 import { startEmailCron } from './services/email-cron.server';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Footer from './component/Footer';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: line_awesome },
@@ -84,13 +68,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }
 
     let canAccessSpecific = specificDynPages(pathname, usuario.papel);
-    
-    if (
-      !canAccessSpecific &&
-      !request.url.includes('/app/autorizacao') &&
-      !canAccess(pathname, usuario.papel)
-    )
-      return redirect('/app/autorizacao');
+
+    if (!canAccessSpecific && !request.url.includes('/app/autorizacao') && !canAccess(pathname, usuario.papel)) return redirect('/app/autorizacao');
   }
 
   return json({ ENV: getEnv(), usuario, perfil, mensagensNaoLidas });
@@ -113,8 +92,7 @@ export default function App() {
         history.back();
       }
 
-      usuario.papelAdicional = async () =>
-        await loadAditionalRoles(location.pathname, perfil.id);
+      usuario.papelAdicional = async () => await loadAditionalRoles(location.pathname, perfil.id);
       handleElements(document, usuario.papel, usuario.papelAdicional, location.pathname);
     }
 
@@ -133,6 +111,7 @@ export default function App() {
         <Layout>
           <Topbar />
           {isAuthorized ? <Outlet /> : <NotAuthorized />}
+          <Footer />
         </Layout>
 
         <ScrollRestoration />
