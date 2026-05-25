@@ -22,6 +22,12 @@ function getContentDisposition(key: string): string {
   return `inline; filename*=UTF-8''${encodedFilename}`;
 }
 
+function getAttachmentContentDisposition(key: string): string {
+  const filename = key.split('/').pop() || 'documento';
+  const encodedFilename = encodeURIComponent(filename);
+  return `attachment; filename*=UTF-8''${encodedFilename}`;
+}
+
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const usuario = await authenticator.isAuthenticated(request);
   if (!usuario) {
@@ -41,12 +47,16 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   try {
     const content = await readStorageFile(documento.key);
     const contentType = getContentTypeByKey(documento.key);
+    const url = new URL(request.url);
+    const forceDownload = url.searchParams.get('download') === '1';
 
     return new Response(content, {
       status: 200,
       headers: {
         'Content-Type': contentType,
-        'Content-Disposition': getContentDisposition(documento.key),
+        'Content-Disposition': forceDownload
+          ? getAttachmentContentDisposition(documento.key)
+          : getContentDisposition(documento.key),
         'Cache-Control': 'private, max-age=60',
         'Content-Length': String(content.length),
       },

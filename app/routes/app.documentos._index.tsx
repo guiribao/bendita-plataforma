@@ -5,6 +5,7 @@ import { useLoaderData } from '@remix-run/react';
 import { useState } from 'react';
 import { Badge, Button, Card, Col, Container, Form as BootstrapForm, InputGroup, Row } from 'react-bootstrap';
 import LayoutRestrictArea from '~/component/layout/LayoutRestrictArea';
+import DocumentViewerModal from '~/component/DocumentViewerModal';
 import { authenticator } from '~/secure/authentication.server';
 import { prisma } from '~/secure/db.server';
 import { brDataFromIsoString } from '~/shared/DateTime.util';
@@ -157,6 +158,21 @@ const DocumentosPage = () => {
 
   const [filtroNome, setFiltroNome] = useState('');
   const [filtroTipo, setFiltroTipo] = useState('');
+  const [visualizadorAberto, setVisualizadorAberto] = useState(false);
+  const [documentoSelecionado, setDocumentoSelecionado] = useState<{
+    url: string;
+    nome: string;
+  } | null>(null);
+
+  const abrirVisualizador = (url: string, nomeArquivo: string) => {
+    setDocumentoSelecionado({ url, nome: nomeArquivo });
+    setVisualizadorAberto(true);
+  };
+
+  const fecharVisualizador = () => {
+    setVisualizadorAberto(false);
+    setDocumentoSelecionado(null);
+  };
 
   if (!usuario) {
     return null;
@@ -385,7 +401,12 @@ const DocumentosPage = () => {
                       <Card.Footer className='bg-white border-top-0 pt-0'>
                         <div className='d-flex gap-2'>
                           {doc.thumbnailUrl && (
-                            <Button variant='outline-primary' size='sm' className='flex-grow-1' onClick={() => window.open(doc.thumbnailUrl!, '_blank')}>
+                            <Button
+                              variant='outline-primary'
+                              size='sm'
+                              className='flex-grow-1'
+                              onClick={() => abrirVisualizador(doc.thumbnailUrl!, doc.nome_arquivo.split('/').pop() || 'documento')}
+                            >
                               <i className='las la-eye me-1' />
                               Visualizar
                             </Button>
@@ -511,7 +532,12 @@ const DocumentosPage = () => {
                         <Card.Footer className='bg-white border-top-0 pt-0'>
                           <div className='d-flex gap-2'>
                             {doc.thumbnailUrl && (
-                              <Button variant='outline-primary' size='sm' className='flex-grow-1' onClick={() => window.open(doc.thumbnailUrl!, '_blank')}>
+                                <Button
+                                  variant='outline-primary'
+                                  size='sm'
+                                  className='flex-grow-1'
+                                  onClick={() => abrirVisualizador(doc.thumbnailUrl!, doc.nome_arquivo.split('/').pop() || 'documento')}
+                                >
                                 <i className='las la-eye me-1' />
                                 Visualizar
                               </Button>
@@ -531,6 +557,13 @@ const DocumentosPage = () => {
             </>
           )}
         </RoleBasedRender>
+
+        <DocumentViewerModal
+          show={visualizadorAberto}
+          onHide={fecharVisualizador}
+          fileUrl={documentoSelecionado?.url || null}
+          fileName={documentoSelecionado?.nome || 'documento'}
+        />
       </Container>
     </LayoutRestrictArea>
   );
