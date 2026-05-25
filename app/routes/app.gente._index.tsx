@@ -10,7 +10,7 @@ import pegarPerfis from '~/domain/Perfil/pegar-perfis.server';
 import { authenticator } from '~/secure/authentication.server';
 import { prisma } from '~/secure/db.server';
 import { brDataFromIsoString, brDisplayDateTime } from '~/shared/DateTime.util';
-import { addDays, addMonths } from 'date-fns';
+import { addMonths, endOfMonth, startOfMonth } from 'date-fns';
 
 export const meta: MetaFunction = () => {
   return [
@@ -81,6 +81,29 @@ export async function action({ request }: ActionFunctionArgs) {
 
   if (!associadoId || !tipoPagamento) {
     return json({ error: 'Dados inválidos' }, { status: 400 });
+  }
+
+  const inicioMesAtual = startOfMonth(new Date());
+  const fimMesAtual = endOfMonth(new Date());
+
+  if (tipoPagamento === 'MENSALIDADE_SOCIAL' || tipoPagamento === 'MENSALIDADE_INTEGRAL') {
+    const mensalidadeNoMes = await prisma.pagamento.findFirst({
+      where: {
+        associadoId,
+        data_pagamento: {
+          gte: inicioMesAtual,
+          lte: fimMesAtual,
+        },
+        observacao: {
+          contains: 'Mensalidade',
+          mode: 'insensitive',
+        },
+      },
+    });
+
+    if (mensalidadeNoMes) {
+      return json({ error: 'Este associado já possui mensalidade registrada neste mês.' }, { status: 400 });
+    }
   }
 
   // Verificar elegibilidade para pagamentos sociais
@@ -432,6 +455,18 @@ const Gente = () => {
                         {isAssociado && isAdminOuSecretaria ? (() => {
                           const pagamentos = perfil.Associacao?.Pagamentos || [];
                           const elegivelTarifaSocial = perfil.Associacao?.elegivel_tarifa_social;
+                          const inicioMesAtual = startOfMonth(new Date());
+                          const fimMesAtual = endOfMonth(new Date());
+                          const jaPagouMensalidadeMesAtual = pagamentos.some((p) => {
+                            const dataPagamento = new Date(p.data_pagamento);
+                            const observacao = p.observacao || '';
+
+                            return (
+                              dataPagamento >= inicioMesAtual &&
+                              dataPagamento <= fimMesAtual &&
+                              observacao.toLowerCase().includes('mensalidade')
+                            );
+                          });
                           
                           // Verificar se já pagou taxa associativa
                           const jaPagouTaxa = pagamentos.some(p => 
@@ -441,37 +476,43 @@ const Gente = () => {
                           return (
                             <div className='d-flex flex-column gap-1' style={{ minWidth: '200px' }}>
                               {/* Mensalidades */}
-                              <div className='d-flex gap-1'>
-                                {elegivelTarifaSocial && (
+                              {!jaPagouMensalidadeMesAtual ? (
+                                <div className='d-flex gap-1'>
+                                  {elegivelTarifaSocial && (
+                                    <Form method='post' className='flex-fill'>
+                                      <input type='hidden' name='associadoId' value={perfil.Associacao?.id} />
+                                      <input type='hidden' name='tipoPagamento' value='MENSALIDADE_SOCIAL' />
+                                      <Button 
+                                        variant='outline-success' 
+                                        size='sm' 
+                                        type='submit'
+                                        className='w-100'
+                                      >
+                                        <i className='las la-heart me-1' />
+                                        Mensalidade social
+                                      </Button>
+                                    </Form>
+                                  )}
+                                  
                                   <Form method='post' className='flex-fill'>
                                     <input type='hidden' name='associadoId' value={perfil.Associacao?.id} />
-                                    <input type='hidden' name='tipoPagamento' value='MENSALIDADE_SOCIAL' />
+                                    <input type='hidden' name='tipoPagamento' value='MENSALIDADE_INTEGRAL' />
                                     <Button 
-                                      variant='outline-success' 
+                                      variant='outline-primary' 
                                       size='sm' 
                                       type='submit'
                                       className='w-100'
                                     >
-                                      <i className='las la-heart me-1' />
-                                      Mensalidade social
+                                      <i className='las la-dollar-sign me-1' />
+                                      Mensalidade R$20
                                     </Button>
                                   </Form>
-                                )}
-                                
-                                <Form method='post' className='flex-fill'>
-                                  <input type='hidden' name='associadoId' value={perfil.Associacao?.id} />
-                                  <input type='hidden' name='tipoPagamento' value='MENSALIDADE_INTEGRAL' />
-                                  <Button 
-                                    variant='outline-primary' 
-                                    size='sm' 
-                                    type='submit'
-                                    className='w-100'
-                                  >
-                                    <i className='las la-dollar-sign me-1' />
-                                    Mensalidade R$20
-                                  </Button>
-                                </Form>
-                              </div>
+                                </div>
+                              ) : (
+                                <Badge bg='success' className='align-self-start'>
+                                  Mensalidade do mês paga
+                                </Badge>
+                              )}
                               
                               {/* Taxas Associativas - aparecem apenas se não foi paga */}
                               {!jaPagouTaxa && (

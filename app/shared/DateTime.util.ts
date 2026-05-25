@@ -14,6 +14,11 @@ export function brStringToIsoString(stringDate: unknown): string | null {
   const trimmed = stringDate.trim();
   if (!trimmed) return null;
 
+  // Input HTML type="date" envia no formato ISO de data (yyyy-MM-dd)
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    return trimmed;
+  }
+
   // Mascara incompleta (InputMaskClient usa '_' no placeholder)
   if (trimmed.includes('_')) return null;
 

@@ -62,12 +62,25 @@ export async function loader({ request }: LoaderFunctionArgs) {
     // Verificar se tem pagamento ativo (próximo vencimento no futuro)
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
+    const inicioMesAtual = startOfMonth(hoje);
+    const fimMesAtual = endOfMonth(hoje);
     const temPagamentoAtivo = meusPagamentos.some(
       (p) => new Date(p.proximo_vencimento) >= hoje
     );
 
+    const pagouMensalidadeNoMes = meusPagamentos.some((p) => {
+      const dataPagamento = new Date(p.data_pagamento);
+      const observacao = (p.observacao || '').toLowerCase();
+
+      return (
+        dataPagamento >= inicioMesAtual &&
+        dataPagamento <= fimMesAtual &&
+        observacao.includes('mensalidade')
+      );
+    });
+
     // Pode solicitar aporte se for elegível E não tiver pagamento ativo
-    const podeAporte = associado.elegivel_tarifa_social && !temPagamentoAtivo;
+    const podeAporte = associado.elegivel_tarifa_social && !temPagamentoAtivo && !pagouMensalidadeNoMes;
 
     return json({
       pagamentos: [],
@@ -263,6 +276,8 @@ export async function action({ request }: ActionFunctionArgs) {
     // Verificar se já tem pagamento ativo
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
+    const inicioMesAtual = startOfMonth(hoje);
+    const fimMesAtual = endOfMonth(hoje);
     
     const pagamentoAtivo = await prisma.pagamento.findFirst({
       where: {
@@ -275,6 +290,24 @@ export async function action({ request }: ActionFunctionArgs) {
 
     if (pagamentoAtivo) {
       return json({ error: "Você já possui um plano ativo" }, { status: 400 });
+    }
+
+    const mensalidadeNoMes = await prisma.pagamento.findFirst({
+      where: {
+        associadoId: associado.id,
+        data_pagamento: {
+          gte: inicioMesAtual,
+          lte: fimMesAtual,
+        },
+        observacao: {
+          contains: "Mensalidade",
+          mode: "insensitive",
+        },
+      },
+    });
+
+    if (mensalidadeNoMes) {
+      return json({ error: "Você já possui mensalidade registrada neste mês" }, { status: 400 });
     }
 
     // Criar pagamento de aporte social (valor 0)

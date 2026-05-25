@@ -796,6 +796,21 @@ header {
   .app-content p {
     font-size: 0.9rem !important;
   }
+
+  .app-content .d-flex.justify-content-between.align-items-center {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .app-content .d-flex.gap-1,
+  .app-content .d-flex.gap-2,
+  .app-content .d-inline-flex.gap-1 {
+    flex-wrap: wrap;
+  }
+
+  .app-content .btn {
+    white-space: normal;
+  }
 }
 
 @media screen and (min-width: 576px) and (max-width: 767px) {
@@ -879,6 +894,7 @@ header {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     white-space: nowrap;
+    min-width: 640px;
   }
   
   table thead,

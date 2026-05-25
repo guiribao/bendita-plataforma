@@ -176,7 +176,7 @@ export default function CadastroResponsavel() {
             id="tem_responsavel_nao"
             value={'false'}
             onChange={() => setTemResponsavel(false)}
-            disabled={temResponsavel}
+            checked={!temResponsavel}
             required
           />
           <label htmlFor='tem_responsavel_nao'>Não</label>
@@ -188,7 +188,7 @@ export default function CadastroResponsavel() {
             id="tem_responsavel_sim"
             value={'true'}
             onChange={() => setTemResponsavel(true)}
-            defaultChecked={temResponsavel}
+            checked={temResponsavel}
           />
           <label htmlFor='tem_responsavel_sim'>Sim</label>
         </div>

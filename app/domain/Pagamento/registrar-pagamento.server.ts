@@ -1,9 +1,34 @@
 import { prisma } from '~/secure/db.server';
-import { addDays, startOfDay } from 'date-fns';
+import { addDays, endOfMonth, startOfDay, startOfMonth } from 'date-fns';
 
-export default async function registrarPagamento(associadoId: string) {
+type RegistrarPagamentoResult =
+  | { ok: true; pagamento: any }
+  | { ok: false; reason: 'ja_registrado_mes_atual' | 'erro' };
+
+export default async function registrarPagamento(associadoId: string): Promise<RegistrarPagamentoResult> {
   try {
     const hoje = new Date();
+    const inicioMesAtual = startOfMonth(hoje);
+    const fimMesAtual = endOfMonth(hoje);
+
+    const mensalidadeNoMes = await prisma.pagamento.findFirst({
+      where: {
+        associadoId,
+        data_pagamento: {
+          gte: inicioMesAtual,
+          lte: fimMesAtual,
+        },
+        observacao: {
+          contains: 'Mensalidade',
+          mode: 'insensitive',
+        },
+      },
+    });
+
+    if (mensalidadeNoMes) {
+      return { ok: false, reason: 'ja_registrado_mes_atual' };
+    }
+
     const proximoVencimento = startOfDay(addDays(hoje, 30));
 
     // Criar novo pagamento
@@ -12,12 +37,13 @@ export default async function registrarPagamento(associadoId: string) {
         associadoId,
         data_pagamento: hoje,
         proximo_vencimento: proximoVencimento,
+        observacao: 'Mensalidade',
       },
     });
 
-    return pagamento;
+    return { ok: true, pagamento };
   } catch (error) {
     console.error('Erro ao registrar pagamento:', error);
-    return null;
+    return { ok: false, reason: 'erro' };
   }
 }

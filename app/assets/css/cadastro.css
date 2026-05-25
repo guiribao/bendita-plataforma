@@ -222,6 +222,53 @@ main {
   gap: 5px;
 }
 
+@media screen and (max-width: 767px) {
+  .header {
+    width: 100%;
+    padding: 0 1rem;
+    text-align: center;
+  }
+
+  .header h1 {
+    font-size: 2rem;
+  }
+
+  .header p {
+    font-size: 1.1rem;
+  }
+
+  .step-groups .step-group {
+    padding: 1.25rem 1rem;
+  }
+
+  .step-group .form-group.inline-group {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .step-group .form-group.inline-group div {
+    width: 100%;
+  }
+
+  .form-group .instruct p {
+    max-width: 100%;
+  }
+
+  .form-group div.medicacao {
+    justify-content: flex-start !important;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .submit-button {
+    justify-content: stretch;
+  }
+
+  .submit-button button {
+    width: 100%;
+  }
+}
+
 .step-group .form-group.sexo {
   flex-direction: column;
 }
@@ -482,5 +529,11 @@ main.entrar .footer {
     display: flex;
     justify-content: center;
     gap: 1em;
+  }
+}
+
+@media screen and (max-width: 507px) {
+  .cadastro-associado {
+    width: 100%;
   }
 }

@@ -49,11 +49,14 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const formData = await request.formData();
   const tipo = formData.get('tipo');
-
   const dataNascimento = brStringToIsoString(formData.get('data_nascimento'));
 
   try {
     if (tipo === 'pessoal') {
+      if (!dataNascimento) {
+        return json({ error: 'Data de nascimento inválida. Use o formato aaaa-mm-dd.' }, { status: 400 });
+      }
+
       await prisma.perfil.update({
         where: { usuarioId: (usuario as any).id },
         data: {

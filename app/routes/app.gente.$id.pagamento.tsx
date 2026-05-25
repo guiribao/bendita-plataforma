@@ -20,9 +20,13 @@ export const action: ActionFunction = async ({ request, params }) => {
     return json({ error: 'ID do associado não fornecido' }, { status: 400 });
   }
 
-  const pagamento = await registrarPagamento(associadoId);
+  const resultado = await registrarPagamento(associadoId);
 
-  if (!pagamento) {
+  if (!resultado.ok && resultado.reason === 'ja_registrado_mes_atual') {
+    return json({ error: 'Este associado já possui mensalidade registrada neste mês' }, { status: 409 });
+  }
+
+  if (!resultado.ok) {
     return json({ error: 'Erro ao registrar pagamento' }, { status: 500 });
   }
 
