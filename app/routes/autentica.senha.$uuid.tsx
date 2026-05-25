@@ -19,6 +19,7 @@ import atualizarSenhaUsuario from '~/domain/Usuario/atualizar-senha-usuario.serv
 import desativarTokensEsqueciSenha from '~/domain/Usuario/desativar-tokens-esqueci-senha.server';
 import Toastify from 'toastify-js';
 import { useEffect } from 'react';
+import cadastroPageStyle from '~/assets/css/cadastro.css';
 
 export const meta: V2_MetaFunction = () => {
   return [
