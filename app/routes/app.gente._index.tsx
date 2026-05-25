@@ -457,6 +457,8 @@ const Gente = () => {
                           const elegivelTarifaSocial = perfil.Associacao?.elegivel_tarifa_social;
                           const inicioMesAtual = startOfMonth(new Date());
                           const fimMesAtual = endOfMonth(new Date());
+                          const hojeSemHora = new Date();
+                          hojeSemHora.setHours(0, 0, 0, 0);
                           const jaPagouMensalidadeMesAtual = pagamentos.some((p) => {
                             const dataPagamento = new Date(p.data_pagamento);
                             const observacao = p.observacao || '';
@@ -467,6 +469,19 @@ const Gente = () => {
                               observacao.toLowerCase().includes('mensalidade')
                             );
                           });
+
+                          // Considera mensalidade vigente para evitar exibir botao quando o associado ja esta coberto.
+                          // Registros antigos podem estar sem observacao; por isso filtramos por "nao taxa" + vencimento futuro.
+                          const jaTemMensalidadeVigente = pagamentos.some((p) => {
+                            const observacao = (p.observacao || '').toLowerCase();
+                            const ehTaxa = observacao.includes('taxa');
+                            if (ehTaxa) return false;
+
+                            const proximoVencimento = new Date(p.proximo_vencimento);
+                            proximoVencimento.setHours(0, 0, 0, 0);
+
+                            return proximoVencimento >= hojeSemHora;
+                          });
                           
                           // Verificar se já pagou taxa associativa
                           const jaPagouTaxa = pagamentos.some(p => 
@@ -476,7 +491,7 @@ const Gente = () => {
                           return (
                             <div className='d-flex flex-column gap-1' style={{ minWidth: '200px' }}>
                               {/* Mensalidades */}
-                              {!jaPagouMensalidadeMesAtual ? (
+                              {!jaPagouMensalidadeMesAtual && !jaTemMensalidadeVigente ? (
                                 <div className='d-flex gap-1'>
                                   {elegivelTarifaSocial && (
                                     <Form method='post' className='flex-fill'>
@@ -510,7 +525,7 @@ const Gente = () => {
                                 </div>
                               ) : (
                                 <Badge bg='success' className='align-self-start'>
-                                  Mensalidade do mês paga
+                                  Mensalidade vigente
                                 </Badge>
                               )}
                               

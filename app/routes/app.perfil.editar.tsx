@@ -9,6 +9,26 @@ import { authenticator } from '~/secure/authentication.server';
 import type { MetaFunction } from '@remix-run/node';
 import { brStringToIsoString } from '~/shared/DateTime.util';
 
+function toDateInputValue(value: unknown): string {
+  if (typeof value !== 'string') return '';
+
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+
+  // Valor ja no formato esperado do input date
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+
+  // Aceita legado em dd/MM/yyyy
+  const fromBr = brStringToIsoString(trimmed);
+  if (fromBr) return fromBr;
+
+  // Fallback para formatos de Date parseaveis
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) return '';
+
+  return parsed.toISOString().split('T')[0];
+}
+
 export const meta: MetaFunction = () => {
   return [
     { title: 'Editar Perfil - Associação Bendita Canábica' },
@@ -49,12 +69,13 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const formData = await request.formData();
   const tipo = formData.get('tipo');
-  const dataNascimento = brStringToIsoString(formData.get('data_nascimento'));
+  const dataNascimentoRaw = formData.get('data_nascimento');
+  const dataNascimento = brStringToIsoString(dataNascimentoRaw);
 
   try {
     if (tipo === 'pessoal') {
       if (!dataNascimento) {
-        return json({ error: 'Data de nascimento inválida. Use o formato aaaa-mm-dd.' }, { status: 400 });
+        return json({ error: 'Data de nascimento inválida. Envie no formato aaaa-mm-dd.' }, { status: 400 });
       }
 
       await prisma.perfil.update({
@@ -219,7 +240,7 @@ export default function EditarPerfilPage() {
                           <BSForm.Control
                             type='date'
                             name='data_nascimento'
-                            defaultValue={perfil.data_nascimento ? new Date(perfil.data_nascimento).toISOString().split('T')[0] : ''}
+                            defaultValue={toDateInputValue(perfil.data_nascimento)}
                             required
                           />
                         </BSForm.Group>
