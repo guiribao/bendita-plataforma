@@ -73,6 +73,10 @@ export async function podeSolicitarLinkDocumento(documento: DocumentoComDono, us
   const papel = parsePapel(usuario.papel);
   if (!papel) return false;
 
+  // Fallback de seguranca: admin sempre pode solicitar link privado.
+  // Evita indisponibilidade total quando a tabela de permissoes nao foi migrada/populada.
+  if (papel === Papel.ADMIN) return true;
+
   const escopo = await encontrarEscopoPermissao(papel, documento.tipo);
   if (!escopo || escopo === EscopoPermissaoDocumento.NENHUM) return false;
   if (escopo === EscopoPermissaoDocumento.TODOS) return true;
