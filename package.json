@@ -1,7 +1,7 @@
 {
   "name": "bendita-plataforma",
   "description": "A Plataforma da Bendita Canabica",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -9,7 +9,7 @@
     "build": "npx @remix-run/dev build",
     "dev": "remix dev --manual",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
-    "start": "remix-serve ./build/index.js",
+    "start": "PORT=3002 remix-serve ./build/index.js",
     "start:test": "PORT=6000 remix-serve ./build/index.js",
     "typecheck": "tsc"
   },
