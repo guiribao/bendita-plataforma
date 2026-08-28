@@ -1,6 +1,6 @@
 import { deleteStorageFile } from './local-storage.server';
 
-export async function deletarArquivoS3(key: string): Promise<boolean> {
+export async function deletarArquivoLocal(key: string): Promise<boolean> {
   try {
     const deleted = await deleteStorageFile(key);
     if (deleted) {
@@ -13,12 +13,12 @@ export async function deletarArquivoS3(key: string): Promise<boolean> {
   }
 }
 
-export async function deletarVariosArquivosS3(keys: string[]): Promise<{ success: number; failed: number }> {
+export async function deletarVariosArquivosLocais(keys: string[]): Promise<{ success: number; failed: number }> {
   let success = 0;
   let failed = 0;
 
   for (const key of keys) {
-    const resultado = await deletarArquivoS3(key);
+    const resultado = await deletarArquivoLocal(key);
     if (resultado) {
       success++;
     } else {

@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { LoaderFunctionArgs } from '@remix-run/node';
+import type { LoaderFunctionArgs } from '@remix-run/node';
 import { authenticator } from '~/secure/authentication.server';
 import { readStorageFile } from '~/storage/local-storage.server';
 import { resolverLinkPrivadoDocumento } from '~/storage/documento-link.server';
@@ -50,7 +50,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     const url = new URL(request.url);
     const forceDownload = url.searchParams.get('download') === '1';
 
-    return new Response(content, {
+    return new Response(new Uint8Array(content), {
       status: 200,
       headers: {
         'Content-Type': contentType,

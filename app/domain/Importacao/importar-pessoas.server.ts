@@ -3,7 +3,7 @@ import { prisma } from '~/secure/db.server';
 import { Papel, TipoAssociado, AssociacaoStatus } from '@prisma/client';
 import { createRandomPassword } from '~/shared/Password.util';
 import bcrypt from 'bcryptjs';
-import { uploadGoogleDriveToS3 } from '~/storage/google-drive-to-s3.server';
+import { salvarArquivoGoogleDriveLocal } from '~/storage/google-drive-to-local.server';
 import enviarEmailBoasVindas from '../Usuario/enviar-email-boas-vindas.server';
 
 interface LinhaXLSX {
@@ -179,7 +179,7 @@ async function processarLinha(linha: LinhaXLSX, numeroLinha: number) {
       nome_completo: linha['Nome'],
       cpf: linha['CPF'],
       rg: linha['RG'],
-      data_nascimento: dataNascimento,
+      data_nascimento: dataNascimento?.toISOString().slice(0, 10) ?? '',
       sexo: linha['SEXO']?.toUpperCase() === 'MASCULINO' ? 'M' : 'F',
       telefone: linha['Telefone/Whatsapp'],
       endereco_rua: endereco.endereco,
@@ -252,7 +252,7 @@ async function processarDocumentos(perfilId: string, linha: LinhaXLSX) {
     if (doc.url && doc.url.trim()) {
       try {
         // Faz download do Google Drive e salva no storage local
-        const s3Key = await uploadGoogleDriveToS3(doc.url, perfilId);
+        const storageKey = await salvarArquivoGoogleDriveLocal(doc.url, perfilId);
         
         // Busca o associado pelo perfil
         const associado = await prisma.associado.findUnique({
@@ -265,7 +265,7 @@ async function processarDocumentos(perfilId: string, linha: LinhaXLSX) {
             data: {
               associadoId: associado.id,
               tipo: doc.tipo as any,
-              nome_arquivo: s3Key,
+              nome_arquivo: storageKey,
             },
           });
         }
@@ -319,7 +319,7 @@ async function criarResponsavel(linha: LinhaXLSX, dependentePerfilId: string) {
         nome_completo: linha['Nome do responsável - aplicável para o caso de pacientes menores de idade e com doenças neurodegenerativas'],
         cpf: linha['CPF do Responsável'],
         rg: linha['RG do Responsável'],
-        data_nascimento: dataNascimentoResp,
+        data_nascimento: dataNascimentoResp.toISOString().slice(0, 10),
         sexo: linha['Sexo do Responsável']?.toUpperCase() === 'MASCULINO' ? 'M' : 'F',
         telefone: linha['Telefone do responsável com DDD'],
         endereco_rua: enderecoResp.endereco,
@@ -344,7 +344,7 @@ async function criarResponsavel(linha: LinhaXLSX, dependentePerfilId: string) {
     // Processa documento do responsável
     if (linha['Anexe RG do responsável']) {
       try {
-        const s3Key = await uploadGoogleDriveToS3(
+        const storageKey = await salvarArquivoGoogleDriveLocal(
           linha['Anexe RG do responsável'],
           perfilResponsavel.id
         );
@@ -358,7 +358,7 @@ async function criarResponsavel(linha: LinhaXLSX, dependentePerfilId: string) {
             data: {
               associadoId: associadoResp.id,
               tipo: 'IDENTIFICACAO_RESPONSAVEL' as any,
-              nome_arquivo: s3Key,
+              nome_arquivo: storageKey,
             },
           });
         }

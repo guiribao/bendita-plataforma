@@ -1,8 +1,9 @@
-import {
+import type {
   ActionFunction,
   LinksFunction,
   LoaderFunctionArgs,
-  MetaFunction,
+  MetaFunction} from '@remix-run/node';
+import {
   json,
   unstable_parseMultipartFormData,
 } from '@remix-run/node';
@@ -13,7 +14,7 @@ import { authenticator } from '~/secure/authentication.server';
 
 import cadastroStyle from '~/assets/css/cadastro.css';
 import loading from '~/assets/img/loading.gif'
-import { s3UploaderHandler } from '~/storage/s3.service.server';
+import { localUploadHandler } from '~/storage/local-upload.server';
 import criarNovoUsuario from '~/domain/Usuario/criar-novo-usuario.server';
 import { Papel, TipoDocumento } from '@prisma/client';
 import pegarAssociadoPorId from '~/domain/Associado/pegar-por-id.server';
@@ -35,7 +36,16 @@ export const links: LinksFunction = () => {
 };
 
 export const action: ActionFunction = async ({ request }) => {
-  const form = await unstable_parseMultipartFormData(request, s3UploaderHandler);
+  let form: FormData;
+  try {
+    form = await unstable_parseMultipartFormData(request, localUploadHandler);
+  } catch (error) {
+    console.error('Erro ao processar documentos do responsável:', error);
+    return json(
+      { errors: { data: error instanceof Error ? error.message : 'Não foi possível processar os arquivos enviados.' } },
+      { status: 400 }
+    );
+  }
 
   const id_responsavel_1 = form.get('identificacao_responsavel_1');
   const id_responsavel_2 = form.get('identificacao_responsavel_2');
@@ -76,7 +86,7 @@ export const action: ActionFunction = async ({ request }) => {
     const senha = createRandom()
     let papel: Papel = Papel.ASSOCIADO
 
-    const usuario = await criarNovoUsuario(emailResponsavel, senha, papel)
+    const usuario = await criarNovoUsuario(String(emailResponsavel), senha, papel)
 
     const perfil = await criarPerfil({
       nomeCompleto,
@@ -121,7 +131,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function CadastroResponsavel() {
-  const actionData = useActionData();
+  const actionData = useActionData<any>();
   const navigation = useNavigation();
   const navigate = useNavigate();
 

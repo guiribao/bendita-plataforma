@@ -1,19 +1,21 @@
-import {
+import type {
   ActionFunction,
   LinksFunction,
   LoaderFunctionArgs,
-  MetaFunction,
+  MetaFunction} from '@remix-run/node';
+import {
+  json,
   unstable_parseMultipartFormData,
   redirect,
 } from '@remix-run/node';
 import { Form, useActionData, useNavigation, useLoaderData } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
 import { TipoDocumento, Papel } from '@prisma/client';
-import { Button, Card, Col, Container, Form as BootstrapForm, ProgressBar, Row, Alert } from 'react-bootstrap';
+import { Button, Card, Col, Container, Form as BootstrapForm, Row, Alert } from 'react-bootstrap';
 import LayoutRestrictArea from '~/component/layout/LayoutRestrictArea';
 import { authenticator } from '~/secure/authentication.server';
 import { prisma } from '~/secure/db.server';
-import { s3UploaderHandler } from '~/storage/s3.service.server';
+import { localUploadHandler } from '~/storage/local-upload.server';
 import criarDocumento from '~/domain/Documentos/criar-documento.server';
 import cadastroStyle from '~/assets/css/cadastro.css';
 
@@ -73,12 +75,17 @@ export const action: ActionFunction = async ({ request }) => {
   });
 
   // Apenas associados podem fazer upload
-  if (usuario.papel !== Papel.ASSOCIADO) {
+  if (usuario.papel !== Papel.ASSOCIADO && usuario.papel !== Papel.ASSOCIADO_DEPENDENTE) {
     throw new Error('Acesso negado. Apenas associados podem fazer upload de documentos.');
   }
 
-  // Parse multipart form data com upload para S3
-  const form = await unstable_parseMultipartFormData(request, s3UploaderHandler);
+  let form: FormData;
+  try {
+    form = await unstable_parseMultipartFormData(request, localUploadHandler);
+  } catch (error) {
+    console.error('Erro ao processar upload de documentos:', error);
+    return json({ error: error instanceof Error ? error.message : 'Não foi possível processar os arquivos enviados.' }, { status: 400 });
+  }
 
   // Buscar perfil do usuário para obter associado
   const perfil = await prisma.perfil.findUnique({
@@ -108,7 +115,10 @@ export const action: ActionFunction = async ({ request }) => {
           associadoId: associadoId,
           criadoPorId: perfilId,
         };
-        await criarDocumento(documentoObj);
+        const documentoCriado = await criarDocumento(documentoObj);
+        if (!documentoCriado) {
+          throw new Error('Não foi possível registrar o documento.');
+        }
         uploadedDocuments.push(config.label);
       } catch (error) {
         errors.push(`Erro ao fazer upload de ${config.label}: ${error}`);
@@ -134,7 +144,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   });
 
   // Apenas associados podem acessar
-  if (usuario.papel !== Papel.ASSOCIADO) {
+  if (usuario.papel !== Papel.ASSOCIADO && usuario.papel !== Papel.ASSOCIADO_DEPENDENTE) {
     throw redirect('/app/documentos');
   }
 
@@ -185,7 +195,7 @@ export default function DocumentoNovoPage() {
   }, [actionData?.success]);
 
   return (
-    <LayoutRestrictArea usuarioSistema={usuario}>
+    <LayoutRestrictArea usuarioSistema={usuario as any}>
       <Container fluid className='app-content'>
         <Row className='align-items-center mt-3 mb-4'>
           <Col>
@@ -281,7 +291,7 @@ export default function DocumentoNovoPage() {
                             const file = (e.target as HTMLInputElement).files?.[0] || null;
                             handleFileChange(config.fieldName, file);
                           }}
-                          ref={(el) => {
+                          ref={(el: HTMLInputElement | null) => {
                             if (el) fileInputRefs.current[config.fieldName] = el;
                           }}
                           disabled={isSubmitting}

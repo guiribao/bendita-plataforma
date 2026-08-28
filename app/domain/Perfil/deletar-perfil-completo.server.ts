@@ -1,5 +1,5 @@
 import { prisma } from '~/secure/db.server';
-import { deletarVariosArquivosS3 } from '~/storage/s3-delete.server';
+import { deletarVariosArquivosLocais } from '~/storage/local-delete.server';
 
 export default async function deletarPerfilCompleto(perfilId: string): Promise<{ success: boolean; message: string }> {
   try {
@@ -31,14 +31,14 @@ export default async function deletarPerfilCompleto(perfilId: string): Promise<{
       return { success: false, message: 'Perfil não encontrado.' };
     }
 
-    // 2. Coletar URLs dos arquivos S3 para deletar
-    const arquivosS3: string[] = [];
+    // 2. Coletar chaves dos arquivos locais para deletar
+    const arquivosLocais: string[] = [];
     
     // Documentos do próprio associado
     if (perfil.Associacao?.Documentos) {
       perfil.Associacao.Documentos.forEach((doc) => {
         if (doc.nome_arquivo) {
-          arquivosS3.push(doc.nome_arquivo);
+          arquivosLocais.push(doc.nome_arquivo);
         }
       });
     }
@@ -48,7 +48,7 @@ export default async function deletarPerfilCompleto(perfilId: string): Promise<{
       perfil.Dependentes.forEach((dependente) => {
         dependente.Documentos.forEach((doc) => {
           if (doc.nome_arquivo) {
-            arquivosS3.push(doc.nome_arquivo);
+            arquivosLocais.push(doc.nome_arquivo);
           }
         });
       });
@@ -57,19 +57,19 @@ export default async function deletarPerfilCompleto(perfilId: string): Promise<{
     // Documentos criados por este perfil (mas que pertencem a outros associados)
     if (perfil.Documentos) {
       perfil.Documentos.forEach((doc) => {
-        if (doc.nome_arquivo && !arquivosS3.includes(doc.nome_arquivo)) {
-          arquivosS3.push(doc.nome_arquivo);
+        if (doc.nome_arquivo && !arquivosLocais.includes(doc.nome_arquivo)) {
+          arquivosLocais.push(doc.nome_arquivo);
         }
       });
     }
 
     console.log(`[${new Date().toISOString()}] Iniciando deleção do perfil: ${perfil.nome_completo} (${perfilId})`);
-    console.log(`[${new Date().toISOString()}] Total de arquivos S3 a deletar: ${arquivosS3.length}`);
+    console.log(`[${new Date().toISOString()}] Total de arquivos locais a deletar: ${arquivosLocais.length}`);
 
-    // 3. Deletar arquivos do S3
-    if (arquivosS3.length > 0) {
-      const resultadoS3 = await deletarVariosArquivosS3(arquivosS3);
-      console.log(`[${new Date().toISOString()}] Arquivos S3 deletados: ${resultadoS3.success}/${arquivosS3.length}`);
+    // 3. Deletar arquivos locais
+    if (arquivosLocais.length > 0) {
+      const resultadoArquivos = await deletarVariosArquivosLocais(arquivosLocais);
+      console.log(`[${new Date().toISOString()}] Arquivos locais deletados: ${resultadoArquivos.success}/${arquivosLocais.length}`);
     }
 
     // 4. Deletar em ordem (respeitar constraints de FK)
@@ -179,7 +179,7 @@ export default async function deletarPerfilCompleto(perfilId: string): Promise<{
 
     return { 
       success: true, 
-      message: `Perfil de ${perfil.nome_completo}${mensagemDependentes} foi deletado com sucesso, incluindo ${arquivosS3.length} arquivo(s).` 
+      message: `Perfil de ${perfil.nome_completo}${mensagemDependentes} foi deletado com sucesso, incluindo ${arquivosLocais.length} arquivo(s).`
     };
 
   } catch (error) {

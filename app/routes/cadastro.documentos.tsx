@@ -1,8 +1,9 @@
-import {
+import type {
   ActionFunction,
   LinksFunction,
   LoaderFunctionArgs,
-  MetaFunction,
+  MetaFunction} from '@remix-run/node';
+import {
   json,
   unstable_parseMultipartFormData
 } from '@remix-run/node';
@@ -16,7 +17,7 @@ import cadastroStyle from '~/assets/css/cadastro.css';
 import loading from '~/assets/img/loading.gif';
 import identificationImg from '~/assets/img/undraw/docs_inspection.svg';
 import residencyImg from '~/assets/img/undraw/home_sweet_home.svg';
-import { s3UploaderHandler } from '~/storage/s3.service.server';
+import { localUploadHandler } from '~/storage/local-upload.server';
 import { TipoDocumento } from '@prisma/client';
 import criarDocumento from '~/domain/Documentos/criar-documento.server';
 import pegarAssociadoPorId from '~/domain/Associado/pegar-por-id.server';
@@ -33,7 +34,16 @@ export const links: LinksFunction = () => {
 };
 
 export const action: ActionFunction = async ({ request }) => {
-  const form = await unstable_parseMultipartFormData(request, s3UploaderHandler);
+  let form: FormData;
+  try {
+    form = await unstable_parseMultipartFormData(request, localUploadHandler);
+  } catch (error) {
+    console.error('Erro ao processar documentos do cadastro:', error);
+    return json(
+      { errors: { data: error instanceof Error ? error.message : 'Não foi possível processar os arquivos enviados.' } },
+      { status: 400 }
+    );
+  }
 
   const identificacao_1 = form.get('identificacao_1');
   const identificacao_2 = form.get('identificacao_2');
@@ -101,7 +111,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function CadastroAnexos() {
-  const actionData = useActionData();
+  const actionData = useActionData<any>();
   const navigation = useNavigation();
   const navigate = useNavigate()
   const isSubmitting = ['submitting', 'loading'].includes(navigation.state);

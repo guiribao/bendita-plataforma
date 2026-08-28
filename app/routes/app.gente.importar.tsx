@@ -1,25 +1,23 @@
 //@ts-nocheck
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from '@remix-run/node';
+import type { ActionFunctionArgs, LoaderFunctionArgs} from '@remix-run/node';
+import { json } from '@remix-run/node';
 import { useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import { useState } from 'react';
 import { Button, Card, Alert, ProgressBar, ListGroup } from 'react-bootstrap';
 import NavRestrictArea from '~/component/NavRestrictArea';
 import LayoutRestrictArea from '~/component/layout/LayoutRestrictArea';
 import { importarPessoas } from '~/domain/Importacao/importar-pessoas.server';
-import { authenticator } from '~/secure/authentication.server';
+import { requireRoles } from '~/secure/require-role.server';
+import { Papel } from '@prisma/client';
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const usuario = await authenticator.isAuthenticated(request, {
-    failureRedirect: '/autentica/entrar',
-  });
+  const usuario = await requireRoles(request, [Papel.ADMIN, Papel.SECRETARIA]);
 
   return json({ usuario });
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  await authenticator.isAuthenticated(request, {
-    failureRedirect: '/autentica/entrar',
-  });
+  await requireRoles(request, [Papel.ADMIN, Papel.SECRETARIA]);
 
   try {
     const formData = await request.formData();
@@ -34,6 +32,10 @@ export async function action({ request }: ActionFunctionArgs) {
         { erro: 'Formato de arquivo inválido. Por favor, envie um arquivo XLSX.' },
         { status: 400 }
       );
+    }
+
+    if (arquivo.size > 10 * 1024 * 1024) {
+      return json({ erro: 'Arquivo muito grande. O limite para importação é 10 MB.' }, { status: 413 });
     }
 
     const resultados = await importarPessoas(arquivo);

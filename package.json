@@ -16,8 +16,6 @@
     "test:only": "node --test --test-concurrency=1 \"tests/*.test.mjs\""
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.556.0",
-    "@aws-sdk/s3-request-presigner": "^3.564.0",
     "@mona-health/react-input-mask": "^3.0.3",
     "@prisma/client": "^6.3.0",
     "@remix-run/css-bundle": "^2.8.0",

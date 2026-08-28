@@ -1,4 +1,5 @@
-import { EscopoPermissaoDocumento, Papel, TipoDocumento } from '@prisma/client';
+import type { TipoDocumento } from '@prisma/client';
+import { EscopoPermissaoDocumento, Papel } from '@prisma/client';
 import { prisma } from '~/secure/db.server';
 
 type DocumentoComDono = {

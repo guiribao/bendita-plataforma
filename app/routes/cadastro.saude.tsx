@@ -1,8 +1,9 @@
-import {
+import type {
   ActionFunction,
   LinksFunction,
   LoaderFunctionArgs,
-  MetaFunction,
+  MetaFunction} from '@remix-run/node';
+import {
   json,
   unstable_parseMultipartFormData
 } from '@remix-run/node';
@@ -10,7 +11,7 @@ import { Form, useActionData, useNavigate, useNavigation } from '@remix-run/reac
 import { useEffect, useRef, useState } from 'react';
 
 import { authenticator } from '~/secure/authentication.server';
-import { s3UploaderHandler } from '~/storage/s3.service.server';
+import { localUploadHandler } from '~/storage/local-upload.server';
 
 import cadastroStyle from '~/assets/css/cadastro.css';
 import loading from '~/assets/img/loading.gif';
@@ -32,7 +33,16 @@ export const links: LinksFunction = () => {
 };
 
 export const action: ActionFunction = async ({ request }) => {
-  const form = await unstable_parseMultipartFormData(request, s3UploaderHandler);
+  let form: FormData;
+  try {
+    form = await unstable_parseMultipartFormData(request, localUploadHandler);
+  } catch (error) {
+    console.error('Erro ao processar documentos de saúde:', error);
+    return json(
+      { errors: { data: error instanceof Error ? error.message : 'Não foi possível processar os arquivos enviados.' } },
+      { status: 400 }
+    );
+  }
 
   const receitaUsoCanabis = form.get('receita_uso_canabis')
   const autorizacaoAnvisa = form.get('autorizacao_anvisa')
@@ -112,7 +122,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function CadastroSaude() {
-  const actionData = useActionData();
+  const actionData = useActionData<any>();
   const navigation = useNavigation();
   const navigate = useNavigate();
 
@@ -152,8 +162,9 @@ export default function CadastroSaude() {
     if (actionData?.uploaded) navigate('/cadastro/responsavel')
   }, [actionData])
 
-  function resizeTextarea(event) {
-    if (event.target.scrollHeight > event.target.offsetHeight) event.target.rows += 1
+  function resizeTextarea(event: React.FormEvent<HTMLTextAreaElement>) {
+    const textarea = event.currentTarget;
+    if (textarea.scrollHeight > textarea.offsetHeight) textarea.rows += 1
   }
 
   return <Form method='post' className='step-group' name="saude" encType='multipart/form-data'>

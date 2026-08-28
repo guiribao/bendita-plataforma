@@ -1,4 +1,5 @@
-import { Documentos, TipoDocumento, Usuario, Papel } from '@prisma/client';
+import type { Documentos, Usuario} from '@prisma/client';
+import { TipoDocumento, Papel } from '@prisma/client';
 import { json } from '@remix-run/node';
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';

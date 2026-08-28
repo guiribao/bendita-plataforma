@@ -1,4 +1,5 @@
 import Jimp from 'jimp';
+import type { UploadHandler } from '@remix-run/node';
 import { gerarUuid } from '~/shared/Uuid.util';
 import { writeStorageFile } from './local-storage.server';
 
@@ -7,28 +8,23 @@ const FILE_FIELDS = ['identificacao_1', 'identificacao_2', 'comprovante_residenc
   'receita_uso_canabis', 'autorizacao_anvisa', 'identificacao_responsavel_1', 'identificacao_responsavel_2'];
 const FILE_FORMAT = ['image/jpeg', 'image/png', 'application/pdf'];
 
-const uploadStreamToS3 = async (data: Buffer, key: string, _contentType: string) => {
-  try {
-    await writeStorageFile(key, data);
-    return key;
-  } catch (error) {
-    console.warn(error);
-    return;
-  }
+const uploadStorageFile = async (data: Buffer, key: string) => {
+  await writeStorageFile(key, data);
+  return key;
 };
 
-async function convertToBuffer(a: AsyncIterable<Uint8Array>) {
-  const result = [];
-  for await (const chunk of a) {
+async function convertToBuffer(data: AsyncIterable<Uint8Array>) {
+  const result: Uint8Array[] = [];
+  for await (const chunk of data) {
     result.push(chunk);
   }
 
   return Buffer.concat(result);
 }
 
-async function convertToString(a: AsyncIterable<Uint8Array>) {
-  const result = [];
-  for await (const letter of a) {
+async function convertToString(data: AsyncIterable<Uint8Array>) {
+  const result: string[] = [];
+  for await (const letter of data) {
     result.push(new TextDecoder().decode(letter));
   }
 
@@ -36,8 +32,7 @@ async function convertToString(a: AsyncIterable<Uint8Array>) {
 }
 
 
-//@ts-ignore
-export const s3UploaderHandler = async ({ name, data, filename, contentType }) => {
+export const localUploadHandler: UploadHandler = async ({ name, data, filename, contentType }) => {
   let finalFile = null;
 
   // Se não for um campo de arquivo (sem filename), retornar o valor como string
@@ -53,11 +48,10 @@ export const s3UploaderHandler = async ({ name, data, filename, contentType }) =
   if (!FILE_FORMAT.includes(contentType))
     throw new Error(`${name}: formato do arquivo é inválido\nUtilize JPG, PNG ou PDF.`);
 
-  //@ts-ignore
   let fileBuffer = await convertToBuffer(data);
   let folderAndFile = '';
 
-  if (fileBuffer.length === 0 || !data)
+  if (fileBuffer.length === 0)
     throw new Error(`${name}: arquivo inválido.`);
 
 
@@ -155,9 +149,5 @@ export const s3UploaderHandler = async ({ name, data, filename, contentType }) =
   if (!folderAndFile.length)
     throw new Error(`${name}: Erro ao processar upload do arquivo.`);
 
-  return await uploadStreamToS3(finalFile!, folderAndFile!, contentType);
+  return await uploadStorageFile(finalFile!, folderAndFile!);
 };
-
-export async function getObjectUrlFromS3(key: string) {
-  return key;
-}

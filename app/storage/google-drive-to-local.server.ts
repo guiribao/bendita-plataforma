@@ -26,7 +26,7 @@ function extrairIdGoogleDrive(url: string): string | null {
 /**
  * Faz download de um arquivo do Google Drive e salva no storage local
  */
-export async function uploadGoogleDriveToS3(
+export async function salvarArquivoGoogleDriveLocal(
   googleDriveUrl: string,
   perfilId: string
 ): Promise<string> {
@@ -44,6 +44,8 @@ export async function uploadGoogleDriveToS3(
     const response = await axios.get(downloadUrl, {
       responseType: 'arraybuffer',
       maxRedirects: 5,
+      maxContentLength: 5 * 1024 * 1024,
+      maxBodyLength: 5 * 1024 * 1024,
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
       },
@@ -62,10 +64,10 @@ export async function uploadGoogleDriveToS3(
     // Gera nome único para o arquivo
     const timestamp = Date.now();
     const nomeArquivo = `importacao-${timestamp}${extensao}`;
-    const s3Key = `${STORAGE_ENV}/documentos/importacao/${perfilId}/${nomeArquivo}`;
-    await writeStorageFile(s3Key, Buffer.from(response.data));
+    const storageKey = `${STORAGE_ENV}/documentos/importacao/${perfilId}/${nomeArquivo}`;
+    await writeStorageFile(storageKey, Buffer.from(response.data));
 
-    return s3Key;
+    return storageKey;
   } catch (erro: any) {
     console.error('Erro ao transferir arquivo do Google Drive para storage local:', erro);
     throw new Error(`Falha ao processar arquivo do Google Drive: ${erro.message}`);

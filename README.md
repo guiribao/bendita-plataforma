@@ -36,3 +36,10 @@ Make sure to deploy the output of `remix build`
 
 - `build/`
 - `public/build/`
+
+## Armazenamento e e-mail
+
+Uploads e documentos são gravados localmente em `storage-private/`. O projeto
+não usa S3 para arquivos. Os pacotes `@aws-sdk/*` que aparecem no lockfile são
+dependências transitivas do transporte de e-mail SES usado por `nodemailer`,
+quando configurado, e não participam do fluxo de upload.

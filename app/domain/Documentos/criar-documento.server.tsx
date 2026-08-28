@@ -1,4 +1,3 @@
-import { Associado } from '@prisma/client';
 import { prisma } from '~/secure/db.server';
 
 //@ts-ignore

@@ -62,7 +62,7 @@ Para cada linha do XLSX, o sistema:
 2. **Cria o usuário** com papel ASSOCIADO e senha aleatória
 3. **Cria o perfil** com todos os dados pessoais
 4. **Cria a associação** com status ASSOCIADO e termo aceito
-5. **Faz download dos documentos** do Google Drive e upload para S3
+5. **Faz download dos documentos** do Google Drive e salva no storage local
 6. **Cria registros de documentos** vinculados ao associado
 7. **Se houver responsável**, cria ou vincula o responsável
 8. **Envia email de boas-vindas** com credenciais de acesso
@@ -76,7 +76,7 @@ O sistema aceita URLs do Google Drive nos seguintes formatos:
 
 Os arquivos serão automaticamente:
 1. Baixados do Google Drive
-2. Enviados para o bucket S3
+2. Salvos em `storage-private/{NODE_ENV}/documentos/importacao`
 3. Registrados no banco de dados com tipo apropriado
 
 ## Tipos de Documentos
@@ -119,7 +119,7 @@ Se houver dados de responsável preenchidos:
 - Senhas são enviadas por email
 - Usuários devem alterar a senha no primeiro acesso
 - Todas as credenciais são hashadas com bcrypt
-- Documentos são armazenados no S3 privado
+- Documentos são armazenados no diretório privado local `storage-private`
 
 ## Exemplos de Valores
 

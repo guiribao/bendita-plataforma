@@ -1,11 +1,12 @@
 //@ts-nocheck
-import {
-  Papel,
-  TipoDocumento,
+import type {
   Usuario,
   Perfil,
   Associado,
-  Documentos,
+  Documentos} from '@prisma/client';
+import {
+  Papel,
+  TipoDocumento
 } from '@prisma/client';
 import { json, redirect, unstable_parseMultipartFormData } from '@remix-run/node';
 import type { ActionFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
@@ -29,7 +30,6 @@ import {
 } from 'react-bootstrap';
 import LayoutRestrictArea from '~/component/layout/LayoutRestrictArea';
 import { InputMaskClient } from '~/component/InputMaskClient';
-import { authenticator } from '~/secure/authentication.server';
 import { brStringToIsoString, brDataFromIsoString } from '~/shared/DateTime.util';
 import { buscarEnderecoViaCep } from '~/shared/Address.util';
 import paises from '~/assets/paises.json';
@@ -39,10 +39,11 @@ import criarAssociado from '~/domain/Associado/criar-associado.server';
 import atualizarSaudeAssociado from '~/domain/Associado/atualizar-saude-associado.server';
 import atualizarIndicacaoAssociado from '~/domain/Associado/atualizar-indicacao-associado.server';
 import criarDocumento from '~/domain/Documentos/criar-documento.server';
-import { s3UploaderHandler } from '~/storage/s3.service.server';
+import { localUploadHandler } from '~/storage/local-upload.server';
 import pegarUsuarioPeloEmail from '~/domain/Usuario/pegar-usuario-pelo-email.server';
 import perfilPorCpf from '~/domain/Perfil/perfil-por-cpf.server';
 import { prisma } from '~/secure/db.server';
+import { requireRoles } from '~/secure/require-role.server';
 
 export const meta: MetaFunction = () => {
   return [
@@ -55,13 +56,20 @@ export const meta: MetaFunction = () => {
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
+  const usuarioAtual = await requireRoles(request, [Papel.ADMIN, Papel.SECRETARIA]);
   const perfilId = params.id;
 
   if (!perfilId) {
     return redirect('/app/gente');
   }
 
-  const form = await unstable_parseMultipartFormData(request, s3UploaderHandler);
+  let form: FormData;
+  try {
+    form = await unstable_parseMultipartFormData(request, localUploadHandler);
+  } catch (error) {
+    console.error('Erro ao processar documentos da edição de perfil:', error);
+    return json({ error: error instanceof Error ? error.message : 'Não foi possível processar os arquivos enviados.' }, { status: 400 });
+  }
 
   const email = form.get('email');
   const papel = form.get('papel') as Papel;
@@ -117,6 +125,12 @@ export const action: ActionFunction = async ({ request, params }) => {
     return json({
       errors: { data: 'Perfil não encontrado.' },
     });
+  }
+
+  if (papel !== perfilExistente.usuario.papel && usuarioAtual.papel !== Papel.ADMIN) {
+    return json({
+      errors: { data: 'Somente administradores podem alterar o papel do usuário.' },
+    }, { status: 403 });
   }
 
   // Verificar se email mudou e se já existe
@@ -282,9 +296,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  let usuario = await authenticator.isAuthenticated(request, {
-    failureRedirect: '/autentica/entrar',
-  });
+  let usuario = await requireRoles(request, [Papel.ADMIN, Papel.SECRETARIA]);
 
   const perfilId = params.id;
 

@@ -1,8 +1,9 @@
 //@ts-nocheck
+import type {
+  Usuario} from '@prisma/client';
 import {
   Papel,
-  TipoDocumento,
-  Usuario,
+  TipoDocumento
 } from '@prisma/client';
 import { json, unstable_parseMultipartFormData } from '@remix-run/node';
 import type { ActionFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
@@ -25,7 +26,7 @@ import {
 } from 'react-bootstrap';
 import LayoutRestrictArea from '~/component/layout/LayoutRestrictArea';
 import { InputMaskClient } from '~/component/InputMaskClient';
-import { authenticator } from '~/secure/authentication.server';
+import { requireRoles } from '~/secure/require-role.server';
 import { brStringToIsoString, verificarIdade } from '~/shared/DateTime.util';
 import { buscarEnderecoViaCep } from '~/shared/Address.util';
 import paises from '~/assets/paises.json';
@@ -34,7 +35,7 @@ import criarPerfil from '~/domain/Perfil/criar-perfil.server';
 import criarAssociado from '~/domain/Associado/criar-associado.server';
 import atualizarSaudeAssociado from '~/domain/Associado/atualizar-saude-associado.server';
 import criarDocumento from '~/domain/Documentos/criar-documento.server';
-import { s3UploaderHandler } from '~/storage/s3.service.server';
+import { localUploadHandler } from '~/storage/local-upload.server';
 import pegarUsuarioPeloEmail from '~/domain/Usuario/pegar-usuario-pelo-email.server';
 import perfilPorCpf from '~/domain/Perfil/perfil-por-cpf.server';
 import enviarEmailBoasVindas from '~/domain/Usuario/enviar-email-boas-vindas.server';
@@ -51,7 +52,14 @@ export const meta: MetaFunction = () => {
 };
 
 export const action: ActionFunction = async ({ request }) => {
-  const form = await unstable_parseMultipartFormData(request, s3UploaderHandler);
+  await requireRoles(request, [Papel.ADMIN, Papel.SECRETARIA]);
+  let form: FormData;
+  try {
+    form = await unstable_parseMultipartFormData(request, localUploadHandler);
+  } catch (error) {
+    console.error('Erro ao processar documentos do novo perfil:', error);
+    return json({ error: error instanceof Error ? error.message : 'Não foi possível processar os arquivos enviados.' }, { status: 400 });
+  }
 
   const email = form.get('email') as string;
   const papel = form.get('papel') as Papel;
@@ -255,9 +263,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  let usuario = await authenticator.isAuthenticated(request, {
-    failureRedirect: '/autentica/entrar',
-  });
+  let usuario = await requireRoles(request, [Papel.ADMIN, Papel.SECRETARIA]);
 
   return json({ usuario });
 }
