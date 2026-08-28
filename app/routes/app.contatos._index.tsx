@@ -19,9 +19,11 @@ import {
 import LayoutRestrictArea from '~/component/layout/LayoutRestrictArea';
 import { authenticator } from '~/secure/authentication.server';
 import { prisma } from '~/secure/db.server';
-import { Papel, Usuario, Remetente } from '@prisma/client';
+import type { Usuario} from '@prisma/client';
+import { Papel, Remetente } from '@prisma/client';
 import enviarEmailResposta from '~/domain/Contatos/enviar-email-resposta.server';
 import { useRootLoaderData } from '~/hooks/useRootLoaderData';
+import { requireRoles } from '~/secure/require-role.server';
 
 export const meta: MetaFunction = () => {
   return [
@@ -34,9 +36,7 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const usuario = await authenticator.isAuthenticated(request, {
-    failureRedirect: '/autentica/entrar',
-  });
+  const usuario = await requireRoles(request, [Papel.SAUDE, Papel.SECRETARIA, Papel.ADMIN]);
 
   // Buscar todos os contatos com suas mensagens
   const contatos = await prisma.contato.findMany({

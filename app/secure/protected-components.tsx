@@ -1,5 +1,5 @@
 import React from 'react';
-import { Papel } from '@prisma/client';
+import type { Papel } from '@prisma/client';
 import { canAccess } from './authorization';
 
 interface ProtectedRouteProps {

@@ -2,13 +2,12 @@
 import { json, redirect } from '@remix-run/node';
 import type { ActionFunction } from '@remix-run/node';
 import deletarPerfilCompleto from '~/domain/Perfil/deletar-perfil-completo.server';
-import { authenticator } from '~/secure/authentication.server';
+import { Papel } from '@prisma/client';
+import { requireRoles } from '~/secure/require-role.server';
 
 export const action: ActionFunction = async ({ request, params }) => {
   // Verificar autenticação
-  await authenticator.isAuthenticated(request, {
-    failureRedirect: '/autentica/entrar',
-  });
+  await requireRoles(request, [Papel.ADMIN]);
 
   const perfilId = params.id;
 

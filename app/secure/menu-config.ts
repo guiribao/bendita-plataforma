@@ -1,4 +1,4 @@
-import { Papel } from "@prisma/client";
+import type { Papel } from "@prisma/client";
 
 import { PaginasPorPapel } from "./permissions";
 export interface MenuItemConfig {
@@ -68,7 +68,7 @@ export const MenuItems: MenuItemConfig[] = [
 export function getMenuItemsForRole(papelUsuario: string | Papel): MenuItemConfig[] {
   return MenuItems.filter((item) => {
     const permissoes = PaginasPorPapel[item.path as keyof typeof PaginasPorPapel];
-    return permissoes && permissoes.includes(papelUsuario as any);
+    return Boolean(permissoes && (permissoes as readonly (string | Papel)[]).includes(papelUsuario));
   }).filter((item) => item.ativo !== false);
 }
 

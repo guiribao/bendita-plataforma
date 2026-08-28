@@ -61,7 +61,8 @@ export const PaginasPorPapel = {
   "/app/financeiro": [
     Papel.SECRETARIA,
     Papel.ADMIN,
-    Papel.ASSOCIADO
+    Papel.ASSOCIADO,
+    Papel.ASSOCIADO_DEPENDENTE,
   ],
   "/app/medicacao": [
     Papel.SAUDE,
@@ -76,6 +77,7 @@ export const PaginasPorPapel = {
     Papel.SECRETARIA,
     Papel.ADMIN,
     Papel.ASSOCIADO,
+    Papel.ASSOCIADO_DEPENDENTE,
   ]
 };
 

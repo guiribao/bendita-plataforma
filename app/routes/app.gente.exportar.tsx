@@ -1,13 +1,12 @@
 //@ts-nocheck
-import { LoaderFunctionArgs } from '@remix-run/node';
-import { authenticator } from '~/secure/authentication.server';
+import type { LoaderFunctionArgs } from '@remix-run/node';
+import { requireRoles } from '~/secure/require-role.server';
+import { Papel } from '@prisma/client';
 import { gerarPDFPessoas } from '~/domain/Exportacao/exportar-pessoas-pdf.server';
 
 export async function loader({ request }: LoaderFunctionArgs) {
   // Verifica autenticação
-  await authenticator.isAuthenticated(request, {
-    failureRedirect: '/autentica/entrar',
-  });
+  await requireRoles(request, [Papel.ADMIN, Papel.SECRETARIA]);
 
   try {
     // Gera o PDF

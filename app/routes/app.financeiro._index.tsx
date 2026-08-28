@@ -1,4 +1,5 @@
-import { json, LoaderFunctionArgs, ActionFunctionArgs, redirect } from "@remix-run/node";
+import type { LoaderFunctionArgs, ActionFunctionArgs} from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData, useSearchParams, useNavigation, useActionData } from "@remix-run/react";
 import { Badge, Button, Card, Col, Container, Row, Table, Alert } from "react-bootstrap";
 import { format, parseISO, startOfMonth, endOfMonth, addMonths } from "date-fns";
@@ -6,17 +7,16 @@ import { ptBR } from "date-fns/locale";
 import LayoutRestrictArea from "~/component/layout/LayoutRestrictArea";
 import { prisma } from "~/secure/db.server";
 import { authenticator } from "~/secure/authentication.server";
-import { Papel } from "@prisma/client";
+import { Papel, Prisma } from "@prisma/client";
 import { formatarMoeda } from "~/shared/Number.util";
 import { RoleBasedRender } from "~/secure/protected-components";
+import { requireRoles } from "~/secure/require-role.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const usuario = await authenticator.isAuthenticated(request, {
-    failureRedirect: "/autentica/entrar",
-  });
+  const usuario = await requireRoles(request, [Papel.ASSOCIADO, Papel.ASSOCIADO_DEPENDENTE, Papel.SECRETARIA, Papel.ADMIN]);
 
   const isAdmin = usuario?.papel === Papel.ADMIN || usuario?.papel === Papel.SECRETARIA || usuario?.papel === Papel.SAUDE;
-  const isAssociado = usuario?.papel === Papel.ASSOCIADO;
+  const isAssociado = usuario?.papel === Papel.ASSOCIADO || usuario?.papel === Papel.ASSOCIADO_DEPENDENTE;
 
   // Se for associado, buscar apenas seus próprios pagamentos
   if (isAssociado) {
@@ -246,7 +246,7 @@ export async function action({ request }: ActionFunctionArgs) {
     failureRedirect: "/autentica/entrar",
   });
 
-  if (usuario.papel !== Papel.ASSOCIADO) {
+  if (usuario.papel !== Papel.ASSOCIADO && usuario.papel !== Papel.ASSOCIADO_DEPENDENTE) {
     return json({ error: "Acesso negado" }, { status: 403 });
   }
 
@@ -292,35 +292,42 @@ export async function action({ request }: ActionFunctionArgs) {
       return json({ error: "Você já possui um plano ativo" }, { status: 400 });
     }
 
-    const mensalidadeNoMes = await prisma.pagamento.findFirst({
-      where: {
-        associadoId: associado.id,
-        data_pagamento: {
-          gte: inicioMesAtual,
-          lte: fimMesAtual,
-        },
-        observacao: {
-          contains: "Mensalidade",
-          mode: "insensitive",
-        },
-      },
-    });
-
-    if (mensalidadeNoMes) {
-      return json({ error: "Você já possui mensalidade registrada neste mês" }, { status: 400 });
-    }
-
     // Criar pagamento de aporte social (valor 0)
     const proximoVencimento = addMonths(hoje, 1);
 
-    await prisma.pagamento.create({
-      data: {
-        associadoId: associado.id,
-        valor: 0,
-        proximo_vencimento: proximoVencimento,
-        observacao: "Mensalidade social - Aporte social solicitado pelo associado",
-      },
-    });
+    try {
+      await prisma.$transaction(async (tx) => {
+        const mensalidadeNoMes = await tx.pagamento.findFirst({
+          where: {
+            associadoId: associado.id,
+            data_pagamento: { gte: inicioMesAtual, lte: fimMesAtual },
+            observacao: { contains: "Mensalidade", mode: "insensitive" },
+          },
+        });
+
+        if (mensalidadeNoMes) {
+          throw new Error("PAGAMENTO_JA_REGISTRADO");
+        }
+
+        await tx.pagamento.create({
+          data: {
+            associadoId: associado.id,
+            valor: 0,
+            proximo_vencimento: proximoVencimento,
+            observacao: "Mensalidade social - Aporte social solicitado pelo associado",
+          },
+        });
+      }, {
+        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+        maxWait: 5000,
+        timeout: 10000,
+      });
+    } catch (error: any) {
+      if (error?.message === "PAGAMENTO_JA_REGISTRADO" || error?.code === "P2034") {
+        return json({ error: "Você já possui mensalidade registrada neste mês" }, { status: 409 });
+      }
+      throw error;
+    }
 
     return json({ success: true, message: "Aporte social solicitado com sucesso!" });
   }
@@ -346,7 +353,7 @@ export default function Financeiro() {
     associado,
   } = useLoaderData<typeof loader>();
 
-  const actionData = useActionData<typeof action>();
+  const actionData = useActionData<any>();
   const navigation = useNavigation();
   const [searchParams] = useSearchParams();
 
@@ -462,7 +469,7 @@ export default function Financeiro() {
                           </tr>
                         </thead>
                         <tbody>
-                          {meusPagamentos.map((pagamento) => {
+                          {(meusPagamentos as any[]).filter((pagamento) => pagamento !== null).map((pagamento: any) => {
                             const hoje = new Date();
                             hoje.setHours(0, 0, 0, 0);
                             const vencimento = new Date(pagamento.proximo_vencimento);
@@ -744,7 +751,7 @@ export default function Financeiro() {
                         </tr>
                       </thead>
                       <tbody>
-                        {pagamentos.map((pagamento) => {
+                        {(pagamentos as any[]).filter((pagamento) => pagamento !== null).map((pagamento: any) => {
                           const hoje = new Date();
                           hoje.setHours(0, 0, 0, 0);
                           const vencimento = new Date(pagamento.proximo_vencimento);

@@ -1,4 +1,5 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { useLoaderData, Link } from "@remix-run/react";
 import { Badge, Button, Card, Col, Container, Row, Table, ProgressBar } from "react-bootstrap";
 import { format } from "date-fns";
@@ -9,11 +10,10 @@ import { authenticator } from "~/secure/authentication.server";
 import { Papel } from "@prisma/client";
 import { formatarMoeda } from "~/shared/Number.util";
 import { RoleBasedRender } from "~/secure/protected-components";
+import { requireRoles } from "~/secure/require-role.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const usuario = await authenticator.isAuthenticated(request, {
-    failureRedirect: "/autentica/entrar",
-  });
+  const usuario = await requireRoles(request, [Papel.ASSOCIADO, Papel.SAUDE, Papel.ADMIN]);
 
   const isAdmin = usuario?.papel === Papel.ADMIN;
   const isSecretaria = usuario?.papel === Papel.SECRETARIA;
@@ -98,7 +98,7 @@ export default function Medicacao() {
     useLoaderData<typeof loader>();
 
   return (
-    <LayoutRestrictArea usuarioSistema={usuario}>
+    <LayoutRestrictArea usuarioSistema={usuario as any}>
       <Container fluid className="app-content">
         <Row className="align-items-center mt-3 mb-4">
           <Col>

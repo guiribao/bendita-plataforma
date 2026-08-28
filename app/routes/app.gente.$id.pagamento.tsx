@@ -1,18 +1,11 @@
 import { json, redirect } from '@remix-run/node';
 import type { ActionFunction } from '@remix-run/node';
-import { authenticator } from '~/secure/authentication.server';
 import { Papel } from '@prisma/client';
 import registrarPagamento from '~/domain/Pagamento/registrar-pagamento.server';
+import { requireRoles } from '~/secure/require-role.server';
 
 export const action: ActionFunction = async ({ request, params }) => {
-  const usuario = await authenticator.isAuthenticated(request, {
-    failureRedirect: '/autentica/entrar',
-  });
-
-  // Apenas admins e secretaria podem registrar pagamentos
-  if (usuario.papel !== Papel.ADMIN && usuario.papel !== Papel.SECRETARIA) {
-    return json({ error: 'Sem permissão para registrar pagamentos' }, { status: 403 });
-  }
+  await requireRoles(request, [Papel.ADMIN, Papel.SECRETARIA]);
 
   const associadoId = params.id;
 

@@ -1,5 +1,6 @@
 //@ts-nocheck
-import { Papel, Perfil, Usuario } from '@prisma/client';
+import type { Perfil, Usuario } from '@prisma/client';
+import { Papel, Prisma } from '@prisma/client';
 import { json } from '@remix-run/node';
 import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { Form, Link, useLoaderData } from '@remix-run/react';
@@ -8,6 +9,7 @@ import { Badge, Button, ButtonGroup, Card, Col, Container, Dropdown, Form as Boo
 import LayoutRestrictArea from '~/component/layout/LayoutRestrictArea';
 import pegarPerfis from '~/domain/Perfil/pegar-perfis.server';
 import { authenticator } from '~/secure/authentication.server';
+import { requireRoles } from '~/secure/require-role.server';
 import { prisma } from '~/secure/db.server';
 import { brDataFromIsoString, brDisplayDateTime } from '~/shared/DateTime.util';
 import { addMonths, endOfMonth, startOfMonth } from 'date-fns';
@@ -23,9 +25,7 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  let usuario = await authenticator.isAuthenticated(request, {
-    failureRedirect: '/autentica/entrar',
-  });
+  let usuario = await requireRoles(request, [Papel.SAUDE, Papel.SECRETARIA, Papel.ADMIN]);
 
   // Buscar perfis com informações completas de pagamento
   const perfis = await prisma.perfil.findMany({
@@ -86,26 +86,6 @@ export async function action({ request }: ActionFunctionArgs) {
   const inicioMesAtual = startOfMonth(new Date());
   const fimMesAtual = endOfMonth(new Date());
 
-  if (tipoPagamento === 'MENSALIDADE_SOCIAL' || tipoPagamento === 'MENSALIDADE_INTEGRAL') {
-    const mensalidadeNoMes = await prisma.pagamento.findFirst({
-      where: {
-        associadoId,
-        data_pagamento: {
-          gte: inicioMesAtual,
-          lte: fimMesAtual,
-        },
-        observacao: {
-          contains: 'Mensalidade',
-          mode: 'insensitive',
-        },
-      },
-    });
-
-    if (mensalidadeNoMes) {
-      return json({ error: 'Este associado já possui mensalidade registrada neste mês.' }, { status: 400 });
-    }
-  }
-
   // Verificar elegibilidade para pagamentos sociais
   const associado = await prisma.associado.findUnique({
     where: { id: associadoId },
@@ -153,26 +133,46 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   try {
-    await prisma.pagamento.create({
-      data: {
-        associadoId,
-        valor,
-        observacao,
-        proximo_vencimento: proximoVencimento,
-      },
-    });
+    await prisma.$transaction(async (tx) => {
+      if (tipoPagamento === 'MENSALIDADE_SOCIAL' || tipoPagamento === 'MENSALIDADE_INTEGRAL') {
+        const mensalidadeNoMes = await tx.pagamento.findFirst({
+          where: {
+            associadoId,
+            data_pagamento: { gte: inicioMesAtual, lte: fimMesAtual },
+            observacao: { contains: 'Mensalidade', mode: 'insensitive' },
+          },
+        });
 
-    // Se for taxa associativa (social ou integral), atualizar status para EM_ANALISE
-    if (tipoPagamento === 'TAXA_ASSOCIATIVA' || tipoPagamento === 'TAXA_ASSOCIATIVA_SOCIAL') {
-      await prisma.associado.update({
-        where: { id: associadoId },
-        data: { status: 'EM_ANALISE' },
+        if (mensalidadeNoMes) {
+          throw new Error('PAGAMENTO_JA_REGISTRADO');
+        }
+      }
+
+      await tx.pagamento.create({
+        data: { associadoId, valor, observacao, proximo_vencimento: proximoVencimento },
       });
-    }
+
+      if (tipoPagamento === 'TAXA_ASSOCIATIVA' || tipoPagamento === 'TAXA_ASSOCIATIVA_SOCIAL') {
+        await tx.associado.update({
+          where: { id: associadoId },
+          data: { status: 'EM_ANALISE' },
+        });
+      }
+    }, {
+      isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+      maxWait: 5000,
+      timeout: 10000,
+    });
 
     return json({ success: true });
   } catch (error) {
     console.error('Erro ao criar pagamento:', error);
+    if (error instanceof Error && error.message === 'PAGAMENTO_JA_REGISTRADO') {
+      return json({ error: 'Este associado já possui mensalidade registrada neste mês.' }, { status: 400 });
+    }
+    if ((error as { code?: string })?.code === 'P2034') {
+      return json({ error: 'Este pagamento já foi registrado por outra requisição.' }, { status: 409 });
+    }
     return json({ error: 'Erro ao criar pagamento' }, { status: 500 });
   }
 }

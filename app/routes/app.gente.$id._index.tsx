@@ -1,10 +1,11 @@
 //@ts-nocheck
-import {
-  Papel,
+import type {
   Perfil,
   Usuario,
   Associado,
-  Documentos,
+  Documentos} from '@prisma/client';
+import {
+  Papel,
   TipoDocumento,
 } from '@prisma/client';
 import { json, redirect } from '@remix-run/node';
@@ -22,7 +23,7 @@ import {
   Table,
 } from 'react-bootstrap';
 import LayoutRestrictArea from '~/component/layout/LayoutRestrictArea';
-import { authenticator } from '~/secure/authentication.server';
+import { requireRoles } from '~/secure/require-role.server';
 import { brDataFromIsoString, brDisplayDateTime } from '~/shared/DateTime.util';
 import { prisma } from '~/secure/db.server';
 
@@ -37,9 +38,7 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const usuario = await authenticator.isAuthenticated(request, {
-    failureRedirect: '/autentica/entrar',
-  });
+  const usuario = await requireRoles(request, [Papel.SAUDE, Papel.SECRETARIA, Papel.ADMIN]);
 
   const perfilId = params.id;
 
