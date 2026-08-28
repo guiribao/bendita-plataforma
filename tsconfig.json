@@ -1,5 +1,15 @@
 {
   "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": [
+    "app/domain/Perfil/buscar-perfil.server.tsx",
+    "app/domain/Perfil/criar-editar-perfil-usuario.server.ts",
+    "app/domain/Perfil/deletar-perfil-por-id.server.ts",
+    "app/domain/Perfil/editar-perfil-feirante.server.ts",
+    "app/domain/Perfil/enviar-email-cadastro-perfil.server.ts",
+    "app/domain/Perfil/novo-perfil.server.ts",
+    "app/domain/Perfil/pegar-dados-perfis-dashboard.server.tsx",
+    "app/model/Perfil.server.ts"
+  ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "isolatedModules": true,
