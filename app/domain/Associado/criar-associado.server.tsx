@@ -1,4 +1,5 @@
-import { Associado, AssociacaoStatus } from '@prisma/client';
+import type { Associado} from '@prisma/client';
+import { AssociacaoStatus } from '@prisma/client';
 import { prisma } from '~/secure/db.server';
 
 //@ts-ignore

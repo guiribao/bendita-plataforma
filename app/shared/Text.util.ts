@@ -5,7 +5,7 @@ export function upperCaseNomes(nome: string): string {
   for(let parte in partes_nome) {
     parte = partes_nome[parte].toLowerCase()
     
-    if (["de", "da", "dos"].includes(partes_nome[parte])) return
+    if (["de", "da", "dos"].includes(partes_nome[parte])) continue;
     
     parte = String(partes_nome[parte]).charAt(0).toUpperCase() + String(partes_nome[parte]).slice(1);
   }

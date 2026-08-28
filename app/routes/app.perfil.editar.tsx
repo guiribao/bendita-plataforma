@@ -1,4 +1,4 @@
-import { json, LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/node';
+import { json } from '@remix-run/node';
 import { Form, useLoaderData, useActionData, Link } from '@remix-run/react';
 import { Button, Card, Col, Container, Row, Form as BSForm, Alert, Tabs, Tab } from 'react-bootstrap';
 import { useState } from 'react';
@@ -6,7 +6,7 @@ import LayoutRestrictArea from '~/component/layout/LayoutRestrictArea';
 import { InputMaskClient } from '~/component/InputMaskClient';
 import { prisma } from '~/secure/db.server';
 import { authenticator } from '~/secure/authentication.server';
-import type { MetaFunction } from '@remix-run/node';
+import type { MetaFunction , LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/node';
 import { brStringToIsoString } from '~/shared/DateTime.util';
 
 function toDateInputValue(value: unknown): string {
@@ -161,7 +161,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function EditarPerfilPage() {
   const { perfil, usuario } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
+  const actionData = useActionData<any>();
   const [activeTab, setActiveTab] = useState('pessoal');
 
   return (
@@ -324,7 +324,7 @@ export default function EditarPerfilPage() {
                       <Button variant='primary' type='submit'>
                         <i className='las la-save'></i> Salvar Alterações
                       </Button>
-                      <Button variant='outline-secondary' as={Link} to='/app/perfil'>
+                      <Button variant='outline-secondary' as='a' href='/app/perfil'>
                         Cancelar
                       </Button>
                     </div>
@@ -424,7 +424,7 @@ export default function EditarPerfilPage() {
                       <Button variant='primary' type='submit'>
                         <i className='las la-save'></i> Salvar Alterações
                       </Button>
-                      <Button variant='outline-secondary' as={Link} to='/app/perfil'>
+                      <Button variant='outline-secondary' as='a' href='/app/perfil'>
                         Cancelar
                       </Button>
                     </div>
@@ -471,7 +471,7 @@ export default function EditarPerfilPage() {
                       <Button variant='primary' type='submit'>
                         <i className='las la-save'></i> Salvar Alterações
                       </Button>
-                      <Button variant='outline-secondary' as={Link} to='/app/perfil'>
+                      <Button variant='outline-secondary' as='a' href='/app/perfil'>
                         Cancelar
                       </Button>
                     </div>
@@ -583,7 +583,7 @@ export default function EditarPerfilPage() {
                         <Button variant='primary' type='submit'>
                           <i className='las la-save'></i> Salvar Alterações
                         </Button>
-                        <Button variant='outline-secondary' as={Link} to='/app/perfil'>
+                        <Button variant='outline-secondary' as='a' href='/app/perfil'>
                           Cancelar
                         </Button>
                       </div>

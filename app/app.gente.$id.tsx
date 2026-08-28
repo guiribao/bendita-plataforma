@@ -1,17 +1,17 @@
 //@ts-nocheck
-import {
-  Papel,
+import type {
   Perfil,
   Usuario,
   Associado,
-  Documentos,
+  Documentos} from '@prisma/client';
+import {
+  Papel,
   TipoDocumento,
 } from '@prisma/client';
 import { json, redirect } from '@remix-run/node';
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Link, useLoaderData, useNavigate } from '@remix-run/react';
+import { useLoaderData, useNavigate } from '@remix-run/react';
 import {
-  Alert,
   Badge,
   Button,
   Card,

@@ -1,5 +1,5 @@
 import { prisma } from '~/secure/db.server';
-import addHours from 'date-fns/addHours';
+import { addHours } from 'date-fns/addHours';
 
 const VALIDADE_EMAIL_PADRAO = Number(process.env.VALIDADE_EMAIL_PADRAO)
 

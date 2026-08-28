@@ -11,7 +11,8 @@ import footerStyle from '~/assets/css/footer.css';
 import Layout from './component/layout/Layout';
 import Topbar from './component/layout/Topbar';
 import { authenticator } from './secure/authentication.server';
-import { Papel, Perfil, Usuario } from '@prisma/client';
+import type { Perfil, Usuario } from '@prisma/client';
+import { Papel } from '@prisma/client';
 import pegarPerfilPeloIdUsuario from './domain/Perfil/perfil-pelo-id-usuario.server';
 import { useEffect, useState } from 'react';
 import { createHashHistory } from 'history';
@@ -92,8 +93,10 @@ export default function App() {
         history.back();
       }
 
-      usuario.papelAdicional = async () => await loadAditionalRoles(location.pathname, perfil.id);
-      handleElements(document, usuario.papel, usuario.papelAdicional, location.pathname);
+      const papelAdicional = async () => perfil
+        ? await loadAditionalRoles(location.pathname, perfil.id)
+        : [];
+      handleElements(document, usuario.papel, papelAdicional, location.pathname);
     }
 
     setLoading(false);

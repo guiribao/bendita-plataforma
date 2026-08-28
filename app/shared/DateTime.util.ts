@@ -52,7 +52,7 @@ export function parseDateTime(date: Date | string) {
   return date_utc_correct;
 }
 
-export function parseDateTimeTZ(date, time) {
+export function parseDateTimeTZ(date: string | Date, time?: string) {
   let dt;
 
   if (!time) {

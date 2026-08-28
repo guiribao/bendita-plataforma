@@ -1,12 +1,13 @@
+import type { ScheduledTask } from 'node-cron';
 import cron from 'node-cron';
 import { checkNewEmails } from './imap.server';
 
-let cronJob: cron.ScheduledTask | null = null;
+let cronJob: ScheduledTask | null = null;
 
 function isImapEnabled(): boolean {
   if (process.env.DISABLE_IMAP === 'true') return false;
   // No ambiente local, nao precisamos mapear IMAP nem rodar cron
-  if (process.env.NODE_ENV === 'local') return false;
+  if (String(process.env.NODE_ENV) === 'local') return false;
   return true;
 }
 

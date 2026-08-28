@@ -1,5 +1,5 @@
 import { prisma } from '~/secure/db.server';
-import { Usuario } from '@prisma/client';
+import type { Usuario } from '@prisma/client';
 
 export default async function pegarUsuarioPeloId(usuarioId: number): Promise<Usuario | null> {
   try {

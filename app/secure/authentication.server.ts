@@ -2,7 +2,7 @@ import { Authenticator, AuthorizationError } from 'remix-auth';
 import { FormStrategy } from 'remix-auth-form';
 import { prisma } from './db.server';
 import { sessionStorage } from './session.server';
-import { Usuario as PrismaUsuario } from '@prisma/client';
+import type { Usuario as PrismaUsuario } from '@prisma/client';
 import Usuario from '~/model/Usuario.server';
 import { compare } from '~/shared/Password.util';
 

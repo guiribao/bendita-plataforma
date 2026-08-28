@@ -1,7 +1,6 @@
 import { prisma } from '~/secure/db.server';
-import { encrypt } from '~/shared/Password.util'
 
-export default async function atualizarUsuarioDoPerfil(usuarioId: number, perfilId: number) {
+export default async function atualizarUsuarioDoPerfil(usuarioId: number, perfilId: string) {
   try {
     const perfil = await prisma.perfil.update({
       data: {

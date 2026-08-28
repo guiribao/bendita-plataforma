@@ -1,4 +1,4 @@
-import { Perfil } from '@prisma/client';
+import type { Perfil } from '@prisma/client';
 import { prisma } from '~/secure/db.server';
 
 export default async function pegarPerfilPeloIdUsuario(id: number): Promise<Perfil | null> {

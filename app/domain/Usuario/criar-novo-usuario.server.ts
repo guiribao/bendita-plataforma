@@ -1,4 +1,4 @@
-import { Papel } from '@prisma/client';
+import type { Papel } from '@prisma/client';
 import Usuario from '~/model/Usuario.server';
 import { prisma } from '~/secure/db.server';
 import { encrypt } from '~/shared/Password.util'

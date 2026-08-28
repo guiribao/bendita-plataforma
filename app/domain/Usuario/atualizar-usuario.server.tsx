@@ -1,8 +1,8 @@
-import { Papel, Usuario } from '@prisma/client';
+import type { Papel, Usuario } from '@prisma/client';
 import { prisma } from '~/secure/db.server';
 
 //@ts-ignore
-export default async function atualizarUsuario(usuarioId: string, email: string, papel: Papel): Promise<Usuario | null> {
+export default async function atualizarUsuario(usuarioId: number, email: string, papel: Papel): Promise<Usuario | null> {
   try {
     let usuarioAtualizado = await prisma.usuario.update({
       where: {

@@ -1,4 +1,5 @@
-import { ActionFunction, LinksFunction, LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node';
+import type { ActionFunction, LinksFunction, LoaderFunctionArgs, MetaFunction} from '@remix-run/node';
+import { json } from '@remix-run/node';
 import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
 import { authenticator } from '~/secure/authentication.server';
 import cadastroStyle from '~/assets/css/cadastro.css';
@@ -66,7 +67,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function EsqueciSenha() {
-  const actionData = useActionData();
+  const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   const isSubmitting = ['submitting', 'loading'].includes(navigation.state);
 

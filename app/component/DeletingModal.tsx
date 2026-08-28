@@ -1,16 +1,27 @@
 import { Form } from '@remix-run/react';
 
-function DeletingModal({ item, close, entity }) {
+type DeletableItem = { id: string | number; eventoId?: string | number };
+type Entity = keyof typeof endpointConfig;
+
+const endpointConfig = {
+  financeiro: { name: 'a Operação financeira', endpoint: '/financeiro' },
+  calendario: { name: 'o Evento', endpoint: '/calendario' },
+  gente: { name: 'o Perfil', endpoint: '/gente' },
+  'financeiro feira': { name: 'a Venda na feira', endpoint: '/calendario/feira' },
+} as const;
+
+function DeletingModal({ item, close, entity }: { item: DeletableItem; close: () => void; entity: Entity }) {
   const endPointMatch = {
-    financeiro: { id: item.id, name: 'a Operação financeira', endpoint: '/financeiro' },
-    calendario: { id: item.id, name: 'o Evento', endpoint: '/calendario' },
-    gente: { id: item.id, name: 'o Perfil', endpoint: '/gente' },
-    "financeiro feira": { id: item.id, name: "a Venda na feira", endpoint: `/calendario/feira/${item.eventoId}`}
+    financeiro: { ...endpointConfig.financeiro, id: item.id },
+    calendario: { ...endpointConfig.calendario, id: item.id },
+    gente: { ...endpointConfig.gente, id: item.id },
+    'financeiro feira': { ...endpointConfig['financeiro feira'], id: item.id, endpoint: `/calendario/feira/${item.eventoId}` },
   };
 
-  function handleSubmit(event) {
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     close();
-    event.target.submit();
+    event.currentTarget.submit();
   }
 
   return (
@@ -22,7 +33,7 @@ function DeletingModal({ item, close, entity }) {
         <div className='modal-body'>
           <p>
             Você tem certeza que deseja excluir {endPointMatch[entity].name}: <br />
-            <strong>#{endPointMatch[entity].id}</strong>
+            <strong>#{String(endPointMatch[entity].id)}</strong>
           </p>
         </div>
         <div className='modal-footer'>

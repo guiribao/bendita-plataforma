@@ -1,4 +1,4 @@
-import { Usuario as PrismaUsuario } from '@prisma/client';
+import type { Usuario as PrismaUsuario } from '@prisma/client';
 
 export default class Usuario {
   id: number;

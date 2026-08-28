@@ -1,7 +1,7 @@
-import { Associado } from '@prisma/client';
+import type { Associado } from '@prisma/client';
 import { prisma } from '~/secure/db.server';
 
-export default async function pegarAssociadoPorId(associadoId): Promise<Associado | null> {
+export default async function pegarAssociadoPorId(associadoId: string): Promise<Associado | null> {
   try {
     const associado = await prisma.associado.findUnique({
       where: {

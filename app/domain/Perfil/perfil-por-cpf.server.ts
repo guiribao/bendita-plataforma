@@ -1,9 +1,9 @@
-import { Perfil } from '@prisma/client';
+import type { Perfil, Usuario } from '@prisma/client';
 import { prisma } from '~/secure/db.server';
 
 export default async function perfilPorCpf(
   cpf: string
-): Promise<Perfil | null> {
+): Promise<(Perfil & { usuario: Usuario }) | null> {
   try {
     const perfil = await prisma.perfil.findFirst({
       where: {

@@ -1,10 +1,10 @@
 
-export function cortarDecimal(numero, casas) {
+export function cortarDecimal(numero: number | string, casas: number) {
   var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (casas || -1) + '})?');
-  return numero.toString().match(re)[0];
+  return numero.toString().match(re)?.[0] ?? '';
 }
 
-export function substituirPontoDecimalPorVirtgula(aStringNumber) {
+export function substituirPontoDecimalPorVirtgula(aStringNumber: string) {
   return aStringNumber.replaceAll(".", ",")
 }
 

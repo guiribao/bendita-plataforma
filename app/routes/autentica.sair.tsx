@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { authenticator } from '~/secure/authentication.server';
 
 export const meta: MetaFunction = () => {

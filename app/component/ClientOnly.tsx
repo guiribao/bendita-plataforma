@@ -1,4 +1,5 @@
-import { useState, useEffect, ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { useState, useEffect } from 'react';
 
 export function ClientOnly({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);

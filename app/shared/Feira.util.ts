@@ -1,6 +1,6 @@
 import { cortarDecimal, substituirPontoDecimalPorVirtgula } from "./Number.util";
 
-export function calcularCaixaFeirante(feirante) {
+export function calcularCaixaFeirante(feirante: any) {
   let totalVendido = 0;
   let totalVendidoPorTipo = {
     PIX: { valor: 0, qtd: 0 },
@@ -18,7 +18,7 @@ export function calcularCaixaFeirante(feirante) {
   let totalArrecadacao = 0;
 
   if (feirante.Operacao) {
-    feirante.Operacao.forEach((operacao) => {
+    feirante.Operacao.forEach((operacao: any) => {
       if (operacao.forma_pagamento == 'PIX') {
         totalVendidoPorTipo['PIX'].valor += Number(operacao.valor);
         totalVendidoPorTipo['PIX'].qtd += 1
@@ -69,7 +69,7 @@ export function calcularCaixaFeirante(feirante) {
   }
 }
 
-export function formatarColunaDeValor(valorOriginal) {
+export function formatarColunaDeValor(valorOriginal: number | string) {
   let novoNumero = cortarDecimal(valorOriginal, 2)
   let n = substituirPontoDecimalPorVirtgula(novoNumero)
 

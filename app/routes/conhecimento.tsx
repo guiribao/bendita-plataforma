@@ -1,4 +1,4 @@
-import { LinksFunction, MetaFunction } from '@remix-run/node';
+import type { LinksFunction, MetaFunction } from '@remix-run/node';
 import { useEffect, useRef, useState } from 'react';
 import knowledgeBase from '~/data/knowledge-base.json';
 import siteStyle from '~/assets/css/site.css';

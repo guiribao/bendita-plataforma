@@ -1,4 +1,5 @@
-import { ActionFunctionArgs, LinksFunction, MetaFunction, json } from '@remix-run/node';
+import type { ActionFunctionArgs, LinksFunction, MetaFunction} from '@remix-run/node';
+import { json } from '@remix-run/node';
 import { Form, useActionData, useNavigation } from '@remix-run/react';
 import { useState } from 'react';
 import { prisma } from '~/secure/db.server';

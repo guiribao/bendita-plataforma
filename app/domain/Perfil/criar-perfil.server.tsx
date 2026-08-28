@@ -1,6 +1,5 @@
-import { Perfil } from '@prisma/client';
+import type { Perfil } from '@prisma/client';
 import { prisma } from '~/secure/db.server';
-import { brStringToIsoString } from '~/shared/DateTime.util';
 
 //@ts-ignore
 export default async function criarPerfil(perfil): Promise<Perfil | null> {

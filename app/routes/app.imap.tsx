@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { json, redirect } from '@remix-run/node';
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
+import { useLoaderData , useFetcher } from '@remix-run/react';
 import {
   Badge,
   Button,
@@ -15,8 +15,11 @@ import {
 import LayoutRestrictArea from '~/component/layout/LayoutRestrictArea';
 import { authenticator } from '~/secure/authentication.server';
 import { prisma } from '~/secure/db.server';
-import { Papel, Usuario } from '@prisma/client';
+import type { Usuario } from '@prisma/client';
+import { Papel } from '@prisma/client';
 import { useRootLoaderData } from '~/hooks/useRootLoaderData';
+
+import React from 'react';
 
 export const meta: MetaFunction = () => {
   return [
@@ -368,6 +371,3 @@ export default function IMAPMonitorPage() {
     </LayoutRestrictArea>
   );
 }
-
-import React from 'react';
-import { useFetcher } from '@remix-run/react';

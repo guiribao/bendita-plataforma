@@ -1,5 +1,4 @@
-import { ReactElement } from 'react';
-import Footer from '../Footer';
+import type { ReactElement } from 'react';
 
 interface LayoutProps {
   children: ReactElement | ReactElement[];

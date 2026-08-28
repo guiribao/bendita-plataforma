@@ -1,4 +1,4 @@
-import {
+import type {
   ActionFunction,
   LinksFunction,
   LoaderFunctionArgs,
@@ -35,7 +35,7 @@ export const action: ActionFunction = async ({ request, context }) => {
       return error;
     }
 
-    errors = { message: error.message };
+    errors = { message: error instanceof Error ? error.message : 'Erro ao autenticar' };
     return { errors };
   }
 };
@@ -48,7 +48,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function Entrar() {
-  const actionData = useActionData();
+  const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
 
   const isSubmitting = ['submitting', 'loading'].includes(navigation.state);

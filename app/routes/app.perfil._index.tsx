@@ -1,4 +1,4 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { Badge, Button, Card, Col, Container, Row, Table, Alert } from "react-bootstrap";
 import { format, formatDistanceToNow } from "date-fns";
@@ -8,7 +8,7 @@ import { prisma } from "~/secure/db.server";
 import { authenticator } from "~/secure/authentication.server";
 import { Papel, type Usuario } from "@prisma/client";
 import { formatarMoeda } from "~/shared/Number.util";
-import type { MetaFunction } from "@remix-run/node";
+import type { MetaFunction , LoaderFunctionArgs } from "@remix-run/node";
 
 export const meta: MetaFunction = () => {
   return [

@@ -1,9 +1,7 @@
-import { ReactElement } from 'react';
-import type { LinksFunction } from '@remix-run/node';
+import type { ReactElement } from 'react';
 
-import { Usuario, Papel } from '@prisma/client';
+import type { Usuario, Papel } from '@prisma/client';
 import NavRestrictArea from '../NavRestrictArea';
-import templateStyle from '~/assets/css/template.css';
 
 interface LayoutProps {
   children: ReactElement | ReactElement[];

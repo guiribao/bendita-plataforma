@@ -1,4 +1,5 @@
-import { ActionFunctionArgs, json, LoaderFunctionArgs, redirect } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { Button, Card, Col, Container, Row, Alert, Badge } from "react-bootstrap";
 import { format } from "date-fns";
@@ -149,7 +150,7 @@ export default function DemonstrarInteresse() {
   );
 
   return (
-    <LayoutRestrictArea usuarioSistema={usuario}>
+    <LayoutRestrictArea usuarioSistema={usuario as any}>
       <Container fluid className="py-4">
         <Row className="mb-4">
           <Col>

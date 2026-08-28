@@ -1,8 +1,8 @@
-import { LinksFunction, LoaderArgs, V2_MetaFunction } from '@remix-run/node';
+import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import accessDenied from '~/assets/img/undraw/access_denied.svg';
 import naoAutorizadoPage from '~/assets/css/nao-autorizado-page.css';
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [{ title: 'ChaveCloud' }, { name: 'description', content: 'A Núvem do Chave!' }];
 };
 
@@ -10,7 +10,7 @@ export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: naoAutorizadoPage }];
 };
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request: _request }: LoaderFunctionArgs) {
   return {};
 }
 

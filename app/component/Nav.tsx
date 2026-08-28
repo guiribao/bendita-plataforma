@@ -1,11 +1,11 @@
-import { LoaderFunctionArgs, json } from '@remix-run/node';
+import type { LoaderFunctionArgs} from '@remix-run/node';
+import { json } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
 import pegarPerfilPeloIdUsuario from '~/domain/Perfil/perfil-pelo-id-usuario.server';
-import { Papel } from '@prisma/client';
+import type { Papel } from '@prisma/client';
 
 import { authenticator } from '~/secure/authentication.server';
 
-import userImage from '~/assets/img/user.png';
 
 // Função para obter avatar baseado no nome
 const obterAvatar = (nome?: string | null, papel?: Papel | string, sexo?: string | null) => {

@@ -1,4 +1,5 @@
-import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
+import type { ActionFunctionArgs} from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import { Button, Card, Col, Container, Row, Alert } from "react-bootstrap";
 import LayoutRestrictArea from "~/component/layout/LayoutRestrictArea";

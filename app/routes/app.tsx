@@ -1,8 +1,9 @@
-import {
-  ActionFunction,
+import type {
   LinksFunction,
   LoaderFunctionArgs,
-  MetaFunction,
+  MetaFunction} from '@remix-run/node';
+import {
+  ActionFunction,
   json,
   redirect,
 } from '@remix-run/node';
@@ -47,7 +48,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   });
 
   // Verificar se o associado precisa aceitar o termo
-  await verificarTermoAssociativo(usuario, request.url);
+  await verificarTermoAssociativo(usuario as any, request.url);
 
   return null;
 }

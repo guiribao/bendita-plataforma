@@ -68,7 +68,7 @@ function extractCurrentReply(emailText: string): string {
  * Processa emails não lidos
  */
 export async function checkNewEmails(): Promise<void> {
-  if (process.env.DISABLE_IMAP === 'true' || process.env.NODE_ENV === 'local') {
+  if (process.env.DISABLE_IMAP === 'true' || String(process.env.NODE_ENV) === 'local') {
     console.log('[IMAP] ℹ️  IMAP desabilitado no ambiente local.');
     return;
   }
