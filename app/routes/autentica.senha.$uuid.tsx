@@ -1,27 +1,28 @@
-import {
+import type {
   ActionFunction,
   LinksFunction,
-  LoaderArgs,
-  V2_MetaFunction,
+  LoaderFunctionArgs,
+  MetaFunction} from '@remix-run/node';
+import {
   json,
   redirect,
 } from '@remix-run/node';
 import { Form, Link, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
-import compareAsc from 'date-fns/compareAsc';
+import { compareAsc } from 'date-fns/compareAsc';
 
 import { authenticator } from '~/secure/authentication.server';
-import cadastroStyle from '~/assets/css/cadastro.css';
 import loading from '~/assets/img/loading.gif';
 import pegarRequisicaoEsqueciSenha from '~/domain/Usuario/pegar-requisicao-esqueci-senha.server';
 import pegarUsuarioPeloId from '~/domain/Usuario/pegar-usuario-pelo-id.server';
-import Usuario from '~/model/Usuario.server';
-import atualizarSenhaUsuario from '~/domain/Usuario/atualizar-senha-usuario.server';
+import type Usuario from '~/model/Usuario.server';
 import desativarTokensEsqueciSenha from '~/domain/Usuario/desativar-tokens-esqueci-senha.server';
+import { prisma } from '~/secure/db.server';
+import { encrypt } from '~/shared/Password.util';
 import Toastify from 'toastify-js';
 import { useEffect } from 'react';
 import cadastroPageStyle from '~/assets/css/cadastro.css';
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [
     { title: 'Nova senha - ChaveCloud' },
     { name: 'description', content: 'A Núvem do Chave!' },
@@ -32,11 +33,21 @@ export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: cadastroPageStyle }];
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request, params }) => {
+  const token = params.uuid;
+  if (!token) {
+    return redirect('/autentica/entrar');
+  }
+
+  const requisicao = await pegarRequisicaoEsqueciSenha(token);
+  if (!requisicao?.ativo || compareAsc(new Date(), requisicao.valido_ate) !== -1) {
+    return redirect('/autentica/entrar');
+  }
+
   const form = await request.formData();
   const senha: string = form.get('senha') as string;
   const senhaRepetida: string = form.get('senha_repetida') as string;
-  const usuarioId: number = Number(form.get('usuario_id'));
+  const usuarioId = requisicao.usuarioId;
 
   let errors = {
     senha: !senha,
@@ -60,7 +71,25 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors });
   }
 
-  const update = await atualizarSenhaUsuario(senha, usuarioId);
+  const update = await prisma.$transaction(async (tx) => {
+    const tokenConsumido = await tx.usuario_Esqueci_Senha.updateMany({
+      where: {
+        token,
+        ativo: true,
+        valido_ate: { gt: new Date() },
+      },
+      data: { ativo: false },
+    });
+
+    if (tokenConsumido.count === 0) {
+      return null;
+    }
+
+    return tx.usuario.update({
+      where: { id: usuarioId },
+      data: { senha: await encrypt(senha) },
+    });
+  });
 
   if (update) {
     await desativarTokensEsqueciSenha(usuarioId);
@@ -71,7 +100,7 @@ export const action: ActionFunction = async ({ request }) => {
   return json({ errors, success });
 };
 
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   let usuario: Usuario | null = await authenticator.isAuthenticated(request, {
     successRedirect: '/app/dashboard',
   });
@@ -90,8 +119,8 @@ export async function loader({ request, params }: LoaderArgs) {
 }
 
 export default function NovaSenha() {
-  const actionData = useActionData();
-  const { usuario } = useLoaderData();
+  const actionData = useActionData<typeof action>();
+  const { usuario } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
 
@@ -122,7 +151,7 @@ export default function NovaSenha() {
           type='hidden'
           name='usuario_id'
           id='usuario_id'
-          value={usuario.id}
+          value={usuario?.id ?? ''}
           autoComplete='off'
         />
         <div className='form-group'>

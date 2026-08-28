@@ -1,8 +1,9 @@
-import {
+import type {
   ActionFunction,
   LinksFunction,
   LoaderFunctionArgs,
-  MetaFunction,
+  MetaFunction} from '@remix-run/node';
+import {
   json,
 } from '@remix-run/node';
 import {
@@ -50,13 +51,13 @@ export const links: LinksFunction = () => {
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
 
-  const email = form.get('email');
-  const senha = form.get('senha');
-  const senhaRepetida = form.get('senha_repetida');
+  const email = String(form.get('email') ?? '');
+  const senha = String(form.get('senha') ?? '');
+  const senhaRepetida = String(form.get('senha_repetida') ?? '');
   const nomeCompleto = form.get('nome_completo');
   const apelido = form.get('apelido');
   const dataNascimentoRaw = form.get('data_nascimento');
-  const cpf = form.get('cpf');
+  const cpf = String(form.get('cpf') ?? '');
   const rg = form.get('rg');
   const nacionalidade = form.get('nacionalidade');
   const estadoCivil = form.get('estado_civil');
@@ -129,7 +130,7 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  let necessarioResponsavel = verificarIdade(dataNascimento) < 18;
+  let necessarioResponsavel = verificarIdade(dataNascimento ?? '') < 18;
   let papel: Papel = Papel.ASSOCIADO;
 
   if (necessarioResponsavel) {
@@ -199,9 +200,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function CadastroBasico() {
   const navigation = useNavigation();
   const navigate = useNavigate();
-  const actionData = useActionData();
+  const actionData = useActionData<any>();
 
-  const [endereco, setEndereco] = useState({});
+  const [endereco, setEndereco] = useState<{
+    logradouro?: string;
+    bairro?: string;
+    cidade?: string;
+    estado?: string;
+  }>({});
 
   const isSubmitting = ['submitting', 'loading'].includes(navigation.state);
 
@@ -216,7 +222,7 @@ export default function CadastroBasico() {
     }
   }, [actionData]);
 
-  async function carregarEndereco(event) {
+  async function carregarEndereco(event: React.ChangeEvent<HTMLInputElement>) {
     let cep = event.target.value.replace(/\D/g, '');
 
     //@ts-ignore
@@ -235,8 +241,8 @@ export default function CadastroBasico() {
       return;
     }
 
-    let numero = document.getElementById('numero');
-    numero.value = '';
+    let numero = document.getElementById('numero') as HTMLInputElement | null;
+    if (numero) numero.value = '';
     numero?.focus();
   }
 

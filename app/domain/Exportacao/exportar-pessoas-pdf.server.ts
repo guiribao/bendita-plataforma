@@ -1,5 +1,4 @@
 import PDFDocument from 'pdfkit';
-import { Readable } from 'stream';
 import { prisma } from '~/secure/db.server';
 import { brDataFromIsoString } from '~/shared/DateTime.util';
 
@@ -106,7 +105,7 @@ export async function gerarPDFPessoas(): Promise<Buffer> {
       // Lista detalhada de pessoas (uma por página)
       perfis.forEach((perfil, index) => {
         doc.addPage();
-        adicionarPessoaDetalhada(doc, perfil as PerfilCompleto, index + 1);
+        adicionarPessoaDetalhada(doc, perfil as unknown as PerfilCompleto, index + 1);
       });
 
       // Rodapé em todas as páginas
@@ -264,7 +263,11 @@ function adicionarPessoaDetalhada(doc: PDFKit.PDFDocument, perfil: PerfilComplet
     ['Papel no Sistema', formatarPapel(perfil.usuario.papel)],
     ['CPF', perfil.cpf || 'Nao informado'],
     ['RG', perfil.rg || 'Nao informado'],
-    ['Data de Nascimento', perfil.data_nascimento ? brDataFromIsoString(perfil.data_nascimento.toISOString()) : 'Nao informado'],
+    ['Data de Nascimento', perfil.data_nascimento
+      ? brDataFromIsoString(perfil.data_nascimento instanceof Date
+        ? perfil.data_nascimento.toISOString()
+        : perfil.data_nascimento)
+      : 'Nao informado'],
     ['Sexo', perfil.sexo === 'M' ? 'Masculino' : perfil.sexo === 'F' ? 'Feminino' : 'Nao informado'],
     ['Apelido', perfil.apelido || 'Nao informado'],
     ['Nacionalidade', perfil.nacionalidade || 'Nao informado'],

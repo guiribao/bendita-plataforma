@@ -1,8 +1,9 @@
-import {
+import type {
   ActionFunction,
   LinksFunction,
   LoaderFunctionArgs,
-  MetaFunction,
+  MetaFunction} from '@remix-run/node';
+import {
   json,
   redirect,
 } from '@remix-run/node';
@@ -14,12 +15,14 @@ import { authenticator } from '~/secure/authentication.server';
 
 import criarNovoUsuario from '~/domain/Usuario/criar-novo-usuario.server';
 import perfilPorEmailCpf from '~/domain/Perfil/perfil-por-cpf.server';
+import atualizarUsuarioDoPerfil from '~/domain/Perfil/atualizar-usuario-do-perfil.server';
 
 import cadastroStyle from '~/assets/css/cadastro.css';
 
 
 import { verificarIdade } from '~/shared/DateTime.util';
 import { useEffect, useRef, useState } from 'react';
+import { Papel } from '@prisma/client';
 
 export const meta: MetaFunction = () => {
   return [
@@ -61,9 +64,9 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors });
   }
 
-  let perfilSeExistir = await perfilPorEmailCpf(email, cpf);
+  let perfilSeExistir = await perfilPorEmailCpf(cpf);
 
-  if (email == perfilSeExistir?.email) {
+  if (email == perfilSeExistir?.usuario?.email) {
     return json({
       errors: {
         data: 'Já existe uma conta associada a este e-mail, solicite recuperação de senha.',
@@ -89,10 +92,10 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  let criarUsuario = await criarNovoUsuario(email, senha);
+  let criarUsuario = await criarNovoUsuario(email, senha, Papel.ASSOCIADO);
 
   if (perfilSeExistir)
-    await atualizarUsuarioDoPerfil(Number(criarUsuario?.id), Number(perfilSeExistir.id));
+    await atualizarUsuarioDoPerfil(Number(criarUsuario?.id), perfilSeExistir.id);
 
   if (criarUsuario) {
     await authenticator.authenticate('form', request, {
@@ -121,15 +124,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function Cadastro() {
   const [stepAtiva, setStepAtiva] = useState(1)
-  const stepLineRef = useRef(null)
-  const stepGroupsRef = useRef(null)
+  const stepLineRef = useRef<HTMLUListElement>(null)
+  const stepGroupsRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
   const navigate = useNavigate()
   const submit = useSubmit()
 
   const [pageTitle, setPageTitle ] = useState("Cadastro de associado")
 
-  const steps = {
+  const steps: Record<number, { titulo: string; id: string }> = {
     1: { titulo: "Informações básicas", id: "basico" },
     2: { titulo: "Documentos", id: "documentos" },
     3: { titulo: "Informaçoes de saúde", id: "saude" },
@@ -143,15 +146,17 @@ export default function Cadastro() {
   }, [location])
 
   useEffect(() => {
+    if (!stepLineRef.current) return;
     for (let node of stepLineRef.current.childNodes) {
-      node.classList.remove("ativo", "feito")
-      node.childNodes[0].innerHTML = node.id
+      const element = node as HTMLElement;
+      element.classList.remove("ativo", "feito")
+      element.childNodes[0].textContent = element.id
 
-      if (node.id == stepAtiva) node.classList.add("ativo");
+      if (element.id == String(stepAtiva)) element.classList.add("ativo");
 
-      if (node.id < stepAtiva) {
-        node.classList.add("feito")
-        node.childNodes[0].innerHTML = '✔️'
+      if (Number(element.id) < stepAtiva) {
+        element.classList.add("feito")
+        element.childNodes[0].textContent = '✔️'
       }
     }
   }, [stepAtiva])
@@ -159,20 +164,20 @@ export default function Cadastro() {
   function toggleStepLine() {
     if (location.pathname.includes("concluido")) {
       setPageTitle("Cadastrado enviado")
-      stepLineRef.current.style.display = "none"
+      if (stepLineRef.current) stepLineRef.current.style.display = "none"
     } else {
       setPageTitle("Cadastro de associado")
-      stepLineRef.current.style.display = "flex"
+      if (stepLineRef.current) stepLineRef.current.style.display = "flex"
     }
   }
 
   function activeStepOnLoad() {
-    let step_id = Object.keys(steps).find(step_id => location.pathname.includes(steps[step_id].id))
+    let step_id = Object.keys(steps).find(step_id => location.pathname.includes(steps[Number(step_id)].id))
     if (step_id == undefined) return
-    setStepAtiva(step_id)
+    setStepAtiva(Number(step_id))
   }
 
-  async function handleStepAtiva(stepId) {
+  async function handleStepAtiva(stepId: number) {
     if (stepId < stepAtiva) return
     setStepAtiva(stepId);
     navigate(steps[stepId].id)
@@ -188,9 +193,10 @@ export default function Cadastro() {
         <ul className='step-line' ref={stepLineRef}>
           {
             Object.keys(steps).map(step_id => {
-              return (<li className='step-line-item' id={step_id} key={step_id} onClick={() => handleStepAtiva(step_id)}>
+              const stepNumber = Number(step_id);
+              return (<li className='step-line-item' id={step_id} key={step_id} onClick={() => handleStepAtiva(stepNumber)}>
                 <div className='step-id'>{step_id}</div>
-                <div className='step-titulo'>{steps[step_id].titulo}</div>
+                <div className='step-titulo'>{steps[stepNumber].titulo}</div>
               </li>)
             })
           }

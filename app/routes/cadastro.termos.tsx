@@ -1,8 +1,9 @@
-import {
+import type {
   ActionFunction,
   LinksFunction,
   LoaderFunctionArgs,
-  MetaFunction,
+  MetaFunction} from '@remix-run/node';
+import {
   json,
 } from '@remix-run/node';
 import { useEffect, useState } from 'react';
@@ -62,7 +63,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   if (temIndicacao) {
     const nome_indicador = form.get('nome_indicador')
-    await atualizarIndicacaoAssociado(nome_indicador, associadoId)
+    await atualizarIndicacaoAssociado(perfilId, nome_indicador)
   }
 
   await atualizarStatusAssociado(AssociacaoStatus.AGUARDANDO_PAGAMENTO, associadoId)
@@ -81,7 +82,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function CadastroTermos() {
   const navigation = useNavigation();
   const navigate = useNavigate();
-  const actionData = useActionData();
+  const actionData = useActionData<any>();
 
   const [perfilId, setPerfilId] = useState("")
   const [associadoId, setAssociadoId] = useState("")

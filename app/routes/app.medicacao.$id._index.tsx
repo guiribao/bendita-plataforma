@@ -1,4 +1,5 @@
-import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import { Badge, Button, Card, Col, Container, Row, Table, ProgressBar } from "react-bootstrap";
 import { format } from "date-fns";
@@ -100,39 +101,38 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   try {
     if (acao === "aprovar") {
-      // Buscar interesse
-      const interesse = await prisma.interesse.findUnique({
-        where: { id: interesseId },
-        include: { remessa: true },
-      });
-
-      if (!interesse) {
-        return json({ error: "Interesse não encontrado" }, { status: 404 });
-      }
-
-      // Verificar disponibilidade
-      if (interesse.quantidade > interesse.remessa.quantidade_disponivel) {
-        return json(
-          { error: "Quantidade indisponível" },
-          { status: 400 }
-        );
-      }
-
-      // Aprovar interesse e atualizar quantidade disponível
-      await prisma.$transaction([
-        prisma.interesse.update({
+      await prisma.$transaction(async (tx) => {
+        const interesse = await tx.interesse.findUnique({
           where: { id: interesseId },
+        });
+
+        if (!interesse) {
+          throw new Error('INTERESSE_NAO_ENCONTRADO');
+        }
+
+        const interesseAtualizado = await tx.interesse.updateMany({
+          where: { id: interesseId, aprovado: false },
           data: { aprovado: true },
-        }),
-        prisma.remessa.update({
-          where: { id: interesse.remessaId },
-          data: {
-            quantidade_disponivel: {
-              decrement: interesse.quantidade,
-            },
+        });
+
+        if (interesseAtualizado.count === 0) {
+          throw new Error('INTERESSE_JA_APROVADO');
+        }
+
+        const remessaAtualizada = await tx.remessa.updateMany({
+          where: {
+            id: interesse.remessaId,
+            quantidade_disponivel: { gte: interesse.quantidade },
           },
-        }),
-      ]);
+          data: {
+            quantidade_disponivel: { decrement: interesse.quantidade },
+          },
+        });
+
+        if (remessaAtualizada.count === 0) {
+          throw new Error('QUANTIDADE_INDISPONIVEL');
+        }
+      });
     } else if (acao === "reprovar") {
       await prisma.interesse.delete({
         where: { id: interesseId },
@@ -147,26 +147,34 @@ export async function action({ request, params }: ActionFunctionArgs) {
         return json({ error: "Interesse não encontrado" }, { status: 404 });
       }
 
-      // Cancelar aprovação e devolver quantidade
-      await prisma.$transaction([
-        prisma.interesse.update({
-          where: { id: interesseId },
+      // Cancelar aprovação e devolver quantidade apenas uma vez
+      await prisma.$transaction(async (tx) => {
+        const interesseAtualizado = await tx.interesse.updateMany({
+          where: { id: interesseId, aprovado: true },
           data: { aprovado: false },
-        }),
-        prisma.remessa.update({
-          where: { id: interesse.remessaId },
-          data: {
-            quantidade_disponivel: {
-              increment: interesse.quantidade,
-            },
-          },
-        }),
-      ]);
+        });
+
+        if (interesseAtualizado.count > 0) {
+          await tx.remessa.update({
+            where: { id: interesse.remessaId },
+            data: { quantidade_disponivel: { increment: interesse.quantidade } },
+          });
+        }
+      });
     }
 
     return json({ success: true });
   } catch (error) {
     console.error("Erro ao processar ação:", error);
+    if (error instanceof Error && error.message === "INTERESSE_NAO_ENCONTRADO") {
+      return json({ error: "Interesse não encontrado" }, { status: 404 });
+    }
+    if (error instanceof Error && error.message === "INTERESSE_JA_APROVADO") {
+      return json({ error: "Este interesse já foi aprovado" }, { status: 400 });
+    }
+    if (error instanceof Error && error.message === "QUANTIDADE_INDISPONIVEL") {
+      return json({ error: "Quantidade indisponível" }, { status: 400 });
+    }
     return json({ error: "Erro ao processar ação" }, { status: 500 });
   }
 }
@@ -192,7 +200,7 @@ export default function DetalhesRemessa() {
   const estaVencida = diasRestantes < 0;
 
   return (
-    <LayoutRestrictArea usuarioSistema={usuario}>
+    <LayoutRestrictArea usuarioSistema={usuario as any}>
       <Container fluid className="py-4">
         <Row className="mb-4">
           <Col>
