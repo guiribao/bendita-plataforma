@@ -16,6 +16,7 @@ import LayoutRestrictArea from '~/component/layout/LayoutRestrictArea';
 import { authenticator } from '~/secure/authentication.server';
 import { prisma } from '~/secure/db.server';
 import { localUploadHandler } from '~/storage/local-upload.server';
+import CompressorDeAnexos from '~/component/CompressorDeAnexos';
 import criarDocumento from '~/domain/Documentos/criar-documento.server';
 import cadastroStyle from '~/assets/css/cadastro.css';
 
@@ -255,6 +256,7 @@ export default function DocumentoNovoPage() {
         )}
 
         <Form method='post' encType='multipart/form-data' ref={formRef}>
+          <CompressorDeAnexos />
           <Row className='g-4'>
             {TIPOS_DOCUMENTOS.map((config) => (
               <Col key={config.tipo} xs={12} md={6} lg={6}>
@@ -299,7 +301,7 @@ export default function DocumentoNovoPage() {
                         />
 
                         <small className='text-muted d-block mb-2'>
-                          Formatos aceitos: JPG, PNG ou PDF (máximo 5MB)
+                          Formatos aceitos: JPG, PNG ou PDF (máximo 15MB)
                         </small>
                       </BootstrapForm.Group>
 

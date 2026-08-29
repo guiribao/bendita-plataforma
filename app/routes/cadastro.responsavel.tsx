@@ -15,6 +15,7 @@ import { authenticator } from '~/secure/authentication.server';
 import cadastroStyle from '~/assets/css/cadastro.css';
 import loading from '~/assets/img/loading.gif'
 import { localUploadHandler } from '~/storage/local-upload.server';
+import CompressorDeAnexos from '~/component/CompressorDeAnexos';
 import criarNovoUsuario from '~/domain/Usuario/criar-novo-usuario.server';
 import { Papel, TipoDocumento } from '@prisma/client';
 import pegarAssociadoPorId from '~/domain/Associado/pegar-por-id.server';
@@ -170,6 +171,7 @@ export default function CadastroResponsavel() {
   }, [actionData])
 
   return <Form method='post' className='step-group' name="responsavel" encType='multipart/form-data'>
+    <CompressorDeAnexos />
     {actionData?.errors?.data && (
       <p className='mensagem-erro'>{actionData.errors.data}</p>
     )}
@@ -256,7 +258,7 @@ export default function CadastroResponsavel() {
           <div className="instruct">
             <h2><b style={{ fontWeight: '800' }}>Anexo:</b> RG do responsável *</h2>
             <p>Anexe o documento em uma foto única, ou em dois arquivos separados.</p>
-            <span>Formatos aceito: JPG, PNG, PDF</span>
+            <span>Formatos aceito: JPG, PNG, PDF (até 15MB)</span>
           </div>
           <label htmlFor='identificacao_responsavel_1'>Imagem frente / Imagem única *</label>
           <input

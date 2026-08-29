@@ -40,6 +40,7 @@ import atualizarSaudeAssociado from '~/domain/Associado/atualizar-saude-associad
 import atualizarIndicacaoAssociado from '~/domain/Associado/atualizar-indicacao-associado.server';
 import criarDocumento from '~/domain/Documentos/criar-documento.server';
 import { localUploadHandler } from '~/storage/local-upload.server';
+import CompressorDeAnexos from '~/component/CompressorDeAnexos';
 import pegarUsuarioPeloEmail from '~/domain/Usuario/pegar-usuario-pelo-email.server';
 import perfilPorCpf from '~/domain/Perfil/perfil-por-cpf.server';
 import { prisma } from '~/secure/db.server';
@@ -464,6 +465,7 @@ const EditarPerfil = () => {
               id='formEdicaoPerfil'
               onChange={() => setFormAlterado(true)}
             >
+              <CompressorDeAnexos />
               {actionData?.errors?.data && (
                 <Alert variant='danger' className='mb-4 shadow-sm'>
                   <i className='las la-exclamation-triangle me-2'></i>
@@ -867,7 +869,7 @@ const EditarPerfil = () => {
                       <Alert variant='info'>
                         <strong>Adicionar novos documentos:</strong> Selecione arquivos para adicionar novos documentos ao perfil.
                         <br />
-                        <small>Formatos aceitos: JPG, PNG, PDF. Documentos existentes não serão substituídos.</small>
+                        <small>Formatos aceitos: JPG, PNG, PDF (até 15MB). Documentos existentes não serão substituídos.</small>
                       </Alert>
                     </Col>
                   </Row>

@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { authenticator } from '~/secure/authentication.server';
 import { localUploadHandler } from '~/storage/local-upload.server';
+import CompressorDeAnexos from '~/component/CompressorDeAnexos';
 
 import cadastroStyle from '~/assets/css/cadastro.css';
 import loading from '~/assets/img/loading.gif';
@@ -168,6 +169,7 @@ export default function CadastroSaude() {
   }
 
   return <Form method='post' className='step-group' name="saude" encType='multipart/form-data'>
+    <CompressorDeAnexos />
     {actionData?.errors?.data && (
       <p className='mensagem-erro'>{actionData.errors.data}</p>
     )}
@@ -291,7 +293,7 @@ export default function CadastroSaude() {
         <div className="instruct">
           <h2><b style={{ fontWeight: '800' }}>Anexo:</b> Receita Média</h2>
           <p>Se você já tem receita médica para uso da cannabis medicinal anexe aqui.</p>
-          <span>Formatos aceito: JPG, PNG, PDF</span>
+          <span>Formatos aceito: JPG, PNG, PDF (até 15MB)</span>
         </div>
         <label htmlFor='receita_uso_canabis'>Imagem única</label>
         <input
@@ -304,7 +306,7 @@ export default function CadastroSaude() {
         <div className="instruct">
           <h2><b style={{ fontWeight: '800' }}>Anexo:</b> Autorização da ANVISA</h2>
           <p>Se você possui autorização da ANVISA para importação anexe aqui.</p>
-          <span>Formatos aceito: JPG, PNG, PDF</span>
+          <span>Formatos aceito: JPG, PNG, PDF (até 15MB)</span>
         </div>
         <label htmlFor='autorizacao_anvisa'>Imagem única</label>
         <input

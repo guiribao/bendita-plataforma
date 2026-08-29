@@ -2,11 +2,33 @@ import Jimp from 'jimp';
 import type { UploadHandler } from '@remix-run/node';
 import { gerarUuid } from '~/shared/Uuid.util';
 import { writeStorageFile } from './local-storage.server';
+import { TAMANHO_MAXIMO_ARQUIVO, TAMANHO_MAXIMO_ARQUIVO_LABEL, FORMATOS_ARQUIVO_ACEITOS } from '~/shared/Arquivo.util';
 
 const STORAGE_ENV = process.env.NODE_ENV || 'development';
-const FILE_FIELDS = ['identificacao_1', 'identificacao_2', 'comprovante_residencia',
-  'receita_uso_canabis', 'autorizacao_anvisa', 'identificacao_responsavel_1', 'identificacao_responsavel_2'];
-const FILE_FORMAT = ['image/jpeg', 'image/png', 'application/pdf'];
+const FILE_FORMAT = FORMATOS_ARQUIVO_ACEITOS;
+
+/** Compressão aplicada às imagens antes de gravar no storage. */
+const IMAGEM_DIMENSAO_MAXIMA = 2000;
+const IMAGEM_QUALIDADE = 70;
+
+/** Campo do formulário -> pasta de destino no storage. */
+const PASTA_POR_CAMPO: Record<string, string> = {
+  identificacao_1: 'identificacao',
+  identificacao_2: 'identificacao',
+  identificacao_responsavel_1: 'identificacao',
+  identificacao_responsavel_2: 'identificacao',
+  comprovante_residencia: 'residencia',
+  receita_uso_canabis: 'receitas',
+  autorizacao_anvisa: 'anvisa',
+};
+
+const FILE_FIELDS = Object.keys(PASTA_POR_CAMPO);
+
+const EXTENSAO_POR_TIPO: Record<string, string> = {
+  'image/jpeg': '.jpeg',
+  'image/png': '.png',
+  'application/pdf': '.pdf',
+};
 
 const uploadStorageFile = async (data: Buffer, key: string) => {
   await writeStorageFile(key, data);
@@ -31,10 +53,36 @@ async function convertToString(data: AsyncIterable<Uint8Array>) {
   return result.join('');
 }
 
+/**
+ * Reduz as dimensões e a qualidade da imagem para diminuir o tamanho gravado.
+ * PDFs e formatos que o Jimp não conseguir ler são mantidos como estão.
+ */
+async function comprimirImagem(fileBuffer: Buffer, contentType: string) {
+  if (contentType !== 'image/jpeg' && contentType !== 'image/png') return fileBuffer;
+
+  try {
+    const image = await Jimp.read(fileBuffer);
+
+    if (image.getWidth() > IMAGEM_DIMENSAO_MAXIMA || image.getHeight() > IMAGEM_DIMENSAO_MAXIMA) {
+      image.scaleToFit(IMAGEM_DIMENSAO_MAXIMA, IMAGEM_DIMENSAO_MAXIMA);
+    }
+
+    image.quality(IMAGEM_QUALIDADE);
+
+    const comprimido = await image.getBufferAsync(contentType);
+
+    return comprimido.length < fileBuffer.length ? comprimido : fileBuffer;
+  } catch (error) {
+    console.error('Não foi possível comprimir a imagem enviada:', error);
+    return fileBuffer;
+  }
+}
+
+function pastaDoCampo(name: string) {
+  return PASTA_POR_CAMPO[name] ?? PASTA_POR_CAMPO[FILE_FIELDS.find((f) => name.includes(f)) ?? ''];
+}
 
 export const localUploadHandler: UploadHandler = async ({ name, data, filename, contentType }) => {
-  let finalFile = null;
-
   // Se não for um campo de arquivo (sem filename), retornar o valor como string
   if (!filename) {
     return await convertToString(data);
@@ -48,106 +96,22 @@ export const localUploadHandler: UploadHandler = async ({ name, data, filename, 
   if (!FILE_FORMAT.includes(contentType))
     throw new Error(`${name}: formato do arquivo é inválido\nUtilize JPG, PNG ou PDF.`);
 
-  let fileBuffer = await convertToBuffer(data);
-  let folderAndFile = '';
+  const fileBuffer = await convertToBuffer(data);
 
   if (fileBuffer.length === 0)
     throw new Error(`${name}: arquivo inválido.`);
 
+  if (fileBuffer.length > TAMANHO_MAXIMO_ARQUIVO)
+    throw new Error(`${name}: arquivo grande demais\nUtilize um arquivo de até ${TAMANHO_MAXIMO_ARQUIVO_LABEL}.`);
 
-  if (fileBuffer.length > 5242880)
-    throw new Error(`${name}: arquivo grande demais\nUtilize um arquivo de até 5mb.`);
+  const pasta = pastaDoCampo(name);
 
-  if (["identificacao_1", "identificacao_2",
-    "identificacao_responsavel_1", "identificacao_responsavel_2"].includes(name)) {
-
-    let newFilename = gerarUuid()
-
-    if (contentType === 'image/jpeg' || contentType === 'image/png') {
-      if (contentType === 'image/png') {
-        newFilename += '.png';
-      } else {
-        newFilename += '.jpeg';
-      }
-      finalFile = await Jimp.read(fileBuffer).then(async (image) => {
-        image.quality(70);
-        return await image.getBufferAsync(contentType);
-      });
-    }
-
-
-    if (contentType === 'application/pdf') newFilename += '.pdf';
-
-    folderAndFile = `${STORAGE_ENV}/documentos/identificacao/${newFilename}`;
-  }
-
-  if (["comprovante_residencia"].includes(name)) {
-
-    let newFilename = gerarUuid()
-
-    if (contentType === 'image/jpeg' || contentType === 'image/png') {
-      if (contentType === 'image/png') {
-        newFilename += '.png';
-      } else {
-        newFilename += '.jpeg';
-      }
-      finalFile = await Jimp.read(fileBuffer).then(async (image) => {
-        image.quality(70);
-        return await image.getBufferAsync(contentType);
-      });
-    }
-
-    if (contentType === 'application/pdf') newFilename += '.pdf';
-
-    folderAndFile = `${STORAGE_ENV}/documentos/residencia/${newFilename}`;
-  }
-
-  if (["receita_uso_canabis"].includes(name)) {
-    let newFilename = gerarUuid()
-
-    if (contentType === 'image/jpeg' || contentType === 'image/png') {
-      if (contentType === 'image/png') {
-        newFilename += '.png';
-      } else {
-        newFilename += '.jpeg';
-      }
-      finalFile = await Jimp.read(fileBuffer).then(async (image) => {
-        image.quality(70);
-        return await image.getBufferAsync(contentType);
-      });
-    }
-
-    if (contentType === 'application/pdf') newFilename += '.pdf';
-
-    folderAndFile = `${STORAGE_ENV}/documentos/receitas/${newFilename}`;
-  }
-
-  if (["autorizacao_anvisa"].includes(name)) {
-    let newFilename = gerarUuid()
-
-    if (contentType === 'image/jpeg' || contentType === 'image/png') {
-      if (contentType === 'image/png') {
-        newFilename += '.png';
-      } else {
-        newFilename += '.jpeg';
-      }
-      finalFile = await Jimp.read(fileBuffer).then(async (image) => {
-        image.quality(70);
-        return await image.getBufferAsync(contentType);
-      });
-    }
-
-    if (contentType === 'application/pdf') newFilename += '.pdf';
-
-    folderAndFile = `${STORAGE_ENV}/documentos/anvisa/${newFilename}`;
-  }
-
-  if (!finalFile) {
-    finalFile = fileBuffer
-  }
-
-  if (!folderAndFile.length)
+  if (!pasta)
     throw new Error(`${name}: Erro ao processar upload do arquivo.`);
 
-  return await uploadStorageFile(finalFile!, folderAndFile!);
+  const finalFile = await comprimirImagem(fileBuffer, contentType);
+  const newFilename = `${gerarUuid()}${EXTENSAO_POR_TIPO[contentType]}`;
+  const folderAndFile = `${STORAGE_ENV}/documentos/${pasta}/${newFilename}`;
+
+  return await uploadStorageFile(finalFile, folderAndFile);
 };

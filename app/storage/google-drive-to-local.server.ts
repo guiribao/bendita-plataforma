@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { writeStorageFile } from './local-storage.server';
+import { TAMANHO_MAXIMO_ARQUIVO } from '~/shared/Arquivo.util';
 
 const STORAGE_ENV = process.env.NODE_ENV || 'development';
 
@@ -44,8 +45,8 @@ export async function salvarArquivoGoogleDriveLocal(
     const response = await axios.get(downloadUrl, {
       responseType: 'arraybuffer',
       maxRedirects: 5,
-      maxContentLength: 5 * 1024 * 1024,
-      maxBodyLength: 5 * 1024 * 1024,
+      maxContentLength: TAMANHO_MAXIMO_ARQUIVO,
+      maxBodyLength: TAMANHO_MAXIMO_ARQUIVO,
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
       },

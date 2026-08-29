@@ -18,6 +18,7 @@ import loading from '~/assets/img/loading.gif';
 import identificationImg from '~/assets/img/undraw/docs_inspection.svg';
 import residencyImg from '~/assets/img/undraw/home_sweet_home.svg';
 import { localUploadHandler } from '~/storage/local-upload.server';
+import CompressorDeAnexos from '~/component/CompressorDeAnexos';
 import { TipoDocumento } from '@prisma/client';
 import criarDocumento from '~/domain/Documentos/criar-documento.server';
 import pegarAssociadoPorId from '~/domain/Associado/pegar-por-id.server';
@@ -146,6 +147,7 @@ export default function CadastroAnexos() {
   }, [actionData])
 
   return <Form method='post' className='step-group' name="documentos" encType='multipart/form-data'>
+    <CompressorDeAnexos />
     {actionData?.errors?.data && (
       <p className='mensagem-erro'>{actionData.errors.data}</p>
     )}
@@ -154,7 +156,7 @@ export default function CadastroAnexos() {
         <img src={identificationImg} width={256} alt="Inspeção de documentos" />
         <h2>Documento de identificação</h2>
         <p>Envie uma imagem única contendo frente e verso do documento, ou frente e verso em imagens separadas.</p>
-        <span>Formatos aceito: JPG, PNG, PDF</span>
+        <span>Formatos aceito: JPG, PNG, PDF (até 15MB)</span>
       </div>
       <label htmlFor='identificacao_1'>Imagem frente / Imagem única <span className='required-field'>*</span></label>
       <input
@@ -180,7 +182,7 @@ export default function CadastroAnexos() {
         <img src={residencyImg} width={256} alt="Inspeção de documentos" />
         <h2>Comprovante de residência</h2>
         <p>Envie uma imagem única.</p>
-        <span>Formatos aceito: JPG, PNG, PDF</span>
+        <span>Formatos aceito: JPG, PNG, PDF (até 15MB)</span>
       </div>
       <label htmlFor='comprovante_residencia'>Imagem única <span className='required-field'>*</span></label>
       <input

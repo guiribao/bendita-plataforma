@@ -36,6 +36,7 @@ import criarAssociado from '~/domain/Associado/criar-associado.server';
 import atualizarSaudeAssociado from '~/domain/Associado/atualizar-saude-associado.server';
 import criarDocumento from '~/domain/Documentos/criar-documento.server';
 import { localUploadHandler } from '~/storage/local-upload.server';
+import CompressorDeAnexos from '~/component/CompressorDeAnexos';
 import pegarUsuarioPeloEmail from '~/domain/Usuario/pegar-usuario-pelo-email.server';
 import perfilPorCpf from '~/domain/Perfil/perfil-por-cpf.server';
 import enviarEmailBoasVindas from '~/domain/Usuario/enviar-email-boas-vindas.server';
@@ -358,6 +359,7 @@ const NovoAssociado = () => {
         <Row>
           <Col className='pt-3'>
             <Form method='post' encType='multipart/form-data'>
+              <CompressorDeAnexos />
               {actionData?.errors?.data && (
                 <Alert variant='danger' className='mb-4 shadow-sm'>
                   <i className='las la-exclamation-triangle me-2'></i>
@@ -743,7 +745,7 @@ const NovoAssociado = () => {
                       <Alert variant='info'>
                         <strong>Documento de identificação:</strong> Envie uma imagem única contendo frente e verso do documento, ou frente e verso em imagens separadas.
                         <br />
-                        <small>Formatos aceitos: JPG, PNG, PDF</small>
+                        <small>Formatos aceitos: JPG, PNG, PDF (até 15MB)</small>
                       </Alert>
                     </Col>
                   </Row>
@@ -782,7 +784,7 @@ const NovoAssociado = () => {
                           accept='image/*,.pdf'
                         />
                         <Form.Text className='text-muted'>
-                          Formatos aceitos: JPG, PNG, PDF
+                          Formatos aceitos: JPG, PNG, PDF (até 15MB)
                         </Form.Text>
                       </Form.Group>
                     </Col>
