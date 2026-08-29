@@ -24,6 +24,9 @@ import { Papel, Remetente } from '@prisma/client';
 import enviarEmailResposta from '~/domain/Contatos/enviar-email-resposta.server';
 import { useRootLoaderData } from '~/hooks/useRootLoaderData';
 import { requireRoles } from '~/secure/require-role.server';
+import { escopoDelecao } from '~/secure/delete-permissions.server';
+import BotaoDeletar from '~/component/BotaoDeletar';
+import AlertaResultadoDelecao from '~/component/AlertaResultadoDelecao';
 
 export const meta: MetaFunction = () => {
   return [
@@ -65,7 +68,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     })
   );
 
-  return json({ usuario, contatos: contatosComRespostas });
+  return json({
+    usuario,
+    contatos: contatosComRespostas,
+    podeDeletarContato: escopoDelecao('contato', usuario.papel) !== 'NENHUM',
+  });
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -156,10 +163,11 @@ export async function action({ request }: ActionFunctionArgs) {
 type LoaderDataType = {
   usuario: Usuario;
   contatos: any[];
+  podeDeletarContato: boolean;
 };
 
 const ContatosPage = () => {
-  const { usuario, contatos } = useLoaderData<LoaderDataType>();
+  const { usuario, contatos, podeDeletarContato } = useLoaderData<LoaderDataType>();
   const { mensagensNaoLidas } = useRootLoaderData();
   const [filtroNome, setFiltroNome] = useState('');
   const [dataInicio, setDataInicio] = useState('');
@@ -256,6 +264,7 @@ const ContatosPage = () => {
   return (
     <LayoutRestrictArea usuarioSistema={usuario} mensagensNaoLidas={mensagensNaoLidas}>
       <Container fluid className='app-content'>
+        <AlertaResultadoDelecao />
         {/* Header */}
         <Row className='align-items-center mt-3 mb-4'>
           <Col>
@@ -438,11 +447,20 @@ const ContatosPage = () => {
                         {contato.telefone}
                       </small>
                     </div>
-                    {naoLidas > 0 && (
-                      <Badge bg='danger' className='ms-2'>
-                        {naoLidas} não lida(s)
-                      </Badge>
-                    )}
+                    <div className='d-flex align-items-center gap-2'>
+                      {naoLidas > 0 && (
+                        <Badge bg='danger'>
+                          {naoLidas} não lida(s)
+                        </Badge>
+                      )}
+                      {podeDeletarContato && (
+                        <BotaoDeletar
+                          action={`/app/contatos/${contato.id}/deletar`}
+                          confirmacao={`Deletar o contato ${contato.nome}? Todas as mensagens da conversa serao removidas junto e a acao nao pode ser desfeita.`}
+                          titulo='Deletar contato'
+                        />
+                      )}
+                    </div>
                   </div>
                 </Card.Header>
                 <Card.Body style={{ overflowY: 'auto', flex: 1, backgroundColor: '#f8f9fa' }}>

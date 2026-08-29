@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import LayoutRestrictArea from "~/component/layout/LayoutRestrictArea";
 import { prisma } from "~/secure/db.server";
+import { deletarInteresse } from "~/domain/Delecao/deletar-em-cascata.server";
 import { authenticator } from "~/secure/authentication.server";
 import { Papel } from "@prisma/client";
 import { formatarMoeda } from "~/shared/Number.util";
@@ -134,9 +135,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
         }
       });
     } else if (acao === "reprovar") {
-      await prisma.interesse.delete({
-        where: { id: interesseId },
-      });
+      // Passa pelo domínio para devolver a quantidade quando o interesse já
+      // tinha sido aprovado — apagar direto deixaria a remessa com saldo menor.
+      const resultado = await deletarInteresse(interesseId);
+      if (!resultado.success) {
+        return json({ error: resultado.message }, { status: 500 });
+      }
     } else if (acao === "cancelar_aprovacao") {
       // Buscar interesse
       const interesse = await prisma.interesse.findUnique({

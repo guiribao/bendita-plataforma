@@ -11,6 +11,7 @@ import pegarPerfis from '~/domain/Perfil/pegar-perfis.server';
 import { authenticator } from '~/secure/authentication.server';
 import { requireRoles } from '~/secure/require-role.server';
 import { prisma } from '~/secure/db.server';
+import AlertaResultadoDelecao from '~/component/AlertaResultadoDelecao';
 import { brDataFromIsoString, brDisplayDateTime } from '~/shared/DateTime.util';
 import { addMonths, endOfMonth, startOfMonth } from 'date-fns';
 
@@ -214,6 +215,7 @@ const Gente = () => {
   return (
     <LayoutRestrictArea usuarioSistema={usuario}>
       <Container fluid className='app-content'>
+        <AlertaResultadoDelecao />
         <Row className='align-items-center mt-3 mb-4'>
           <Col>
             <div className='d-flex align-items-center'>

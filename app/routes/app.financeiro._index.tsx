@@ -11,6 +11,9 @@ import { Papel, Prisma } from "@prisma/client";
 import { formatarMoeda } from "~/shared/Number.util";
 import { RoleBasedRender } from "~/secure/protected-components";
 import { requireRoles } from "~/secure/require-role.server";
+import { escopoDelecao } from "~/secure/delete-permissions.server";
+import BotaoDeletar from "~/component/BotaoDeletar";
+import AlertaResultadoDelecao from "~/component/AlertaResultadoDelecao";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const usuario = await requireRoles(request, [Papel.ASSOCIADO, Papel.ASSOCIADO_DEPENDENTE, Papel.SECRETARIA, Papel.ADMIN]);
@@ -48,6 +51,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         associadosVigentes: 0,
         associadosVencidos: 0,
         totalAssociados: 0,
+        podeDeletarPagamento: false,
         filtros: {
           pessoa: '',
           dataInicio: '',
@@ -96,6 +100,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       associadosVigentes: 0,
       associadosVencidos: 0,
       totalAssociados: 0,
+      podeDeletarPagamento: false,
       filtros: {
         pessoa: '',
         dataInicio: '',
@@ -238,6 +243,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     isAssociado: false,
     podeAporte: false,
     associado: null,
+    podeDeletarPagamento: escopoDelecao('pagamento', usuario?.papel) !== 'NENHUM',
   });
 }
 
@@ -351,6 +357,7 @@ export default function Financeiro() {
     isAssociado,
     podeAporte,
     associado,
+    podeDeletarPagamento,
   } = useLoaderData<typeof loader>();
 
   const actionData = useActionData<any>();
@@ -362,6 +369,7 @@ export default function Financeiro() {
   return (
     <LayoutRestrictArea usuarioSistema={usuario as any}>
       <Container fluid className="app-content">
+        <AlertaResultadoDelecao />
         <Row className="align-items-center mt-3 mb-4">
           <Col>
             <div className='d-flex align-items-center'>
@@ -748,6 +756,7 @@ export default function Financeiro() {
                           <th>Próximo Vencimento</th>
                           <th>Observação</th>
                           <th>Status</th>
+                          {podeDeletarPagamento && <th className="text-end">Ações</th>}
                         </tr>
                       </thead>
                       <tbody>
@@ -831,6 +840,15 @@ export default function Financeiro() {
                                   </Badge>
                                 )}
                               </td>
+                              {podeDeletarPagamento && (
+                                <td className="text-end">
+                                  <BotaoDeletar
+                                    action={`/app/financeiro/${pagamento.id}/deletar`}
+                                    confirmacao={`Deletar o pagamento de ${pagamento.associado.perfil.nome_completo}? A acao nao pode ser desfeita.`}
+                                    className="d-inline-block"
+                                  />
+                                </td>
+                              )}
                             </tr>
                           );
                         })}

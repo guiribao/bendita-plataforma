@@ -12,6 +12,9 @@ import { prisma } from '~/secure/db.server';
 import { brDataFromIsoString } from '~/shared/DateTime.util';
 import { RoleBasedRender } from '~/secure/protected-components';
 import { solicitarLinkPrivadoDocumento } from '~/storage/documento-link.server';
+import { escopoDelecao } from '~/secure/delete-permissions.server';
+import BotaoDeletar from '~/component/BotaoDeletar';
+import AlertaResultadoDelecao from '~/component/AlertaResultadoDelecao';
 
 export const meta: MetaFunction = () => {
   return [
@@ -132,13 +135,21 @@ export async function loader({ request }: LoaderFunctionArgs) {
       )
     : null;
 
-  return json({ usuario, documentos: documentosComUrls, documentosAssociado: documentosAssociadoComUrls });
+  const podeDeletar = escopoDelecao('documento', usuario.papel) !== 'NENHUM';
+
+  return json({
+    usuario,
+    documentos: documentosComUrls,
+    documentosAssociado: documentosAssociadoComUrls,
+    podeDeletar,
+  });
 }
 
 type LoaderDataType = {
   usuario: Usuario;
   documentos: (DocumentoComRelacoes & { thumbnailUrl: string | null })[];
   documentosAssociado?: (DocumentoComRelacoes & { thumbnailUrl: string | null })[] | null;
+  podeDeletar: boolean;
 };
 
 // Função auxiliar para obter badge do tipo de documento
@@ -155,7 +166,7 @@ const obterBadgeTipoDocumento = (tipo: TipoDocumento) => {
 };
 
 const DocumentosPage = () => {
-  const { usuario, documentos, documentosAssociado } = useLoaderData<LoaderDataType>();
+  const { usuario, documentos, documentosAssociado, podeDeletar } = useLoaderData<LoaderDataType>();
 
   const [filtroNome, setFiltroNome] = useState('');
   const [filtroTipo, setFiltroTipo] = useState('');
@@ -218,6 +229,8 @@ const DocumentosPage = () => {
             </Col>
           </RoleBasedRender>
         </Row>
+
+        <AlertaResultadoDelecao />
 
         {/* Sessão para ADMIN, SECRETARIA, SAUDE */}
         <RoleBasedRender roles={['ADMIN', 'SECRETARIA', 'SAUDE']} userRole={usuario.papel}>
@@ -417,6 +430,12 @@ const DocumentosPage = () => {
                               <i className='las la-download' />
                             </Button>
                           )}
+                          {podeDeletar && (
+                            <BotaoDeletar
+                              action={`/app/documentos/${doc.id}/deletar`}
+                              confirmacao={`Deletar este documento de ${doc.associado.perfil.nome_completo}? O arquivo tambem sera removido do servidor e a acao nao pode ser desfeita.`}
+                            />
+                          )}
                         </div>
                       </Card.Footer>
                     </Card>
@@ -547,6 +566,12 @@ const DocumentosPage = () => {
                               <Button variant='outline-secondary' size='sm' as='a' href={doc.thumbnailUrl} download>
                                 <i className='las la-download' />
                               </Button>
+                            )}
+                            {podeDeletar && (
+                              <BotaoDeletar
+                                action={`/app/documentos/${doc.id}/deletar`}
+                                confirmacao={'Deletar este documento? O arquivo tambem sera removido do servidor e a acao nao pode ser desfeita.'}
+                              />
                             )}
                           </div>
                         </Card.Footer>

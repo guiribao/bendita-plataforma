@@ -11,6 +11,9 @@ import { Papel } from "@prisma/client";
 import { formatarMoeda } from "~/shared/Number.util";
 import { RoleBasedRender } from "~/secure/protected-components";
 import { requireRoles } from "~/secure/require-role.server";
+import { escopoDelecao } from "~/secure/delete-permissions.server";
+import BotaoDeletar from "~/component/BotaoDeletar";
+import AlertaResultadoDelecao from "~/component/AlertaResultadoDelecao";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const usuario = await requireRoles(request, [Papel.ASSOCIADO, Papel.SAUDE, Papel.ADMIN]);
@@ -90,16 +93,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
     meusInteresses,
     stats,
     usuario,
+    podeDeletarRemessa: escopoDelecao('remessa', usuario?.papel) !== 'NENHUM',
   });
 }
 
 export default function Medicacao() {
-  const { remessas, podeGerenciar, isAssociado, meuPerfil, meusInteresses, stats, usuario } =
+  const { remessas, podeGerenciar, isAssociado, meuPerfil, meusInteresses, stats, usuario, podeDeletarRemessa } =
     useLoaderData<typeof loader>();
 
   return (
     <LayoutRestrictArea usuarioSistema={usuario as any}>
       <Container fluid className="app-content">
+        <AlertaResultadoDelecao />
         <Row className="align-items-center mt-3 mb-4">
           <Col>
             <div className='d-flex align-items-center'>
@@ -359,14 +364,23 @@ export default function Medicacao() {
 
                               <div className="mt-auto">
                                 {podeGerenciar ? (
-                                  <Link
-                                    to={`/app/medicacao/${remessa.id}`}
-                                    className="w-100"
-                                  >
-                                    <Button variant="outline-primary" className="w-100">
-                                      <i className="las la-eye"></i> Ver Detalhes
-                                    </Button>
-                                  </Link>
+                                  <div className="d-flex gap-2">
+                                    <Link
+                                      to={`/app/medicacao/${remessa.id}`}
+                                      className="flex-grow-1"
+                                    >
+                                      <Button variant="outline-primary" className="w-100">
+                                        <i className="las la-eye"></i> Ver Detalhes
+                                      </Button>
+                                    </Link>
+                                    {podeDeletarRemessa && (
+                                      <BotaoDeletar
+                                        action={`/app/medicacao/${remessa.id}/deletar`}
+                                        confirmacao={`Deletar a remessa "${remessa.nome}"? Os ${remessa._count.Interesses} interesse(s) vinculados serao removidos junto e a acao nao pode ser desfeita.`}
+                                        titulo="Deletar remessa"
+                                      />
+                                    )}
+                                  </div>
                                 ) : isAssociado ? (
                                   meuInteresse ? (
                                     <Button variant="secondary" className="w-100" disabled>
