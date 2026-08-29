@@ -446,7 +446,9 @@ describe('Exclusão de pessoa', () => {
     const admin = await clienteAdmin();
     const resposta = await admin.postForm(`/app/gente/${perfil.id}/deletar`, {});
     assert.equal(resposta.status, 302);
-    assert.equal(resposta.headers.get('location'), '/app/gente');
+    const destino = resposta.headers.get('location');
+    assert.ok(destino.startsWith('/app/gente?'), `redirecionou para ${destino}`);
+    assert.ok(new URLSearchParams(destino.split('?')[1]).get('sucesso').includes('deletado com sucesso'));
 
     assert.equal(await prisma.perfil.count({ where: { id: perfil.id } }), 0, 'perfil deveria sumir');
     assert.equal(await prisma.usuario.count({ where: { id: usuario.id } }), 0, 'usuário deveria sumir');
@@ -458,8 +460,13 @@ describe('Exclusão de pessoa', () => {
   test('exclusão de perfil inexistente devolve erro tratado', async () => {
     const admin = await clienteAdmin();
     const resposta = await admin.postForm('/app/gente/00000000-0000-0000-0000-000000000000/deletar', {});
-    assert.equal(resposta.status, 500);
-    assert.ok((await resposta.text()).includes('não encontrado'));
+
+    // A rota não tem componente: devolver 500 deixava a tela em branco. O erro
+    // volta na URL da listagem, que sabe exibi-lo.
+    assert.equal(resposta.status, 302);
+    const destino = resposta.headers.get('location');
+    assert.ok(destino.startsWith('/app/gente?'), `redirecionou para ${destino}`);
+    assert.ok(new URLSearchParams(destino.split('?')[1]).get('erro').includes('não encontrado'));
   });
 });
 
