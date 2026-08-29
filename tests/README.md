@@ -48,6 +48,7 @@ Os logs de erro de SMTP que aparecem no meio da execução são esperados.
 | `05-area-administrativa` | Pessoas (CRUD), pagamentos, aprovação, exclusão, exportação, importação |
 | `06-documentos-medicacao-contatos` | Links privados de documento, remessas, interesses, contatos, IMAP |
 | `07-permissoes` | Matriz de acesso por papel declarada em `app/secure/permissions.ts` |
+| `08-upload-arquivos` | Limite de 15MB por anexo e compressão das imagens no servidor |
 
 ## Testes vermelhos
 
